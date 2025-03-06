@@ -1,0 +1,140 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0": {
+      "NMS_BusinessObjects/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/NMS_BusinessObjects.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NMS_BusinessObjects.dll": {}
+        }
+      },
+      "NMS_DAOs/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "NMS_BusinessObjects": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/NMS_DAOs.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NMS_DAOs.dll": {}
+        }
+      },
+      "NMS_Repositories/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "NMS_DAOs": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/NMS_Repositories.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/NMS_Repositories.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "NMS_BusinessObjects/1.0.0": {
+      "type": "project",
+      "path": "../NMS_BusinessObjects/NMS_BusinessObjects.csproj",
+      "msbuildProject": "../NMS_BusinessObjects/NMS_BusinessObjects.csproj"
+    },
+    "NMS_DAOs/1.0.0": {
+      "type": "project",
+      "path": "../NMS_DAOs/NMS_DAOs.csproj",
+      "msbuildProject": "../NMS_DAOs/NMS_DAOs.csproj"
+    },
+    "NMS_Repositories/1.0.0": {
+      "type": "project",
+      "path": "../NMS_Repositories/NMS_Repositories.csproj",
+      "msbuildProject": "../NMS_Repositories/NMS_Repositories.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0": [
+      "NMS_Repositories >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\2004d\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "D:\\TIEN'S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\NMS_Razor.csproj",
+      "projectName": "NMS_Razor",
+      "projectPath": "D:\\TIEN'S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\NMS_Razor.csproj",
+      "packagesPath": "C:\\Users\\2004d\\.nuget\\packages\\",
+      "outputPath": "D:\\TIEN'S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\2004d\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "projectReferences": {
+            "D:\\TIEN'S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Repositories\\NMS_Repositories.csproj": {
+              "projectPath": "D:\\TIEN'S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Repositories\\NMS_Repositories.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      }
+    },
+    "frameworks": {
+      "net8.0": {
+        "targetAlias": "net8.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.AspNetCore.App": {
+            "privateAssets": "none"
+          },
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.204/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

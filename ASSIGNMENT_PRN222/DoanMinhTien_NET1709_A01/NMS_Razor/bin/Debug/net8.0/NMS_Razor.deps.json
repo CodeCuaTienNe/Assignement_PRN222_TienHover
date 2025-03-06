@@ -1,0 +1,62 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "NMS_Razor/1.0.0": {
+        "dependencies": {
+          "NMS_Repositories": "1.0.0"
+        },
+        "runtime": {
+          "NMS_Razor.dll": {}
+        }
+      },
+      "NMS_BusinessObjects/1.0.0": {
+        "runtime": {
+          "NMS_BusinessObjects.dll": {}
+        }
+      },
+      "NMS_DAOs/1.0.0": {
+        "dependencies": {
+          "NMS_BusinessObjects": "1.0.0"
+        },
+        "runtime": {
+          "NMS_DAOs.dll": {}
+        }
+      },
+      "NMS_Repositories/1.0.0": {
+        "dependencies": {
+          "NMS_DAOs": "1.0.0"
+        },
+        "runtime": {
+          "NMS_Repositories.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "NMS_Razor/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "NMS_BusinessObjects/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "NMS_DAOs/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "NMS_Repositories/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
