@@ -12,6 +12,6 @@ namespace NMS_Repositories
     public class AccountRepository : IAccountRepository
     {
         public SystemAccount GetAccount(string email, string password)
-            => GetAccount(email,password);      
+            => AccountDAO.Instance().GetAccount(email, password);      
     }
 }

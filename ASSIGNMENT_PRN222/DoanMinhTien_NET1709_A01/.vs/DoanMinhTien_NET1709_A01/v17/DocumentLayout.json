@@ -54,7 +54,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 11,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -74,19 +74,6 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Privacy.cshtml",
-              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Privacy.cshtml",
-              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Privacy.cshtml",
-              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Privacy.cshtml",
-              "RelativeToolTip": "NMS_Razor\\Pages\\Privacy.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-10T14:14:30.1Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 6,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Program.cs",
@@ -95,8 +82,7 @@
               "RelativeToolTip": "NMS_Razor\\Program.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAeAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-10T09:42:54.251Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-10T09:42:54.251Z"
             },
             {
               "$type": "Document",
@@ -120,8 +106,7 @@
               "RelativeToolTip": "NMS_Razor\\Pages\\Index.cshtml",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAABWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-10T09:18:17.589Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-10T09:18:17.589Z"
             },
             {
               "$type": "Document",
@@ -133,8 +118,7 @@
               "RelativeToolTip": "NMS_Razor\\Pages\\Login.cshtml",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAyAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-10T09:18:12.601Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-10T09:18:12.601Z"
             },
             {
               "$type": "Document",
@@ -146,8 +130,7 @@
               "RelativeToolTip": "NMS_Repositories\\AccountRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAA+AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-10T09:11:45.161Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-10T09:11:45.161Z"
             },
             {
               "$type": "Document",
@@ -159,8 +142,7 @@
               "RelativeToolTip": "NMS_Repositories\\IAccountRepository.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAABHAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-10T09:04:27.542Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-10T09:04:27.542Z"
             },
             {
               "$type": "Document",
@@ -170,10 +152,22 @@
               "RelativeDocumentMoniker": "NMS_DAOs\\AccountDAO.cs",
               "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_DAOs\\AccountDAO.cs",
               "RelativeToolTip": "NMS_DAOs\\AccountDAO.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAAwBoAAAAJAAAA",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAABEAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-10T08:45:37.976Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Privacy.cshtml",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Privacy.cshtml",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Privacy.cshtml",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Privacy.cshtml",
+              "RelativeToolTip": "NMS_Razor\\Pages\\Privacy.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-03-10T14:14:30.1Z"
             },
             {
               "$type": "Document",
@@ -185,8 +179,7 @@
               "RelativeToolTip": "NMS_Razor\\Pages\\Login.cshtml.cs",
               "ViewState": "AQIAAAIAAAAAAAAAAAAAAB4AAAAeAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-10T09:30:17.718Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-10T09:30:17.718Z"
             },
             {
               "$type": "Document",
