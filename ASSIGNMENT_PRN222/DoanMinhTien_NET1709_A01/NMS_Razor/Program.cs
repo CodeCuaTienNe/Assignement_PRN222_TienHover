@@ -1,7 +1,14 @@
+using NMS_Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+//DI 
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+//Session
+builder.Services.AddSession();
 
 var app = builder.Build();
 
@@ -17,5 +24,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+//Use Session
+app.UseSession();
 
 app.Run();

@@ -12,6 +12,7 @@
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
+      "launchUrl": "Login",
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5294",
       "environmentVariables": {

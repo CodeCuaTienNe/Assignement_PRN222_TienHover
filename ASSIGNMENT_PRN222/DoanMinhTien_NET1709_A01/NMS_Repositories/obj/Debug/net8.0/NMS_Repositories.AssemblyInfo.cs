@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NMS_Repositories")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bc213deeb5ee9f5c40d0429a70cc23e484705e5f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+23a88ce3b3400dbe9c8295c6c4c81ab1f8fabb73")]
 [assembly: System.Reflection.AssemblyProductAttribute("NMS_Repositories")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NMS_Repositories")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

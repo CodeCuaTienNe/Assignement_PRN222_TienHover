@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMS_Razor", "NMS_Razor\NMS_Razor.csproj", "{57D6CC98-3444-4065-9B08-642B5DF81199}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NMS_Razor", "NMS_Razor\NMS_Razor.csproj", "{57D6CC98-3444-4065-9B08-642B5DF81199}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMS_Repositories", "NMS_Repositories\NMS_Repositories.csproj", "{08B826BB-AD00-47C6-B1CE-0952C9C4C615}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NMS_Repositories", "NMS_Repositories\NMS_Repositories.csproj", "{08B826BB-AD00-47C6-B1CE-0952C9C4C615}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMS_DAOs", "NMS_DAOs\NMS_DAOs.csproj", "{8DF9EA02-84D0-4C15-83F6-93B669A76836}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NMS_DAOs", "NMS_DAOs\NMS_DAOs.csproj", "{8DF9EA02-84D0-4C15-83F6-93B669A76836}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMS_BusinessObjects", "NMS_BusinessObjects\NMS_BusinessObjects.csproj", "{17BF2ED1-8E98-4AB3-AC1E-F2A4535CC61E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NMS_BusinessObjects", "NMS_BusinessObjects\NMS_BusinessObjects.csproj", "{17BF2ED1-8E98-4AB3-AC1E-F2A4535CC61E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
