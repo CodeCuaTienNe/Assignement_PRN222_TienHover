@@ -3,16 +3,76 @@
   "WorkspaceRootPath": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8DF9EA02-84D0-4C15-83F6-93B669A76836}|NMS_DAOs\\NMS_DAOs.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_daos\\accountdao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8DF9EA02-84D0-4C15-83F6-93B669A76836}|NMS_DAOs\\NMS_DAOs.csproj|solutionrelative:nms_daos\\accountdao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\index.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\login.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\login.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\delete.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\delete.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\delete.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\details.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\details.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\edit.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\edit.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\create.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\create.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{08B826BB-AD00-47C6-B1CE-0952C9C4C615}|NMS_Repositories\\NMS_Repositories.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_repositories\\newsarticlerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{08B826BB-AD00-47C6-B1CE-0952C9C4C615}|NMS_Repositories\\NMS_Repositories.csproj|solutionrelative:nms_repositories\\newsarticlerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{08B826BB-AD00-47C6-B1CE-0952C9C4C615}|NMS_Repositories\\NMS_Repositories.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_repositories\\inewsarticlerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{08B826BB-AD00-47C6-B1CE-0952C9C4C615}|NMS_Repositories\\NMS_Repositories.csproj|solutionrelative:nms_repositories\\inewsarticlerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8DF9EA02-84D0-4C15-83F6-93B669A76836}|NMS_DAOs\\NMS_DAOs.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_daos\\newsarticledao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8DF9EA02-84D0-4C15-83F6-93B669A76836}|NMS_DAOs\\NMS_DAOs.csproj|solutionrelative:nms_daos\\newsarticledao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8DF9EA02-84D0-4C15-83F6-93B669A76836}|NMS_DAOs\\NMS_DAOs.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_daos\\accountdao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8DF9EA02-84D0-4C15-83F6-93B669A76836}|NMS_DAOs\\NMS_DAOs.csproj|solutionrelative:nms_daos\\accountdao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -25,14 +85,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{08B826BB-AD00-47C6-B1CE-0952C9C4C615}|NMS_Repositories\\NMS_Repositories.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_repositories\\iaccountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{08B826BB-AD00-47C6-B1CE-0952C9C4C615}|NMS_Repositories\\NMS_Repositories.csproj|solutionrelative:nms_repositories\\iaccountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\login.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\login.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -54,7 +106,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 10,
+          "SelectedChildIndex": 15,
           "Children": [
             {
               "$type": "Bookmark",
@@ -74,19 +126,228 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
+              "Title": "Login.cshtml.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Login.cshtml.cs",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Login.cshtml.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Login.cshtml.cs",
+              "RelativeToolTip": "NMS_Razor\\Pages\\Login.cshtml.cs",
+              "ViewState": "AQIAACAAAAAAAAAAAAAowCoAAAAzAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-10T09:30:17.718Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Delete.cshtml",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Delete.cshtml",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Delete.cshtml",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Delete.cshtml",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Delete.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-03-11T01:46:53.156Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Details.cshtml.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Details.cshtml.cs",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Details.cshtml.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Details.cshtml.cs",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Details.cshtml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-11T01:46:53.065Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Details.cshtml",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Details.cshtml",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Details.cshtml",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Details.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-03-11T01:46:52.958Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Edit.cshtml.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml.cs",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml.cs",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-11T01:46:52.812Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-03-11T01:46:52.669Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Create.cshtml.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml.cs",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml.cs",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-11T01:46:52.556Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-03-11T01:46:51.993Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Program.cs",
               "RelativeDocumentMoniker": "NMS_Razor\\Program.cs",
               "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Program.cs",
               "RelativeToolTip": "NMS_Razor\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAeAAAA",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAA0AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-10T09:42:54.251Z"
+              "WhenOpened": "2025-03-10T09:42:54.251Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 6,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Index.cshtml",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Index.cshtml",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Index.cshtml",
+              "RelativeToolTip": "NMS_Razor\\Pages\\Index.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAABWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-03-10T09:18:17.589Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Index.cshtml",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Index.cshtml",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Index.cshtml",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Index.cshtml",
+              "ViewState": "AQIAADMAAAAAAAAAAAAAAEgAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-03-11T01:46:53.322Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Index.cshtml.cs",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Index.cshtml.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Index.cshtml.cs",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Index.cshtml.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAABYAAABHAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-11T01:46:53.408Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Login.cshtml",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Login.cshtml",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Login.cshtml",
+              "RelativeToolTip": "NMS_Razor\\Pages\\Login.cshtml",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAABIAAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-03-10T09:18:12.601Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Delete.cshtml.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Delete.cshtml.cs",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Delete.cshtml.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Delete.cshtml.cs",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Delete.cshtml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-11T01:46:53.233Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "NewsArticleRepository.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Repositories\\NewsArticleRepository.cs",
+              "RelativeDocumentMoniker": "NMS_Repositories\\NewsArticleRepository.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Repositories\\NewsArticleRepository.cs",
+              "RelativeToolTip": "NMS_Repositories\\NewsArticleRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-11T01:45:15.19Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "INewsArticleRepository.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Repositories\\INewsArticleRepository.cs",
+              "RelativeDocumentMoniker": "NMS_Repositories\\INewsArticleRepository.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Repositories\\INewsArticleRepository.cs",
+              "RelativeToolTip": "NMS_Repositories\\INewsArticleRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-11T01:44:27.267Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "NewsArticleDAO.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_DAOs\\NewsArticleDAO.cs",
+              "RelativeDocumentMoniker": "NMS_DAOs\\NewsArticleDAO.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_DAOs\\NewsArticleDAO.cs",
+              "RelativeToolTip": "NMS_DAOs\\NewsArticleDAO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-11T01:43:45.712Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
               "Title": "launchSettings.json",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "NMS_Razor\\Properties\\launchSettings.json",
@@ -98,31 +359,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Index.cshtml",
-              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Index.cshtml",
-              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Index.cshtml",
-              "RelativeToolTip": "NMS_Razor\\Pages\\Index.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAABWAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-10T09:18:17.589Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Login.cshtml",
-              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Login.cshtml",
-              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Login.cshtml",
-              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Login.cshtml",
-              "RelativeToolTip": "NMS_Razor\\Pages\\Login.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAyAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-10T09:18:12.601Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 19,
               "Title": "AccountRepository.cs",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Repositories\\AccountRepository.cs",
               "RelativeDocumentMoniker": "NMS_Repositories\\AccountRepository.cs",
@@ -134,7 +371,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 17,
+              "Title": "AccountDAO.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_DAOs\\AccountDAO.cs",
+              "RelativeDocumentMoniker": "NMS_DAOs\\AccountDAO.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_DAOs\\AccountDAO.cs",
+              "RelativeToolTip": "NMS_DAOs\\AccountDAO.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAuwBEAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-10T08:45:37.976Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
               "Title": "IAccountRepository.cs",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Repositories\\IAccountRepository.cs",
               "RelativeDocumentMoniker": "NMS_Repositories\\IAccountRepository.cs",
@@ -146,20 +396,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AccountDAO.cs",
-              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_DAOs\\AccountDAO.cs",
-              "RelativeDocumentMoniker": "NMS_DAOs\\AccountDAO.cs",
-              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_DAOs\\AccountDAO.cs",
-              "RelativeToolTip": "NMS_DAOs\\AccountDAO.cs",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAAABEAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-10T08:45:37.976Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 18,
               "Title": "Privacy.cshtml",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Privacy.cshtml",
               "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Privacy.cshtml",
@@ -171,19 +408,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Login.cshtml.cs",
-              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Login.cshtml.cs",
-              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Login.cshtml.cs",
-              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Login.cshtml.cs",
-              "RelativeToolTip": "NMS_Razor\\Pages\\Login.cshtml.cs",
-              "ViewState": "AQIAAAIAAAAAAAAAAAAAAB4AAAAeAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-10T09:30:17.718Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 22,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\appsettings.json",
               "RelativeDocumentMoniker": "NMS_Razor\\appsettings.json",
@@ -195,7 +420,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 23,
               "Title": "FunewsManagementContext.cs",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_DAOs\\FunewsManagementContext.cs",
               "RelativeDocumentMoniker": "NMS_DAOs\\FunewsManagementContext.cs",
