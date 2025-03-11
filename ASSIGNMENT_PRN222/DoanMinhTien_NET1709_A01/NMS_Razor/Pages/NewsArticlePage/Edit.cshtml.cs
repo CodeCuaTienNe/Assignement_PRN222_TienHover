@@ -8,72 +8,122 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NMS_BusinessObjects;
 using NMS_DAOs;
+using NMS_Repositories;
 
 namespace NMS_Razor.Pages.NewsArticlePage
 {
     public class EditModel : PageModel
     {
-        private readonly NMS_DAOs.FunewsManagementContext _context;
+        private readonly INewsArticleRepository _newsArticleRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public EditModel(NMS_DAOs.FunewsManagementContext context)
+        public EditModel(INewsArticleRepository newsArticleRepository, ICategoryRepository categoryRepository)
         {
-            _context = context;
+            _newsArticleRepository = newsArticleRepository;
+            _categoryRepository = categoryRepository;
         }
 
         [BindProperty]
         public NewsArticle NewsArticle { get; set; } = default!;
+        
+        [TempData]
+        public string SuccessMessage { get; set; }
+        
+        [TempData]
+        public string ErrorMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(string id)
+        public IActionResult OnGet(string id)
         {
-            if (id == null)
+            // Kiểm tra đăng nhập
+            var email = HttpContext.Session.GetString("AccountEmail");
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToPage("/Login");
+            }
+
+            // Kiểm tra quyền
+            var role = HttpContext.Session.GetInt32("AccountRole");
+            var staffRole = 1;
+            var currentUserId = HttpContext.Session.GetInt32("AccountId");
+
+            // Chỉ Staff mới có quyền chỉnh sửa
+            if (role != staffRole)
+            {
+                return RedirectToPage("/AccessDenied");
+            }
+
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
 
-            var newsarticle =  await _context.NewsArticles.FirstOrDefaultAsync(m => m.NewsArticleId == id);
-            if (newsarticle == null)
+            var newsArticle = _newsArticleRepository.GetNewsArticleById(id);
+            if (newsArticle == null)
             {
                 return NotFound();
             }
-            NewsArticle = newsarticle;
-           ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryDesciption");
-           ViewData["CreatedById"] = new SelectList(_context.SystemAccounts, "AccountId", "AccountId");
+
+            // Kiểm tra xem người dùng hiện tại có phải là người tạo bài viết không
+            if (newsArticle.CreatedById != currentUserId)
+            {
+                return RedirectToPage("/AccessDenied");
+            }
+
+            NewsArticle = newsArticle;
+            ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more information, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
+            // Kiểm tra đăng nhập
+            var email = HttpContext.Session.GetString("AccountEmail");
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToPage("/Login");
+            }
+
+            // Kiểm tra quyền
+            var role = HttpContext.Session.GetInt32("AccountRole");
+            var staffRole = 1;
+            var currentUserId = HttpContext.Session.GetInt32("AccountId");
+
+            // Chỉ Staff mới có quyền chỉnh sửa
+            if (role != staffRole)
+            {
+                return RedirectToPage("/AccessDenied");
+            }
+
             if (!ModelState.IsValid)
             {
+                ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
                 return Page();
             }
 
-            _context.Attach(NewsArticle).State = EntityState.Modified;
+            // Kiểm tra xem người dùng hiện tại có phải là người tạo bài viết không
+            var existingArticle = _newsArticleRepository.GetNewsArticleById(NewsArticle.NewsArticleId);
+            if (existingArticle == null || existingArticle.CreatedById != currentUserId)
+            {
+                return RedirectToPage("/AccessDenied");
+            }
+
+            // Cập nhật thông tin người chỉnh sửa và thời gian
+            NewsArticle.UpdatedById = (short?)currentUserId;
+            NewsArticle.ModifiedDate = DateTime.Now;
 
             try
             {
-                await _context.SaveChangesAsync();
+                _newsArticleRepository.UpdateNewsArticle(NewsArticle);
+                SuccessMessage = "Bài viết đã được cập nhật thành công!";
+                return RedirectToPage("./Index");
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!NewsArticleExists(NewsArticle.NewsArticleId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                ErrorMessage = "Lỗi khi cập nhật bài viết: " + ex.Message;
+                ModelState.AddModelError("", ErrorMessage);
+                ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
+                return Page();
             }
-
-            return RedirectToPage("./Index");
-        }
-
-        private bool NewsArticleExists(string id)
-        {
-            return _context.NewsArticles.Any(e => e.NewsArticleId == id);
         }
     }
 }

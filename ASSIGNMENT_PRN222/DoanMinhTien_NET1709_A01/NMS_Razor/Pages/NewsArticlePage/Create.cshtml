@@ -2,79 +2,64 @@
 @model NMS_Razor.Pages.NewsArticlePage.CreateModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Tạo bài viết mới";
 }
 
-<h1>Create</h1>
+<h1>Tạo bài viết mới</h1>
 
-<h4>NewsArticle</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.NewsArticleId" class="control-label"></label>
-                <input asp-for="NewsArticle.NewsArticleId" class="form-control" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="NewsArticle.NewsArticleId" class="control-label">Mã bài viết</label>
+                <input asp-for="NewsArticle.NewsArticleId" class="form-control" required />
                 <span asp-validation-for="NewsArticle.NewsArticleId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.NewsTitle" class="control-label"></label>
-                <input asp-for="NewsArticle.NewsTitle" class="form-control" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="NewsArticle.NewsTitle" class="control-label">Tiêu đề</label>
+                <input asp-for="NewsArticle.NewsTitle" class="form-control" required />
                 <span asp-validation-for="NewsArticle.NewsTitle" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.Headline" class="control-label"></label>
-                <input asp-for="NewsArticle.Headline" class="form-control" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="NewsArticle.Headline" class="control-label">Headline</label>
+                <input asp-for="NewsArticle.Headline" class="form-control" required />
                 <span asp-validation-for="NewsArticle.Headline" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.CreatedDate" class="control-label"></label>
-                <input asp-for="NewsArticle.CreatedDate" class="form-control" />
-                <span asp-validation-for="NewsArticle.CreatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.NewsContent" class="control-label"></label>
-                <input asp-for="NewsArticle.NewsContent" class="form-control" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="NewsArticle.NewsContent" class="control-label">Nội dung</label>
+                <textarea asp-for="NewsArticle.NewsContent" class="form-control" rows="5" required></textarea>
                 <span asp-validation-for="NewsArticle.NewsContent" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.NewsSource" class="control-label"></label>
+            
+            <div class="form-group mb-3">
+                <label asp-for="NewsArticle.NewsSource" class="control-label">Nguồn tin</label>
                 <input asp-for="NewsArticle.NewsSource" class="form-control" />
                 <span asp-validation-for="NewsArticle.NewsSource" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.CategoryId" class="control-label"></label>
-                <select asp-for="NewsArticle.CategoryId" class ="form-control" asp-items="ViewBag.CategoryId"></select>
+            
+            <div class="form-group mb-3">
+                <label asp-for="NewsArticle.CategoryId" class="control-label">Danh mục</label>
+                <select asp-for="NewsArticle.CategoryId" class="form-control" asp-items="ViewBag.CategoryId" required></select>
+                <span asp-validation-for="NewsArticle.CategoryId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.NewsStatus" class="control-label"></label>
-                <input asp-for="NewsArticle.NewsStatus" class="form-control" />
-                <span asp-validation-for="NewsArticle.NewsStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.CreatedById" class="control-label"></label>
-                <select asp-for="NewsArticle.CreatedById" class ="form-control" asp-items="ViewBag.CreatedById"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.UpdatedById" class="control-label"></label>
-                <input asp-for="NewsArticle.UpdatedById" class="form-control" />
-                <span asp-validation-for="NewsArticle.UpdatedById" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewsArticle.ModifiedDate" class="control-label"></label>
-                <input asp-for="NewsArticle.ModifiedDate" class="form-control" />
-                <span asp-validation-for="NewsArticle.ModifiedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            
+            <!-- Ẩn các trường không cần thiết -->
+            <input type="hidden" asp-for="NewsArticle.NewsStatus" value="true" />
+            <input type="hidden" asp-for="NewsArticle.CreatedDate" />
+            <input type="hidden" asp-for="NewsArticle.CreatedById" />
+            
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">Tạo bài viết</button>
+                <a asp-page="Index" class="btn btn-secondary">Quay lại</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-page="Index">Back to List</a>
 </div>
 
 @section Scripts {

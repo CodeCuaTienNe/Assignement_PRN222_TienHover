@@ -7,36 +7,47 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using NMS_BusinessObjects;
 using NMS_DAOs;
+using NMS_Repositories;
 
 namespace NMS_Razor.Pages.NewsArticlePage
 {
     public class DetailsModel : PageModel
     {
-        private readonly NMS_DAOs.FunewsManagementContext _context;
+        private readonly INewsArticleRepository _newsArticleRepository;
 
-        public DetailsModel(NMS_DAOs.FunewsManagementContext context)
+        public DetailsModel(INewsArticleRepository newsArticleRepository)
         {
-            _context = context;
+            _newsArticleRepository = newsArticleRepository;
         }
 
         public NewsArticle NewsArticle { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(string id)
+        public IActionResult OnGet(string id)
         {
-            if (id == null)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
 
-            var newsarticle = await _context.NewsArticles.FirstOrDefaultAsync(m => m.NewsArticleId == id);
-            if (newsarticle == null)
+            var newsArticle = _newsArticleRepository.GetNewsArticleById(id);
+            if (newsArticle == null)
             {
                 return NotFound();
             }
-            else
+
+            // Kiểm tra quyền truy cập
+            var role = HttpContext.Session.GetInt32("AccountRole");
+            
+            // Nếu không đăng nhập hoặc là Lecturer, chỉ cho phép xem bài viết active
+            if (role == null || role == 2) // 2 là Lecturer
             {
-                NewsArticle = newsarticle;
+                if (newsArticle.NewsStatus != true)
+                {
+                    return RedirectToPage("/AccessDenied");
+                }
             }
+            
+            NewsArticle = newsArticle;
             return Page();
         }
     }

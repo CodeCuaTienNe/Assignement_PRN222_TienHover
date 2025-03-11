@@ -34,6 +34,25 @@ namespace NMS_Razor.Pages
                     return Page();
                 }
                 
+                // Check if it's the admin account from appsettings.json
+                string adminEmail = _configuration["AdminAccount:Email"];
+                string adminPassword = _configuration["AdminAccount:Password"];
+                string adminName = _configuration["AdminAccount:Name"];
+                int adminRole = int.Parse(_configuration["AdminRole"] ?? "3");
+                
+                if (email == adminEmail && password == adminPassword)
+                {
+                    // Store admin information in Session
+                    HttpContext.Session.SetInt32("AccountId", 0); // Admin ID is set to 0
+                    HttpContext.Session.SetString("AccountName", adminName ?? "Administrator");
+                    HttpContext.Session.SetString("AccountEmail", adminEmail);
+                    HttpContext.Session.SetInt32("AccountRole", adminRole);
+                    HttpContext.Session.SetString("RoleName", "Administrator");
+                    
+                    return RedirectToPage("/NewsArticlePage/Index");
+                }
+                
+                // Check regular accounts from database
                 var account = _accountRepository.GetAccount(email, password);
                 if (account != null)
                 {
@@ -44,7 +63,6 @@ namespace NMS_Razor.Pages
                     HttpContext.Session.SetInt32("AccountRole", account.AccountRole ?? 0);
                     
                     // Check role
-                    int adminRole = int.Parse(_configuration["AdminRole"] ?? "0");
                     int staffRole = 1;
                     int lecturerRole = 2;
                     

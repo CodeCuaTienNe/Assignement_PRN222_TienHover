@@ -7,57 +7,119 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using NMS_BusinessObjects;
 using NMS_DAOs;
+using NMS_Repositories;
 
 namespace NMS_Razor.Pages.NewsArticlePage
 {
     public class DeleteModel : PageModel
     {
-        private readonly NMS_DAOs.FunewsManagementContext _context;
+        private readonly INewsArticleRepository _newsArticleRepository;
 
-        public DeleteModel(NMS_DAOs.FunewsManagementContext context)
+        public DeleteModel(INewsArticleRepository newsArticleRepository)
         {
-            _context = context;
+            _newsArticleRepository = newsArticleRepository;
         }
 
         [BindProperty]
         public NewsArticle NewsArticle { get; set; } = default!;
+        
+        [TempData]
+        public string SuccessMessage { get; set; }
+        
+        [TempData]
+        public string ErrorMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(string id)
+        public IActionResult OnGet(string id)
         {
-            if (id == null)
+            // Kiểm tra đăng nhập
+            var email = HttpContext.Session.GetString("AccountEmail");
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToPage("/Login");
+            }
+
+            // Kiểm tra quyền
+            var role = HttpContext.Session.GetInt32("AccountRole");
+            var staffRole = 1;
+            var currentUserId = HttpContext.Session.GetInt32("AccountId");
+
+            // Chỉ Staff mới có quyền xóa
+            if (role != staffRole)
+            {
+                return RedirectToPage("/AccessDenied");
+            }
+
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
 
-            var newsarticle = await _context.NewsArticles.FirstOrDefaultAsync(m => m.NewsArticleId == id);
-
-            if (newsarticle == null)
+            var newsArticle = _newsArticleRepository.GetNewsArticleById(id);
+            if (newsArticle == null)
             {
                 return NotFound();
             }
-            else
+
+            // Kiểm tra xem người dùng hiện tại có phải là người tạo bài viết không
+            if (newsArticle.CreatedById != currentUserId)
             {
-                NewsArticle = newsarticle;
+                return RedirectToPage("/AccessDenied");
             }
+
+            NewsArticle = newsArticle;
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string id)
+        public IActionResult OnPost(string id)
         {
-            if (id == null)
+            // Kiểm tra đăng nhập
+            var email = HttpContext.Session.GetString("AccountEmail");
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToPage("/Login");
+            }
+
+            // Kiểm tra quyền
+            var role = HttpContext.Session.GetInt32("AccountRole");
+            var staffRole = 1;
+            var currentUserId = HttpContext.Session.GetInt32("AccountId");
+
+            // Chỉ Staff mới có quyền xóa
+            if (role != staffRole)
+            {
+                return RedirectToPage("/AccessDenied");
+            }
+
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
 
-            var newsarticle = await _context.NewsArticles.FindAsync(id);
-            if (newsarticle != null)
+            var newsArticle = _newsArticleRepository.GetNewsArticleById(id);
+            if (newsArticle == null)
             {
-                NewsArticle = newsarticle;
-                _context.NewsArticles.Remove(NewsArticle);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
 
-            return RedirectToPage("./Index");
+            // Kiểm tra xem người dùng hiện tại có phải là người tạo bài viết không
+            if (newsArticle.CreatedById != currentUserId)
+            {
+                return RedirectToPage("/AccessDenied");
+            }
+
+            try
+            {
+                _newsArticleRepository.DeleteNewsArticle(id);
+                SuccessMessage = "Bài viết đã được xóa thành công!";
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "Lỗi khi xóa bài viết: " + ex.Message;
+                ModelState.AddModelError("", ErrorMessage);
+                NewsArticle = newsArticle;
+                return Page();
+            }
         }
     }
 }

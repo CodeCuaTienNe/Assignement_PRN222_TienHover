@@ -1,4 +1,5 @@
 using NMS_Repositories;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +9,15 @@ builder.Services.AddRazorPages();
 //DI 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 //Session
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 

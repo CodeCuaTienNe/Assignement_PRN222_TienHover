@@ -1,90 +1,94 @@
 ﻿@page
 @model NMS_Razor.Pages.NewsArticlePage.IndexModel
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách bài viết";
+    
+    var role = HttpContext.Session.GetInt32("AccountRole");
+    var adminRole = int.Parse(Configuration["AdminRole"] ?? "3");
+    var staffRole = 1;
+    var lecturerRole = 2;
+    var currentUserId = HttpContext.Session.GetInt32("AccountId");
 }
 
-<h1>Index</h1>
+<h1>Danh sách bài viết</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
+@if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (role == staffRole)
+{
+    <p>
+        <a asp-page="Create" class="btn btn-primary">Tạo bài viết mới</a>
+    </p>
+}
+
+<form method="get">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Tìm kiếm theo tiêu đề, headline hoặc nội dung..." 
+               name="SearchTerm" value="@Model.SearchTerm">
+        <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsArticle[0].NewsTitle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsArticle[0].Headline)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsArticle[0].CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsArticle[0].NewsContent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsArticle[0].NewsSource)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsArticle[0].NewsStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsArticle[0].UpdatedById)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsArticle[0].ModifiedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsArticle[0].Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsArticle[0].CreatedBy)
-            </th>
-            <th></th>
+            <th>Tiêu đề</th>
+            <th>Headline</th>
+            <th>Ngày tạo</th>
+            <th>Danh mục</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.NewsArticle) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NewsTitle)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Headline)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NewsContent)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NewsSource)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NewsStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedById)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModifiedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryDesciption)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy.AccountId)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.NewsArticleId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.NewsArticleId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.NewsArticleId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.NewsArticle)
+        {
+            // Chỉ hiển thị bài viết active cho người không đăng nhập và Lecturer
+            if ((role == null || role == lecturerRole) && item.NewsStatus != true)
+            {
+                continue;
+            }
+            
+            <tr>
+                <td>@item.NewsTitle</td>
+                <td>@item.Headline</td>
+                <td>@item.CreatedDate?.ToString("dd/MM/yyyy")</td>
+                <td>@item.Category?.CategoryName</td>
+                <td>@(item.NewsStatus == true ? "Active" : "Inactive")</td>
+                <td>
+                    @if (role == staffRole)
+                    {
+                        <a asp-page="./Details" asp-route-id="@item.NewsArticleId" class="btn btn-info btn-sm">Chi tiết</a>
+                        
+                        @if (item.CreatedById == currentUserId)
+                        {
+                            <a asp-page="./Edit" asp-route-id="@item.NewsArticleId" class="btn btn-primary btn-sm">Sửa</a>
+                            <a asp-page="./Delete" asp-route-id="@item.NewsArticleId" class="btn btn-danger btn-sm">Xóa</a>
+                        }
+                    }
+                    else
+                    {
+                        <a asp-page="./Details" asp-route-id="@item.NewsArticleId" class="btn btn-info btn-sm">Chi tiết</a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

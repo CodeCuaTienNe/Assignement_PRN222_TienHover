@@ -1,9 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - NMS_Razor</title>
+    <title>@ViewData["Title"] - FU News Management</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/NMS_Razor.styles.css" asp-append-version="true" />
@@ -12,7 +15,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">NMS_Razor</a>
+                <a class="navbar-brand" asp-area="" asp-page="/Index">FU News Management</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -22,9 +25,65 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
+                        
+                        @{
+                            var accountEmail = Context.Session.GetString("AccountEmail");
+                            var accountRole = Context.Session.GetInt32("AccountRole");
+                            var accountName = Context.Session.GetString("AccountName");
+                            var adminRole = int.Parse(Configuration["AdminRole"] ?? "3");
+                            var staffRole = 1;
+                            var lecturerRole = 2;
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(accountEmail))
+                        {
+                            @if (accountRole == adminRole) // Admin
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/AccountManagement/Index">Manage Accounts</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Reports/Index">Reports</a>
+                                </li>
+                            }
+                            else if (accountRole == staffRole) // Staff
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/NewsArticlePage/Index">News Articles</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/NewsArticlePage/MyNews">My News</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/CategoryManagement/Index">Categories</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Profile/Index">My Profile</a>
+                                </li>
+                            }
+                            else if (accountRole == lecturerRole) // Lecturer
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/NewsArticlePage/Index">View News</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Profile/Index">My Profile</a>
+                                </li>
+                            }
+                            
+                            <li class="nav-item ms-auto">
+                                <span class="nav-link text-dark">Welcome, @accountName (@(accountRole == adminRole ? "Admin" : accountRole == staffRole ? "Staff" : "Lecturer"))</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Logout">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item ms-auto">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Login">Login</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -38,7 +97,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - NMS_Razor - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2023 - FU News Management - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
     </footer>
 
