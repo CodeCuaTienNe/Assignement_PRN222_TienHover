@@ -61,7 +61,7 @@ namespace NMS_Razor.Pages
                         HttpContext.Session.SetString("RoleName", "Lecturer");
                     }
                     
-                    return RedirectToPage("/Index");
+                    return RedirectToPage("/NewsArticlePage/Index");
                 }
                 
                 ErrorMessage = "Invalid email or password!";

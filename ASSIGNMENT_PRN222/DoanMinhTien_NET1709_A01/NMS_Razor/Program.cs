@@ -7,6 +7,8 @@ builder.Services.AddRazorPages();
 
 //DI 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
+
 //Session
 builder.Services.AddSession();
 
