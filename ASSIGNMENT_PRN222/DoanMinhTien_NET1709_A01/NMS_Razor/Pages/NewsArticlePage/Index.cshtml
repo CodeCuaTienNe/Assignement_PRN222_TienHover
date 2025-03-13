@@ -4,7 +4,7 @@
 @inject IConfiguration Configuration
 
 @{
-    ViewData["Title"] = "Danh sách bài viết";
+    ViewData["Title"] = "News Article List";
     
     var role = HttpContext.Session.GetInt32("AccountRole");
     var adminRole = int.Parse(Configuration["AdminRole"] ?? "3");
@@ -13,7 +13,7 @@
     var currentUserId = HttpContext.Session.GetInt32("AccountId");
 }
 
-<h1>Danh sách bài viết</h1>
+<h1>News Article List</h1>
 
 @if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
 {
