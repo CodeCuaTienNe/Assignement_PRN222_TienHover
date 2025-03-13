@@ -11,28 +11,20 @@ namespace NMS_Repositories
     public class CategoryRepository : ICategoryRepository
     {
         public List<Category> GetAllCategories()
-        {
-            return CategoryDAO.Instance.GetAllCategories();
-        }
+            => CategoryDAO.Instance.GetAllCategories();
+        
 
         public Category GetCategoryById(int id)
-        {
-            return CategoryDAO.Instance.GetCategoryById(id);
-        }
+            => CategoryDAO.Instance.GetCategoryById(id);
 
         public void AddCategory(Category category)
-        {
-            CategoryDAO.Instance.AddCategory(category);
-        }
+           => CategoryDAO.Instance.AddCategory(category);
 
         public void UpdateCategory(Category category)
-        {
-            CategoryDAO.Instance.UpdateCategory(category);
-        }
+           => CategoryDAO.Instance.UpdateCategory(category);
+        
 
         public void DeleteCategory(int id)
-        {
-            CategoryDAO.Instance.DeleteCategory(id);
-        }
+           => CategoryDAO.Instance.DeleteCategory(id);
     }
 }

@@ -9,7 +9,12 @@ namespace NMS_Repositories
 {
     public interface IAccountRepository
     {
-        public SystemAccount GetAccount(String email, String password);
-
+        SystemAccount GetAccount(string email, string password);
+        SystemAccount GetAccountById(short id);
+        List<SystemAccount> GetAccounts();
+        void AddAccount(SystemAccount account);
+        void UpdateAccount(SystemAccount account);
+        void DeleteAccount(short id);
+        bool IsEmailExists(string email);
     }
 }
