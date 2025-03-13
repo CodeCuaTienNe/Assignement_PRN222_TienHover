@@ -18,19 +18,19 @@
     </div>
     <div class="card-body">
         <dl class="row">
-            <dt class="col-sm-2">Tiêu đề</dt>
+            <dt class="col-sm-2">Title</dt>
             <dd class="col-sm-10">@Html.DisplayFor(model => model.NewsArticle.NewsTitle)</dd>
             
             <dt class="col-sm-2">Headline</dt>
             <dd class="col-sm-10">@Html.DisplayFor(model => model.NewsArticle.Headline)</dd>
             
-            <dt class="col-sm-2">Ngày tạo</dt>
+            <dt class="col-sm-2">Created Date</dt>
             <dd class="col-sm-10">@(Model.NewsArticle.CreatedDate?.ToString("dd/MM/yyyy HH:mm"))</dd>
             
-            <dt class="col-sm-2">Nội dung</dt>
+            <dt class="col-sm-2">News Content</dt>
             <dd class="col-sm-10">@Html.DisplayFor(model => model.NewsArticle.NewsContent)</dd>
             
-            <dt class="col-sm-2">Nguồn tin</dt>
+            <dt class="col-sm-2">Source</dt>
             <dd class="col-sm-10">@Html.DisplayFor(model => model.NewsArticle.NewsSource)</dd>
             
             <dt class="col-sm-2">Trạng thái</dt>
@@ -39,7 +39,7 @@
             <dt class="col-sm-2">Danh mục</dt>
             <dd class="col-sm-10">@Html.DisplayFor(model => model.NewsArticle.Category.CategoryName)</dd>
             
-            <dt class="col-sm-2">Tác giả</dt>
+            <dt class="col-sm-2">Created By</dt>
             <dd class="col-sm-10">@Html.DisplayFor(model => model.NewsArticle.CreatedBy.AccountName)</dd>
         </dl>
     </div>
@@ -47,6 +47,6 @@
     
 <form method="post">
     <input type="hidden" asp-for="NewsArticle.NewsArticleId" />
-    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
-    <a asp-page="./Index" class="btn btn-secondary">Quay lại</a>
+    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+    <a asp-page="./Index" class="btn btn-secondary">Back</a>
 </form>

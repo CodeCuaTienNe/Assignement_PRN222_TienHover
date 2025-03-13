@@ -13,14 +13,14 @@
     var currentUserId = HttpContext.Session.GetInt32("AccountId");
 }
 
-<h1>Chi tiết bài viết</h1>
+<h1>News Article Detail</h1>
 
 <div>
     <h4>@Model.NewsArticle.NewsTitle</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            Tiêu đề
+            Title
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.NewsArticle.NewsTitle)
@@ -32,25 +32,25 @@
             @Html.DisplayFor(model => model.NewsArticle.Headline)
         </dd>
         <dt class="col-sm-2">
-            Ngày tạo
+            Created Date
         </dt>
         <dd class="col-sm-10">
             @(Model.NewsArticle.CreatedDate?.ToString("dd/MM/yyyy HH:mm"))
         </dd>
         <dt class="col-sm-2">
-            Nội dung
+            Content
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.NewsArticle.NewsContent)
         </dd>
         <dt class="col-sm-2">
-            Nguồn tin
+            Source
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.NewsArticle.NewsSource)
         </dd>
         <dt class="col-sm-2">
-            Trạng thái
+            Status
         </dt>
         <dd class="col-sm-10">
             @(Model.NewsArticle.NewsStatus == true ? "Active" : "Inactive")
@@ -58,26 +58,26 @@
         @if (Model.NewsArticle.UpdatedById.HasValue)
         {
             <dt class="col-sm-2">
-                Cập nhật bởi
+                Update By
             </dt>
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.NewsArticle.UpdatedById)
             </dd>
             <dt class="col-sm-2">
-                Ngày cập nhật
+                Modified Date
             </dt>
             <dd class="col-sm-10">
                 @(Model.NewsArticle.ModifiedDate?.ToString("dd/MM/yyyy HH:mm"))
             </dd>
         }
         <dt class="col-sm-2">
-            Danh mục
+            Category
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.NewsArticle.Category.CategoryName)
         </dd>
         <dt class="col-sm-2">
-            Tác giả
+            Created By
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.NewsArticle.CreatedBy.AccountName)
@@ -87,8 +87,8 @@
 <div>
     @if (role == staffRole && Model.NewsArticle.CreatedById == currentUserId)
     {
-        <a asp-page="./Edit" asp-route-id="@Model.NewsArticle.NewsArticleId" class="btn btn-primary">Chỉnh sửa</a>
-        <a asp-page="./Delete" asp-route-id="@Model.NewsArticle.NewsArticleId" class="btn btn-danger">Xóa</a>
+        <a asp-page="./Edit" asp-route-id="@Model.NewsArticle.NewsArticleId" class="btn btn-primary">Edit</a>
+        <a asp-page="./Delete" asp-route-id="@Model.NewsArticle.NewsArticleId" class="btn btn-danger">Delete</a>
     }
-    <a asp-page="./Index" class="btn btn-secondary">Quay lại danh sách</a>
+    <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
 </div>

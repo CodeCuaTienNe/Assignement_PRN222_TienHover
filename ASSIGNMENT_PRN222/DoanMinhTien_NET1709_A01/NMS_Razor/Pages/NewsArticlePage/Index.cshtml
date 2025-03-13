@@ -34,33 +34,32 @@
 @if (role == staffRole)
 {
     <p>
-        <a asp-page="Create" class="btn btn-primary">Tạo bài viết mới</a>
+        <a asp-page="Create" class="btn btn-primary">Create News Article</a>
     </p>
 }
 
 <form method="get">
     <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Tìm kiếm theo tiêu đề, headline hoặc nội dung..." 
+        <input type="text" class="form-control" placeholder="Search by title, headline or content..."
                name="SearchTerm" value="@Model.SearchTerm">
-        <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
     </div>
 </form>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Tiêu đề</th>
+            <th>Title</th>
             <th>Headline</th>
-            <th>Ngày tạo</th>
-            <th>Danh mục</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
+            <th>Created Date</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.NewsArticle)
         {
-            // Chỉ hiển thị bài viết active cho người không đăng nhập và Lecturer
             if ((role == null || role == lecturerRole) && item.NewsStatus != true)
             {
                 continue;
@@ -75,17 +74,17 @@
                 <td>
                     @if (role == staffRole)
                     {
-                        <a asp-page="./Details" asp-route-id="@item.NewsArticleId" class="btn btn-info btn-sm">Chi tiết</a>
+                        <a asp-page="./Details" asp-route-id="@item.NewsArticleId" class="btn btn-info btn-sm">Detail</a>
                         
                         @if (item.CreatedById == currentUserId)
                         {
-                            <a asp-page="./Edit" asp-route-id="@item.NewsArticleId" class="btn btn-primary btn-sm">Sửa</a>
-                            <a asp-page="./Delete" asp-route-id="@item.NewsArticleId" class="btn btn-danger btn-sm">Xóa</a>
+                            <a asp-page="./Edit" asp-route-id="@item.NewsArticleId" class="btn btn-primary btn-sm">Edit</a>
+                            <a asp-page="./Delete" asp-route-id="@item.NewsArticleId" class="btn btn-danger btn-sm">Delete</a>
                         }
                     }
                     else
                     {
-                        <a asp-page="./Details" asp-route-id="@item.NewsArticleId" class="btn btn-info btn-sm">Chi tiết</a>
+                        <a asp-page="./Details" asp-route-id="@item.NewsArticleId" class="btn btn-info btn-sm">Detail</a>
                     }
                 </td>
             </tr>
