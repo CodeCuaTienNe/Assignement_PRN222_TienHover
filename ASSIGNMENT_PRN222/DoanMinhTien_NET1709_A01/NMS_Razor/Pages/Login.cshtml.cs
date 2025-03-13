@@ -49,7 +49,8 @@ namespace NMS_Razor.Pages
                     HttpContext.Session.SetInt32("AccountRole", adminRole);
                     HttpContext.Session.SetString("RoleName", "Administrator");
                     
-                    return RedirectToPage("/NewsArticlePage/Index");
+                    // Redirect admin to SystemAccountPage
+                    return RedirectToPage("/SystemAccountPage/Index");
                 }
                 
                 // Check regular accounts from database
@@ -69,14 +70,17 @@ namespace NMS_Razor.Pages
                     if (account.AccountRole == adminRole)
                     {
                         HttpContext.Session.SetString("RoleName", "Administrator");
+                        return RedirectToPage("/SystemAccountPage/Index");
                     }
                     else if (account.AccountRole == staffRole)
                     {
                         HttpContext.Session.SetString("RoleName", "Staff");
+                        return RedirectToPage("/NewsArticlePage/Index");
                     }
                     else if (account.AccountRole == lecturerRole)
                     {
                         HttpContext.Session.SetString("RoleName", "Lecturer");
+                        return RedirectToPage("/NewsArticlePage/Index");
                     }
                     
                     return RedirectToPage("/NewsArticlePage/Index");
