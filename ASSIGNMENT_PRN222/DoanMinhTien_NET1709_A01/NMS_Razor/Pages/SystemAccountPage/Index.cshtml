@@ -1,0 +1,54 @@
+﻿@page
+@model NMS_Razor.Pages.SystemAccountPage.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemAccount[0].AccountName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemAccount[0].AccountEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemAccount[0].AccountRole)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SystemAccount[0].AccountPassword)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.SystemAccount) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountRole)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountPassword)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.AccountId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.AccountId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.AccountId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
