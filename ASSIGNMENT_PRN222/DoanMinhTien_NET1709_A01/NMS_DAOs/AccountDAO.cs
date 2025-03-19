@@ -108,14 +108,14 @@ namespace NMS_DAOs
                 var account = GetAccountById(id);
                 if (account == null)
                 {
-                    throw new Exception($"Không tìm thấy tài khoản với ID {id}");
+                    throw new Exception($"Cannot find account with ID: {id}");
                 }
 
                 // Kiểm tra xem tài khoản có liên quan đến bài viết tin tức không
                 var hasRelatedNews = _context.NewsArticles.Any(n => n.CreatedById == id || n.UpdatedById == id);
                 if (hasRelatedNews)
                 {
-                    throw new Exception("Không thể xóa tài khoản vì nó có liên quan đến các bài viết tin tức");
+                    throw new Exception("Cannot delete account because it is associated with news article");
                 }
 
                 _context.SystemAccounts.Remove(account);
@@ -123,7 +123,7 @@ namespace NMS_DAOs
             }
             catch (Exception ex)
             {
-                throw new Exception("Lỗi khi xóa tài khoản: " + ex.Message);
+                throw new Exception("Error when delete account: " + ex.Message);
             }
         }
     }

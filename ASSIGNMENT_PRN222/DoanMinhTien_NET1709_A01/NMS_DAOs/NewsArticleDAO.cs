@@ -54,14 +54,14 @@ namespace NMS_DAOs
                 var existingArticleById = _context.NewsArticles.FirstOrDefault(a => a.NewsArticleId == newsArticle.NewsArticleId);
                 if (existingArticleById != null)
                 {
-                    throw new Exception($"Bài viết với mã '{newsArticle.NewsArticleId}' đã tồn tại");
+                    throw new Exception($"News article with ID '{newsArticle.NewsArticleId}' is already existed");
                 }
 
                 // Kiểm tra tiêu đề đã tồn tại chưa
                 var existingArticleByTitle = GetNewsArticleByTitle(newsArticle.NewsTitle);
                 if (existingArticleByTitle != null)
                 {
-                    throw new Exception($"Bài viết với tiêu đề '{newsArticle.NewsTitle}' đã tồn tại");
+                    throw new Exception($"News article with title '{newsArticle.NewsTitle}' is already existed");
                 }
 
                 // Thêm bài viết mới
@@ -70,7 +70,7 @@ namespace NMS_DAOs
             }
             catch (Exception ex)
             {
-                throw new Exception("Lỗi khi thêm bài viết: " + ex.Message);
+                throw new Exception("Error when create news: " + ex.Message);
             }
         }
 
