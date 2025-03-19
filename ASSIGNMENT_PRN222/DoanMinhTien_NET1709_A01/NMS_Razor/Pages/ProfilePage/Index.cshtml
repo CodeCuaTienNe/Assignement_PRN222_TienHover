@@ -1,0 +1,125 @@
+@page
+@model NMS_Razor.Pages.ProfilePage.IndexModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<h1>My Profile</h1>
+<hr />
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @Model.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @Model.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Account Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="ProfileVM.AccountName" class="form-label"></label>
+                        <input asp-for="ProfileVM.AccountName" class="form-control" />
+                        <span asp-validation-for="ProfileVM.AccountName" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="ProfileVM.AccountEmail" class="form-label"></label>
+                        <input asp-for="ProfileVM.AccountEmail" class="form-control" readonly />
+                        <small class="form-text text-muted">Email cannot be changed.</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="ProfileVM.RoleName" class="form-label"></label>
+                        <input asp-for="ProfileVM.RoleName" class="form-control" readonly />
+                        <small class="form-text text-muted">Role cannot be changed. Contact administrator for role changes.</small>
+                    </div>
+                    
+                    <hr />
+                    <h5>Change Password (Optional)</h5>
+                    <p class="text-muted">Leave blank if you don't want to change your password.</p>
+                    
+                    <div class="mb-3">
+                        <label asp-for="ProfileVM.NewPassword" class="form-label"></label>
+                        <input asp-for="ProfileVM.NewPassword" class="form-control" data-val="false" />
+                        <span asp-validation-for="ProfileVM.NewPassword" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="ProfileVM.ConfirmPassword" class="form-label"></label>
+                        <input asp-for="ProfileVM.ConfirmPassword" class="form-control" data-val="false" />
+                        <span asp-validation-for="ProfileVM.ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">About Your Account</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    This is your personal account profile where you can update your name and 
+                    optionally change your password.
+                </p>
+                <p>
+                    For any other account-related changes such as changing your email or role,
+                    please contact the system administrator.
+                </p>
+                <hr />
+                <h6>Security Tips:</h6>
+                <ul>
+                    <li>Use a strong password with at least 8 characters</li>
+                    <li>Include numbers, special characters, and mixed case</li>
+                    <li>Change your password regularly</li>
+                    <li>Don't share your login credentials with others</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Completely remove validation for password fields
+            $("#ProfileVM_NewPassword, #ProfileVM_ConfirmPassword").attr("data-val", "false");
+            
+            // Remove all validation attributes
+            $("#ProfileVM_NewPassword, #ProfileVM_ConfirmPassword").removeAttr("data-val-required")
+                .removeAttr("data-val-length")
+                .removeAttr("data-val-length-min")
+                .removeAttr("data-val-length-max")
+                .removeAttr("data-val-equalto")
+                .removeAttr("data-val-equalto-other");
+            
+            // Force validation to be re-processed
+            if ($("form").data("validator")) {
+                $("form").data("validator").settings.ignore = "#ProfileVM_NewPassword, #ProfileVM_ConfirmPassword";
+                $("form").data("validator").resetForm();
+            }
+        });
+    </script>
+}
