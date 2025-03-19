@@ -32,13 +32,19 @@ namespace NMS_DAOs
         //get all
         public List<NewsArticle> GetNewsArticles()
         {
-            return _context.NewsArticles.ToList();
+            return _context.NewsArticles
+                .Include(n => n.Category)
+                .Include(n => n.CreatedBy)
+                .ToList();
         }
 
         //Get by ID
         public NewsArticle GetNewsArticleById(string id)
         {
-            return _context.NewsArticles.SingleOrDefault(m => m.NewsArticleId.Equals(id));
+            return _context.NewsArticles
+                .Include(n => n.Category)
+                .Include(n => n.CreatedBy)
+                .SingleOrDefault(m => m.NewsArticleId.Equals(id));
         }
 
         public NewsArticle GetNewsArticleByTitle(string title)

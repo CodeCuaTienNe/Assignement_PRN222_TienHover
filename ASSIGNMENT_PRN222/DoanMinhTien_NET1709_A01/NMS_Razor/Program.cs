@@ -10,6 +10,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ITagRepository, TagRepository>(); // Add Tag repository
 
 //Session
 builder.Services.AddSession(options =>
