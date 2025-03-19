@@ -5,7 +5,7 @@
     ViewData["Title"] = "Edit News Article";
 }
 
-<h1>Chỉnh sửa bài viết</h1>
+<h1>Edit News Article</h1>
 
 <hr />
 <div class="row">
@@ -30,7 +30,7 @@
             
             <div class="form-group mb-3">
                 <label asp-for="NewsArticle.NewsContent" class="control-label">Content</label>
-                <textarea asp-for="NewsArticle.NewsContent" class="form-control" rows="5" required></textarea>
+                <textarea asp-for="NewsArticle.NewsContent" class="form-control" rows="8" required></textarea>
                 <span asp-validation-for="NewsArticle.NewsContent" class="text-danger"></span>
             </div>
             
@@ -48,18 +48,47 @@
             
             <div class="form-group mb-3">
                 <label asp-for="NewsArticle.NewsStatus" class="control-label">Status</label>
-                <select asp-for="NewsArticle.NewsStatus" class="form-control">
-                    <option value="true">Active</option>
-                    <option value="false">Inactive</option>
-                </select>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="NewsArticle.NewsStatus" id="status-active" value="true">
+                        <label class="form-check-label" for="status-active">Active</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="NewsArticle.NewsStatus" id="status-inactive" value="false">
+                        <label class="form-check-label" for="status-inactive">Inactive</label>
+                    </div>
+                </div>
                 <span asp-validation-for="NewsArticle.NewsStatus" class="text-danger"></span>
             </div>
             
             <div class="form-group mt-4">
-                <button type="submit" class="btn btn-primary">Save changes</button>
-                <a asp-page="./Index" class="btn btn-secondary">Back</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a asp-page="./MyNews" class="btn btn-secondary">Back to My News</a>
             </div>
         </form>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-light">Article Info</div>
+            <div class="card-body">
+                <dl>
+                    <dt>Article ID</dt>
+                    <dd>@Model.NewsArticle.NewsArticleId</dd>
+                    
+                    <dt>Created By</dt>
+                    <dd>@Model.NewsArticle.CreatedBy?.AccountName</dd>
+                    
+                    <dt>Created Date</dt>
+                    <dd>@Model.NewsArticle.CreatedDate?.ToString("dd/MM/yyyy HH:mm")</dd>
+                    
+                    @if (Model.NewsArticle.ModifiedDate.HasValue)
+                    {
+                        <dt>Last Modified</dt>
+                        <dd>@Model.NewsArticle.ModifiedDate?.ToString("dd/MM/yyyy HH:mm")</dd>
+                    }
+                </dl>
+            </div>
+        </div>
     </div>
 </div>
 

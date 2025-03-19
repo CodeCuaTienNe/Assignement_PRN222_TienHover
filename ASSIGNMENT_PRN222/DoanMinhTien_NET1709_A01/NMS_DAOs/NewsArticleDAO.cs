@@ -76,16 +76,42 @@ namespace NMS_DAOs
 
         public List<NewsArticle> SearchNewsArticles(string searchTerm)
         {
-            if (string.IsNullOrEmpty(searchTerm))
-                return GetNewsArticles();
-        
-            return _context.NewsArticles
-                .Include(a => a.Category)
-                .Include(a => a.CreatedBy)
-                .Where(a => a.NewsTitle.Contains(searchTerm) || 
-                           a.NewsContent.Contains(searchTerm) ||
-                           a.Headline.Contains(searchTerm))
-                .ToList();
+            try
+            {
+                // Convert the search term to lowercase for case-insensitive comparison
+                string searchTermLower = searchTerm.ToLower();
+                
+                return _context.NewsArticles
+                    .Include(n => n.Category)
+                    .Include(n => n.CreatedBy)
+                    .Where(n => 
+                        (n.NewsTitle != null && n.NewsTitle.ToLower().Contains(searchTermLower)) || 
+                        (n.Headline != null && n.Headline.ToLower().Contains(searchTermLower)) ||
+                        (n.NewsContent != null && n.NewsContent.ToLower().Contains(searchTermLower)))
+                    .OrderByDescending(n => n.CreatedDate)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error searching news articles: {ex.Message}", ex);
+            }
+        }
+
+        public List<NewsArticle> GetNewsArticlesByAuthor(short authorId)
+        {
+            try
+            {
+                return _context.NewsArticles
+                    .Include(n => n.Category)
+                    .Include(n => n.CreatedBy)
+                    .Where(n => n.CreatedById == authorId)
+                    .OrderByDescending(n => n.CreatedDate)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving articles by author: {ex.Message}", ex);
+            }
         }
 
         public void UpdateNewsArticle(NewsArticle newsArticle)

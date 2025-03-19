@@ -10,25 +10,18 @@ namespace NMS_Repositories
 {
     public class NewsArticleRepository : INewsArticleRepository
     {
-        public void AddNewsArticle(NewsArticle newsArticle)
-            => NewsArticleDAO.Instance.AddNewsArticle(newsArticle);
+        public List<NewsArticle> GetAllNewsArticles() => NewsArticleDAO.Instance.GetNewsArticles();
 
-        public void DeleteNewsArticle(string id)
-            => NewsArticleDAO.Instance.DeleteNewsArticle(id);
+        public NewsArticle GetNewsArticleById(string id) => NewsArticleDAO.Instance.GetNewsArticleById(id);
 
-        public List<NewsArticle> GetAllNewsArticles()
-            => NewsArticleDAO.Instance.GetNewsArticles();
+        public void AddNewsArticle(NewsArticle newsArticle) => NewsArticleDAO.Instance.AddNewsArticle(newsArticle);
 
-        public NewsArticle GetNewsArticleById(string id)
-            => NewsArticleDAO.Instance.GetNewsArticleById(id);
+        public void UpdateNewsArticle(NewsArticle newsArticle) => NewsArticleDAO.Instance.UpdateNewsArticle(newsArticle);
 
-        public List<NewsArticle> GetNewsArticles()
-            => NewsArticleDAO.Instance.GetNewsArticles();
+        public void DeleteNewsArticle(string id) => NewsArticleDAO.Instance.DeleteNewsArticle(id);
 
-        public List<NewsArticle> SearchNewsArticles(string searchTerm)
-            => NewsArticleDAO.Instance.SearchNewsArticles(searchTerm);
+        public List<NewsArticle> SearchNewsArticles(string searchTerm) => NewsArticleDAO.Instance.SearchNewsArticles(searchTerm);
 
-        public void UpdateNewsArticle(NewsArticle newsArticle)
-            => NewsArticleDAO.Instance.UpdateNewsArticle(newsArticle);
+        public List<NewsArticle> GetNewsArticlesByAuthor(short authorId) => NewsArticleDAO.Instance.GetNewsArticlesByAuthor(authorId);
     }
 }

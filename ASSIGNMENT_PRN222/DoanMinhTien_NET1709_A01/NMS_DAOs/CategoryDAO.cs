@@ -32,12 +32,16 @@ namespace NMS_DAOs
 
         public List<Category> GetAllCategories()
         {
-            return _context.Categories.ToList();
+            return _context.Categories
+                .Include(c => c.ParentCategory)
+                .ToList();
         }
 
-        public Category GetCategoryById(int id)
+        public Category GetCategoryById(short id)
         {
-            return _context.Categories.FirstOrDefault(c => c.CategoryId == id);
+            return _context.Categories
+                .Include(c => c.ParentCategory)
+                .FirstOrDefault(c => c.CategoryId == id);
         }
 
         public void AddCategory(Category category)
@@ -63,6 +67,10 @@ namespace NMS_DAOs
                     _context.Entry(existingCategory).CurrentValues.SetValues(category);
                     _context.SaveChanges();
                 }
+                else
+                {
+                    throw new Exception("Category not found");
+                }
             }
             catch (Exception ex)
             {
@@ -70,22 +78,36 @@ namespace NMS_DAOs
             }
         }
 
-        public void DeleteCategory(int id)
+        public bool IsCategoryInUse(short id)
+        {
+            return _context.NewsArticles.Any(a => a.CategoryId == id);
+        }
+
+        public void DeleteCategory(short id)
         {
             try
             {
-                // Check if category is used in any news article
-                bool isUsed = _context.NewsArticles.Any(n => n.CategoryId == id);
-                if (isUsed)
+                // Check if the category is in use by any articles
+                if (IsCategoryInUse(id))
                 {
-                    throw new Exception("Cannot delete category because it is used in news articles");
+                    throw new Exception("Cannot delete this category because it is used by one or more news articles.");
                 }
 
                 var category = _context.Categories.Find(id);
                 if (category != null)
                 {
+                    // Check if this category is used as a parent category
+                    if (_context.Categories.Any(c => c.ParentCategoryId == id))
+                    {
+                        throw new Exception("Cannot delete this category because it is used as a parent category.");
+                    }
+
                     _context.Categories.Remove(category);
                     _context.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("Category not found");
                 }
             }
             catch (Exception ex)

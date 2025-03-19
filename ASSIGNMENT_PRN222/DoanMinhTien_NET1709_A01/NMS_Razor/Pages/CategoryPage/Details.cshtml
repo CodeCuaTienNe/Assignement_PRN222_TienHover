@@ -1,0 +1,41 @@
+﻿@page
+@model NMS_Razor.Pages.CategoryPage.DetailsModel
+
+@{
+    ViewData["Title"] = "Category Details";
+}
+
+<h1>Category Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Category Name</dt>
+        <dd class="col-sm-9">@Model.Category.CategoryName</dd>
+        
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9">@Model.Category.CategoryDesciption</dd>
+        
+        <dt class="col-sm-3">Parent Category</dt>
+        <dd class="col-sm-9">
+            @(Model.Category.ParentCategory?.CategoryName ?? "None")
+        </dd>
+        
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">
+            @if (Model.Category.IsActive == true)
+            {
+                <span class="badge bg-success">Active</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Inactive</span>
+            }
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Category.CategoryId" class="btn btn-primary">Edit</a>
+    <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+</div>

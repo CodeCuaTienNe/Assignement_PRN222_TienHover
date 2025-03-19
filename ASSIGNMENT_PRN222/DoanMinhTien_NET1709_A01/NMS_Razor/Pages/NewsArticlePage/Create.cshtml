@@ -5,7 +5,7 @@
     ViewData["Title"] = "Create News Article";
 }
 
-<h1>Tạo bài viết mới</h1>
+<h1>Create News Article</h1>
 
 <hr />
 <div class="row">
@@ -14,51 +14,67 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
             <div class="form-group mb-3">
-                <label asp-for="NewsArticle.NewsArticleId" class="control-label">News ID</label>
-                <input asp-for="NewsArticle.NewsArticleId" class="form-control" required />
+                <label asp-for="NewsArticle.NewsArticleId" class="control-label">Article ID <span class="text-danger">*</span></label>
+                <input asp-for="NewsArticle.NewsArticleId" class="form-control" required placeholder="Enter a unique ID for this article" />
+                <small class="form-text text-muted">This ID must be unique and cannot be changed later.</small>
                 <span asp-validation-for="NewsArticle.NewsArticleId" class="text-danger"></span>
             </div>
             
             <div class="form-group mb-3">
-                <label asp-for="NewsArticle.NewsTitle" class="control-label">Title</label>
-                <input asp-for="NewsArticle.NewsTitle" class="form-control" required />
+                <label asp-for="NewsArticle.NewsTitle" class="control-label">Title <span class="text-danger">*</span></label>
+                <input asp-for="NewsArticle.NewsTitle" class="form-control" required placeholder="Enter article title" />
                 <span asp-validation-for="NewsArticle.NewsTitle" class="text-danger"></span>
             </div>
             
             <div class="form-group mb-3">
-                <label asp-for="NewsArticle.Headline" class="control-label">Headline</label>
-                <input asp-for="NewsArticle.Headline" class="form-control" required />
+                <label asp-for="NewsArticle.Headline" class="control-label">Headline <span class="text-danger">*</span></label>
+                <input asp-for="NewsArticle.Headline" class="form-control" required placeholder="Enter a brief headline/summary" />
                 <span asp-validation-for="NewsArticle.Headline" class="text-danger"></span>
             </div>
             
             <div class="form-group mb-3">
-                <label asp-for="NewsArticle.NewsContent" class="control-label">Content</label>
-                <textarea asp-for="NewsArticle.NewsContent" class="form-control" rows="5" required></textarea>
+                <label asp-for="NewsArticle.NewsContent" class="control-label">Content <span class="text-danger">*</span></label>
+                <textarea asp-for="NewsArticle.NewsContent" class="form-control" rows="10" required placeholder="Enter the full article content"></textarea>
                 <span asp-validation-for="NewsArticle.NewsContent" class="text-danger"></span>
             </div>
             
             <div class="form-group mb-3">
                 <label asp-for="NewsArticle.NewsSource" class="control-label">Source</label>
-                <input asp-for="NewsArticle.NewsSource" class="form-control" />
+                <input asp-for="NewsArticle.NewsSource" class="form-control" placeholder="Enter the source of this information (optional)" />
                 <span asp-validation-for="NewsArticle.NewsSource" class="text-danger"></span>
             </div>
             
             <div class="form-group mb-3">
-                <label asp-for="NewsArticle.CategoryId" class="control-label">Category</label>
-                <select asp-for="NewsArticle.CategoryId" class="form-control" asp-items="ViewBag.CategoryId" required></select>
+                <label asp-for="NewsArticle.CategoryId" class="control-label">Category <span class="text-danger">*</span></label>
+                <select asp-for="NewsArticle.CategoryId" class="form-control" asp-items="ViewBag.CategoryId" required>
+                    <option value="">-- Select a category --</option>
+                </select>
                 <span asp-validation-for="NewsArticle.CategoryId" class="text-danger"></span>
             </div>
             
-            <!-- Hidden field -->
+            <!-- Hidden fields -->
             <input type="hidden" asp-for="NewsArticle.NewsStatus" value="true" />
             <input type="hidden" asp-for="NewsArticle.CreatedDate" />
             <input type="hidden" asp-for="NewsArticle.CreatedById" />
             
-            <div class="form-group mt-4">
-                <button type="submit" class="btn btn-primary">Create News</button>
-                <a asp-page="Index" class="btn btn-secondary">Back</a>
+            <div class="form-group mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Create Article</button>
+                <a asp-page="MyNews" class="btn btn-secondary">Back to My News</a>
             </div>
         </form>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-light">Tips</div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>All fields marked with <span class="text-danger">*</span> are required</li>
+                    <li>Article ID must be unique</li>
+                    <li>New articles are automatically set to Active status</li>
+                    <li>You can edit the article after creation</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 

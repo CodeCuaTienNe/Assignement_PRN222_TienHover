@@ -10,9 +10,10 @@ namespace NMS_Repositories
     public interface ICategoryRepository
     {
         List<Category> GetAllCategories();
-        Category GetCategoryById(int id);
+        Category GetCategoryById(short id); // Changed from int to short to match the model
         void AddCategory(Category category);
         void UpdateCategory(Category category);
-        void DeleteCategory(int id);
+        void DeleteCategory(short id); // Changed from int to short
+        bool IsCategoryInUse(short id); // Add method to check if category is used by articles
     }
 }

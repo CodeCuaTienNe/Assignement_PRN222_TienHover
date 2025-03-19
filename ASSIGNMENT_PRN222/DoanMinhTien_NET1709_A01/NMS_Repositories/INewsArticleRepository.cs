@@ -9,12 +9,12 @@ namespace NMS_Repositories
 {
     public interface INewsArticleRepository
     {
-        List<NewsArticle> GetNewsArticles();
         List<NewsArticle> GetAllNewsArticles();
-        List<NewsArticle> SearchNewsArticles(string searchTerm);
         NewsArticle GetNewsArticleById(string id);
         void AddNewsArticle(NewsArticle newsArticle);
         void UpdateNewsArticle(NewsArticle newsArticle);
         void DeleteNewsArticle(string id);
+        List<NewsArticle> SearchNewsArticles(string searchTerm);
+        List<NewsArticle> GetNewsArticlesByAuthor(short authorId);
     }
 }

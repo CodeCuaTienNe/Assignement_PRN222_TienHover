@@ -13,8 +13,7 @@ namespace NMS_Repositories
         public List<Category> GetAllCategories()
             => CategoryDAO.Instance.GetAllCategories();
         
-
-        public Category GetCategoryById(int id)
+        public Category GetCategoryById(short id)
             => CategoryDAO.Instance.GetCategoryById(id);
 
         public void AddCategory(Category category)
@@ -23,8 +22,10 @@ namespace NMS_Repositories
         public void UpdateCategory(Category category)
            => CategoryDAO.Instance.UpdateCategory(category);
         
-
-        public void DeleteCategory(int id)
+        public void DeleteCategory(short id)
            => CategoryDAO.Instance.DeleteCategory(id);
+           
+        public bool IsCategoryInUse(short id)
+            => CategoryDAO.Instance.IsCategoryInUse(id);
     }
 }

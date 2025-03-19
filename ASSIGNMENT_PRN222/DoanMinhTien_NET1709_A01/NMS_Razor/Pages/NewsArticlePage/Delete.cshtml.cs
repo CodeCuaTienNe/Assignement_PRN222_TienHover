@@ -31,19 +31,19 @@ namespace NMS_Razor.Pages.NewsArticlePage
 
         public IActionResult OnGet(string id)
         {
-            // Kiểm tra đăng nhập
+            // Check login
             var email = HttpContext.Session.GetString("AccountEmail");
             if (string.IsNullOrEmpty(email))
             {
                 return RedirectToPage("/Login");
             }
 
-            // Kiểm tra quyền
+            // Check role
             var role = HttpContext.Session.GetInt32("AccountRole");
             var staffRole = 1;
             var currentUserId = HttpContext.Session.GetInt32("AccountId");
 
-            // Chỉ Staff mới có quyền xóa
+            // Only Staff can delete
             if (role != staffRole)
             {
                 return RedirectToPage("/AccessDenied");
@@ -60,7 +60,7 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 return NotFound();
             }
 
-            // Kiểm tra xem người dùng hiện tại có phải là người tạo bài viết không
+            // Check if the user is the creator of this article
             if (newsArticle.CreatedById != currentUserId)
             {
                 return RedirectToPage("/AccessDenied");
@@ -72,19 +72,19 @@ namespace NMS_Razor.Pages.NewsArticlePage
 
         public IActionResult OnPost(string id)
         {
-            // Kiểm tra đăng nhập
+            // Check login
             var email = HttpContext.Session.GetString("AccountEmail");
             if (string.IsNullOrEmpty(email))
             {
                 return RedirectToPage("/Login");
             }
 
-            // Kiểm tra quyền
+            // Check role
             var role = HttpContext.Session.GetInt32("AccountRole");
             var staffRole = 1;
             var currentUserId = HttpContext.Session.GetInt32("AccountId");
 
-            // Chỉ Staff mới có quyền xóa
+            // Only Staff can delete
             if (role != staffRole)
             {
                 return RedirectToPage("/AccessDenied");
@@ -101,7 +101,7 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 return NotFound();
             }
 
-            // Kiểm tra xem người dùng hiện tại có phải là người tạo bài viết không
+            // Check if the user is the creator of this article
             if (newsArticle.CreatedById != currentUserId)
             {
                 return RedirectToPage("/AccessDenied");
@@ -110,13 +110,12 @@ namespace NMS_Razor.Pages.NewsArticlePage
             try
             {
                 _newsArticleRepository.DeleteNewsArticle(id);
-                SuccessMessage = "Bài viết đã được xóa thành công!";
-                return RedirectToPage("./Index");
+                SuccessMessage = "Article deleted successfully!";
+                return RedirectToPage("./MyNews");
             }
             catch (Exception ex)
             {
-                ErrorMessage = "Lỗi khi xóa bài viết: " + ex.Message;
-                ModelState.AddModelError("", ErrorMessage);
+                ErrorMessage = $"Failed to delete article: {ex.Message}";
                 NewsArticle = newsArticle;
                 return Page();
             }

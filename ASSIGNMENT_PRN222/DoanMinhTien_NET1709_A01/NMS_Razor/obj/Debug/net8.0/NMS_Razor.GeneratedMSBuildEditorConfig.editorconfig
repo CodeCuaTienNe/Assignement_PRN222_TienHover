@@ -30,6 +30,26 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWNjZXNzRGVuaWVkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/TIEN'S LIBRABRY/STUDY/PRN222/Assignement_PRN222_TienHover/ASSIGNMENT_PRN222/DoanMinhTien_NET1709_A01/NMS_Razor/Pages/CategoryPage/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcnlQYWdlXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TIEN'S LIBRABRY/STUDY/PRN222/Assignement_PRN222_TienHover/ASSIGNMENT_PRN222/DoanMinhTien_NET1709_A01/NMS_Razor/Pages/CategoryPage/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcnlQYWdlXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TIEN'S LIBRABRY/STUDY/PRN222/Assignement_PRN222_TienHover/ASSIGNMENT_PRN222/DoanMinhTien_NET1709_A01/NMS_Razor/Pages/CategoryPage/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcnlQYWdlXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TIEN'S LIBRABRY/STUDY/PRN222/Assignement_PRN222_TienHover/ASSIGNMENT_PRN222/DoanMinhTien_NET1709_A01/NMS_Razor/Pages/CategoryPage/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcnlQYWdlXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TIEN'S LIBRABRY/STUDY/PRN222/Assignement_PRN222_TienHover/ASSIGNMENT_PRN222/DoanMinhTien_NET1709_A01/NMS_Razor/Pages/CategoryPage/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2F0ZWdvcnlQYWdlXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/TIEN'S LIBRABRY/STUDY/PRN222/Assignement_PRN222_TienHover/ASSIGNMENT_PRN222/DoanMinhTien_NET1709_A01/NMS_Razor/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -64,6 +84,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/TIEN'S LIBRABRY/STUDY/PRN222/Assignement_PRN222_TienHover/ASSIGNMENT_PRN222/DoanMinhTien_NET1709_A01/NMS_Razor/Pages/NewsArticlePage/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTmV3c0FydGljbGVQYWdlXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TIEN'S LIBRABRY/STUDY/PRN222/Assignement_PRN222_TienHover/ASSIGNMENT_PRN222/DoanMinhTien_NET1709_A01/NMS_Razor/Pages/NewsArticlePage/MyNews.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTmV3c0FydGljbGVQYWdlXE15TmV3cy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/TIEN'S LIBRABRY/STUDY/PRN222/Assignement_PRN222_TienHover/ASSIGNMENT_PRN222/DoanMinhTien_NET1709_A01/NMS_Razor/Pages/Privacy.cshtml]

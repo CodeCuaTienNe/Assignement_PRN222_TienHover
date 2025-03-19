@@ -34,6 +34,10 @@ namespace NMS_Razor.Pages.NewsArticlePage
         [TempData]
         public string ErrorMessage { get; set; }
 
+        // Flag to indicate if we should show staff's own articles only
+        [BindProperty(SupportsGet = true)]
+        public bool MyArticlesOnly { get; set; }
+
         public IActionResult OnGet()
         {
             // Check login
@@ -48,6 +52,7 @@ namespace NMS_Razor.Pages.NewsArticlePage
             var adminRole = int.Parse(_configuration["AdminRole"] ?? "3");
             var staffRole = 1;
             var lecturerRole = 2;
+            var currentUserId = HttpContext.Session.GetInt32("AccountId");
 
             // Only Admin, Staff, and Lecturer can access this page
             if (role != adminRole && role != staffRole && role != lecturerRole)
@@ -55,31 +60,33 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 return RedirectToPage("/AccessDenied");
             }
 
-            // For Lecturer, only show active news
-            if (role == lecturerRole)
+            List<NewsArticle> articles;
+
+            // First get all articles or search results
+            if (!string.IsNullOrEmpty(SearchTerm))
             {
-                if (!string.IsNullOrEmpty(SearchTerm))
-                {
-                    var allNews = _newsArticleRepository.SearchNewsArticles(SearchTerm);
-                    NewsArticle = allNews.Where(n => n.NewsStatus == true).ToList();
-                }
-                else
-                {
-                    var allNews = _newsArticleRepository.GetAllNewsArticles();
-                    NewsArticle = allNews.Where(n => n.NewsStatus == true).ToList();
-                }
+                articles = _newsArticleRepository.SearchNewsArticles(SearchTerm);
             }
             else
             {
-                // For Admin and Staff, show all news
-                if (!string.IsNullOrEmpty(SearchTerm))
-                {
-                    NewsArticle = _newsArticleRepository.SearchNewsArticles(SearchTerm);
-                }
-                else
-                {
-                    NewsArticle = _newsArticleRepository.GetAllNewsArticles();
-                }
+                articles = _newsArticleRepository.GetAllNewsArticles();
+            }
+
+            // Then apply filters based on role and options
+            if (role == lecturerRole)
+            {
+                // Lecturers can only see active articles
+                NewsArticle = articles.Where(n => n.NewsStatus == true).ToList();
+            }
+            else if (role == staffRole && MyArticlesOnly)
+            {
+                // If staff selected "My Articles Only"
+                NewsArticle = articles.Where(n => n.CreatedById == currentUserId).ToList();
+            }
+            else
+            {
+                // Admin or Staff viewing all articles
+                NewsArticle = articles;
             }
 
             return Page();
