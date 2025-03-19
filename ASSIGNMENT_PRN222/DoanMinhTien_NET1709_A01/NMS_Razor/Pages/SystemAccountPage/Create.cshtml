@@ -2,51 +2,47 @@
 @model NMS_Razor.Pages.SystemAccountPage.CreateModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Account";
 }
 
-<h1>Create</h1>
+<h1>Create New Account</h1>
 
-<h4>SystemAccount</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountId" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountId" class="form-control" />
-                <span asp-validation-for="SystemAccount.AccountId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountName" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountName" class="form-control" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="SystemAccount.AccountName" class="control-label">Name</label>
+                <input asp-for="SystemAccount.AccountName" class="form-control" required />
                 <span asp-validation-for="SystemAccount.AccountName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountEmail" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountEmail" class="form-control" />
+            <div class="form-group mb-3">
+                <label asp-for="SystemAccount.AccountEmail" class="control-label">Email</label>
+                <input asp-for="SystemAccount.AccountEmail" class="form-control" type="email" required />
                 <span asp-validation-for="SystemAccount.AccountEmail" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountRole" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountRole" class="form-control" />
+            <div class="form-group mb-3">
+                <label asp-for="SystemAccount.AccountRole" class="control-label">Role</label>
+                <select asp-for="SystemAccount.AccountRole" class="form-control" required>
+                    <option value="1">Staff</option>
+                    <option value="2">Lecturer</option>
+                    <option value="3">Admin</option>
+                </select>
                 <span asp-validation-for="SystemAccount.AccountRole" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountPassword" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountPassword" class="form-control" />
+            <div class="form-group mb-3">
+                <label asp-for="SystemAccount.AccountPassword" class="control-label">Password</label>
+                <input asp-for="SystemAccount.AccountPassword" class="form-control" type="password" required />
                 <span asp-validation-for="SystemAccount.AccountPassword" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-page="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-page="Index">Back to List</a>
 </div>
 
 @section Scripts {

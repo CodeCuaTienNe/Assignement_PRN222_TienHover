@@ -5,40 +5,69 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using NMS_BusinessObjects;
 using NMS_DAOs;
+using NMS_Repositories;
 
 namespace NMS_Razor.Pages.SystemAccountPage
 {
     public class CreateModel : PageModel
     {
-        private readonly NMS_DAOs.FunewsManagementContext _context;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IConfiguration _configuration;
 
-        public CreateModel(NMS_DAOs.FunewsManagementContext context)
+        public CreateModel(IAccountRepository accountRepository, IConfiguration configuration)
         {
-            _context = context;
+            _accountRepository = accountRepository;
+            _configuration = configuration;
         }
 
         public IActionResult OnGet()
         {
+            // Check if user is logged in
+            var email = HttpContext.Session.GetString("AccountEmail");
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToPage("/Login");
+            }
+
+            // Check if user has admin role
+            var role = HttpContext.Session.GetInt32("AccountRole");
+            var adminRole = int.Parse(_configuration["AdminRole"] ?? "3");
+
+            if (role != adminRole)
+            {
+                return RedirectToPage("/AccessDenied");
+            }
+
             return Page();
         }
 
         [BindProperty]
         public SystemAccount SystemAccount { get; set; } = default!;
 
-        // For more information, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        [TempData]
+        public string? StatusMessage { get; set; }
+
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _context.SystemAccounts.Add(SystemAccount);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
+            try
+            {
+                _accountRepository.AddAccount(SystemAccount);
+                StatusMessage = "Account created successfully";
+                return RedirectToPage("./Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                return Page();
+            }
         }
     }
 }

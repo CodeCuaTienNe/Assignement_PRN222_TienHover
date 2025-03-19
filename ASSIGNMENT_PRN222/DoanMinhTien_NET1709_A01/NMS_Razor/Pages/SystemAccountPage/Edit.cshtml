@@ -2,47 +2,49 @@
 @model NMS_Razor.Pages.SystemAccountPage.EditModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Account";
 }
 
-<h1>Edit</h1>
+<h1>Edit Account</h1>
 
-<h4>SystemAccount</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="SystemAccount.AccountId" />
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountName" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountName" class="form-control" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="SystemAccount.AccountName" class="control-label">Name</label>
+                <input asp-for="SystemAccount.AccountName" class="form-control" required />
                 <span asp-validation-for="SystemAccount.AccountName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountEmail" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountEmail" class="form-control" />
+            <div class="form-group mb-3">
+                <label asp-for="SystemAccount.AccountEmail" class="control-label">Email</label>
+                <input asp-for="SystemAccount.AccountEmail" class="form-control" type="email" required />
                 <span asp-validation-for="SystemAccount.AccountEmail" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountRole" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountRole" class="form-control" />
+            <div class="form-group mb-3">
+                <label asp-for="SystemAccount.AccountRole" class="control-label">Role</label>
+                <select asp-for="SystemAccount.AccountRole" class="form-control" required>
+                    <option value="1">Staff</option>
+                    <option value="2">Lecturer</option>
+                    <option value="3">Admin</option>
+                </select>
                 <span asp-validation-for="SystemAccount.AccountRole" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="SystemAccount.AccountPassword" class="control-label"></label>
-                <input asp-for="SystemAccount.AccountPassword" class="form-control" />
+            <div class="form-group mb-3">
+                <label asp-for="SystemAccount.AccountPassword" class="control-label">Password</label>
+                <input asp-for="SystemAccount.AccountPassword" class="form-control" type="password" placeholder="Leave empty to keep current password" />
                 <span asp-validation-for="SystemAccount.AccountPassword" class="text-danger"></span>
+                <small class="form-text text-muted">Leave blank to keep the current password.</small>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <input type="submit" value="Save" class="btn btn-primary" />
+                <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-page="./Index">Back to List</a>
 </div>
 
 @section Scripts {

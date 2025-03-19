@@ -5,59 +5,81 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using NMS_BusinessObjects;
 using NMS_DAOs;
+using NMS_Repositories;
 
 namespace NMS_Razor.Pages.SystemAccountPage
 {
     public class DeleteModel : PageModel
     {
-        private readonly NMS_DAOs.FunewsManagementContext _context;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IConfiguration _configuration;
 
-        public DeleteModel(NMS_DAOs.FunewsManagementContext context)
+        public DeleteModel(IAccountRepository accountRepository, IConfiguration configuration)
         {
-            _context = context;
+            _accountRepository = accountRepository;
+            _configuration = configuration;
         }
 
         [BindProperty]
         public SystemAccount SystemAccount { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(short? id)
+        [TempData]
+        public string? StatusMessage { get; set; }
+
+        public IActionResult OnGet(short? id)
         {
+            // Check if user is logged in
+            var email = HttpContext.Session.GetString("AccountEmail");
+            if (string.IsNullOrEmpty(email))
+            {
+                return RedirectToPage("/Login");
+            }
+
+            // Check if user has admin role
+            var role = HttpContext.Session.GetInt32("AccountRole");
+            var adminRole = int.Parse(_configuration["AdminRole"] ?? "3");
+
+            if (role != adminRole)
+            {
+                return RedirectToPage("/AccessDenied");
+            }
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            var systemaccount = await _context.SystemAccounts.FirstOrDefaultAsync(m => m.AccountId == id);
-
+            var systemaccount = _accountRepository.GetAccountById(id.Value);
             if (systemaccount == null)
             {
                 return NotFound();
             }
-            else
-            {
-                SystemAccount = systemaccount;
-            }
+            
+            SystemAccount = systemaccount;
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(short? id)
+        public IActionResult OnPost(short? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var systemaccount = await _context.SystemAccounts.FindAsync(id);
-            if (systemaccount != null)
+            try
             {
-                SystemAccount = systemaccount;
-                _context.SystemAccounts.Remove(SystemAccount);
-                await _context.SaveChangesAsync();
+                _accountRepository.DeleteAccount(id.Value);
+                StatusMessage = "Account deleted successfully";
+                return RedirectToPage("./Index");
             }
-
-            return RedirectToPage("./Index");
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+                return Page();
+            }
         }
     }
 }
