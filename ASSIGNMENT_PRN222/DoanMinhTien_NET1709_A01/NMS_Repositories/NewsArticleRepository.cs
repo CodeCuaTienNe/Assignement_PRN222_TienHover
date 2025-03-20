@@ -23,5 +23,9 @@ namespace NMS_Repositories
         public List<NewsArticle> SearchNewsArticles(string searchTerm) => NewsArticleDAO.Instance.SearchNewsArticles(searchTerm);
 
         public List<NewsArticle> GetNewsArticlesByAuthor(short authorId) => NewsArticleDAO.Instance.GetNewsArticlesByAuthor(authorId);
+
+        public void AddTagsToArticle(string newsArticleId, List<int> tagIds) => NewsArticleDAO.Instance.AddTagsToArticle(newsArticleId, tagIds);
+
+        public List<Tag> GetTagsForArticle(string newsArticleId) => NewsArticleDAO.Instance.GetTagsForArticle(newsArticleId);
     }
 }

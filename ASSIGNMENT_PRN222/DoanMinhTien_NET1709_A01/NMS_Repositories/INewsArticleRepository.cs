@@ -16,5 +16,7 @@ namespace NMS_Repositories
         void DeleteNewsArticle(string id);
         List<NewsArticle> SearchNewsArticles(string searchTerm);
         List<NewsArticle> GetNewsArticlesByAuthor(short authorId);
+        void AddTagsToArticle(string newsArticleId, List<int> tagIds);
+        List<Tag> GetTagsForArticle(string newsArticleId);
     }
 }

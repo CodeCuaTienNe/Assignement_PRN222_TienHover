@@ -42,7 +42,13 @@ namespace NMS_DAOs
 
         public Tag GetTagByName(string name)
         {
-            return _context.Tags.FirstOrDefault(t => t.TagName.Equals(name, StringComparison.OrdinalIgnoreCase));
+            // Modified to use a database-compatible approach for case-insensitive comparison
+            if (string.IsNullOrEmpty(name))
+                return null;
+                
+            // Convert both sides to lowercase for case-insensitive comparison
+            string nameLower = name.ToLower();
+            return _context.Tags.FirstOrDefault(t => t.TagName.ToLower() == nameLower);
         }
 
         public void AddTag(Tag tag)
@@ -70,13 +76,18 @@ namespace NMS_DAOs
             try
             {
                 // Check if name is duplicated with another tag
-                var existingTag = _context.Tags.FirstOrDefault(t => 
-                    t.TagName.Equals(tag.TagName, StringComparison.OrdinalIgnoreCase) && 
-                    t.TagId != tag.TagId);
-                
-                if (existingTag != null)
+                // Convert both sides to lowercase for case-insensitive comparison
+                if (!string.IsNullOrEmpty(tag.TagName))
                 {
-                    throw new Exception($"Tag with name '{tag.TagName}' already exists");
+                    string nameLower = tag.TagName.ToLower();
+                    var existingTag = _context.Tags
+                        .Where(t => t.TagId != tag.TagId && t.TagName.ToLower() == nameLower)
+                        .FirstOrDefault();
+                    
+                    if (existingTag != null)
+                    {
+                        throw new Exception($"Tag with name '{tag.TagName}' already exists");
+                    }
                 }
 
                 var tagToUpdate = _context.Tags.Find(tag.TagId);
@@ -99,7 +110,12 @@ namespace NMS_DAOs
         public bool IsTagInUse(int id)
         {
             // Check if tag is used by any news articles
-            return _context.NewsArticles.Any(a => a.Tags.Any(t => t.TagId == id));
+            // Load the tag with its news articles
+            var tag = _context.Tags
+                .Include(t => t.NewsArticles)
+                .FirstOrDefault(t => t.TagId == id);
+                
+            return tag != null && tag.NewsArticles.Count > 0;
         }
 
         public void DeleteTag(int id)

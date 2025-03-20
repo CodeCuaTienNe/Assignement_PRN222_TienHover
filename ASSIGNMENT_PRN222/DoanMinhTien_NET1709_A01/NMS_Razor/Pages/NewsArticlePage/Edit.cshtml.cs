@@ -16,16 +16,21 @@ namespace NMS_Razor.Pages.NewsArticlePage
     {
         private readonly INewsArticleRepository _newsArticleRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ITagRepository _tagRepository;
 
-        public EditModel(INewsArticleRepository newsArticleRepository, ICategoryRepository categoryRepository)
+        public EditModel(INewsArticleRepository newsArticleRepository, ICategoryRepository categoryRepository, ITagRepository tagRepository)
         {
             _newsArticleRepository = newsArticleRepository;
             _categoryRepository = categoryRepository;
+            _tagRepository = tagRepository;
         }
 
         [BindProperty]
         public NewsArticle NewsArticle { get; set; } = default!;
-        
+
+        [BindProperty]
+        public List<int> SelectedTagIds { get; set; } = new List<int>();
+
         [TempData]
         public string SuccessMessage { get; set; }
         
@@ -71,6 +76,13 @@ namespace NMS_Razor.Pages.NewsArticlePage
 
             NewsArticle = newsArticle;
             ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
+            
+            // Get all tags for the dropdown
+            ViewData["AvailableTags"] = new MultiSelectList(_tagRepository.GetAllTags(), "TagId", "TagName");
+            
+            // Preselect the tags that are already associated with this article
+            SelectedTagIds = _newsArticleRepository.GetTagsForArticle(id).Select(t => t.TagId).ToList();
+            
             return Page();
         }
 
@@ -97,6 +109,7 @@ namespace NMS_Razor.Pages.NewsArticlePage
             if (!ModelState.IsValid)
             {
                 ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
+                ViewData["AvailableTags"] = new MultiSelectList(_tagRepository.GetAllTags(), "TagId", "TagName", SelectedTagIds);
                 return Page();
             }
 
@@ -123,6 +136,10 @@ namespace NMS_Razor.Pages.NewsArticlePage
             try
             {
                 _newsArticleRepository.UpdateNewsArticle(NewsArticle);
+                
+                // Update the tags for this article
+                _newsArticleRepository.AddTagsToArticle(NewsArticle.NewsArticleId, SelectedTagIds);
+                
                 SuccessMessage = "Article updated successfully!";
                 
                 // If we came from MyNews page (via query parameter), return there
@@ -138,6 +155,7 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 ErrorMessage = $"Failed to update article: {ex.Message}";
                 ModelState.AddModelError("", ErrorMessage);
                 ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
+                ViewData["AvailableTags"] = new MultiSelectList(_tagRepository.GetAllTags(), "TagId", "TagName", SelectedTagIds);
                 return Page();
             }
         }

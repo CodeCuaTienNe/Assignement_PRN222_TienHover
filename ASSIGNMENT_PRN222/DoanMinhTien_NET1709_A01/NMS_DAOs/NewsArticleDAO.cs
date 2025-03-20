@@ -157,5 +157,60 @@ namespace NMS_DAOs
                 throw new Exception("Error deleting news article: " + ex.Message);
             }
         }
+
+        public void AddTagsToArticle(string newsArticleId, List<int> tagIds)
+        {
+            try
+            {
+                var newsArticle = _context.NewsArticles
+                    .Include(n => n.Tags)
+                    .FirstOrDefault(n => n.NewsArticleId == newsArticleId);
+                    
+                if (newsArticle == null)
+                {
+                    throw new Exception("News article not found");
+                }
+                
+                // Clear existing tags
+                newsArticle.Tags.Clear();
+                
+                // Add selected tags
+                foreach (var tagId in tagIds)
+                {
+                    var tag = _context.Tags.Find(tagId);
+                    if (tag != null)
+                    {
+                        newsArticle.Tags.Add(tag);
+                    }
+                }
+                
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error adding tags to news article: " + ex.Message, ex);
+            }
+        }
+
+        public List<Tag> GetTagsForArticle(string newsArticleId)
+        {
+            try
+            {
+                var newsArticle = _context.NewsArticles
+                    .Include(n => n.Tags)
+                    .FirstOrDefault(n => n.NewsArticleId == newsArticleId);
+                    
+                if (newsArticle == null)
+                {
+                    throw new Exception("News article not found");
+                }
+                
+                return newsArticle.Tags.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error retrieving tags for news article: " + ex.Message, ex);
+            }
+        }
     }
 }
