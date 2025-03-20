@@ -13,7 +13,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-[#e6d5ac] border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">FU News Management</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -43,7 +43,7 @@
                                     <a class="nav-link text-dark" asp-area="" asp-page="/AccountManagement/Index">Manage Accounts</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-page="/Reports/Index">Reports</a>
+                                    <a class="nav-link text-dark" href="/Report">Reports</a>
                                 </li>
                             }
                             else if (accountRole == staffRole) // Staff
