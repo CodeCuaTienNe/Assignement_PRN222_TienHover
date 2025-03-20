@@ -1,0 +1,41 @@
+@page "{id:int}"
+@model NMS_Razor.Pages.NewsArticlePage.Tags.EditModel
+
+@{
+    ViewData["Title"] = "Edit Tag";
+}
+
+<h1>Edit Tag</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Tag.TagId" />
+            
+            <div class="form-group mb-3">
+                <label asp-for="Tag.TagName" class="control-label">Tag Name</label>
+                <input asp-for="Tag.TagName" class="form-control" required />
+                <span asp-validation-for="Tag.TagName" class="text-danger"></span>
+                <small class="form-text text-muted">The name of the tag must be unique.</small>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label asp-for="Tag.Note" class="control-label">Note</label>
+                <textarea asp-for="Tag.Note" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Tag.Note" class="text-danger"></span>
+                <small class="form-text text-muted">Optional additional information about this tag.</small>
+            </div>
+            
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
