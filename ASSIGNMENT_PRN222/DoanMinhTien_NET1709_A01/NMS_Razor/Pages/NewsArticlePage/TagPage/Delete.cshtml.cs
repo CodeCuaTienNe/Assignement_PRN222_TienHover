@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using NMS_BusinessObjects;
 using NMS_Repositories;
 
-namespace NMS_Razor.Pages.NewsArticlePage.Tags
+namespace NMS_Razor.Pages.NewsArticlePage.TagPage
 {
     public class DeleteModel : PageModel
     {
