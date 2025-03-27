@@ -68,12 +68,6 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 return NotFound();
             }
 
-            // Check if the user is the creator of this article
-            if (newsArticle.CreatedById != currentUserId)
-            {
-                return RedirectToPage("/AccessDenied");
-            }
-
             NewsArticle = newsArticle;
             ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
             
@@ -113,16 +107,11 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 return Page();
             }
 
-            // Check if the user is the creator of this article
+            // Check if article exists
             var existingArticle = _newsArticleRepository.GetNewsArticleById(NewsArticle.NewsArticleId);
             if (existingArticle == null)
             {
                 return NotFound();
-            }
-            
-            if (existingArticle.CreatedById != currentUserId)
-            {
-                return RedirectToPage("/AccessDenied");
             }
 
             // Update fields we want to keep from the existing record
@@ -141,13 +130,6 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 _newsArticleRepository.AddTagsToArticle(NewsArticle.NewsArticleId, SelectedTagIds);
                 
                 SuccessMessage = "Article updated successfully!";
-                
-                // If we came from MyNews page (via query parameter), return there
-                if (Request.Query.ContainsKey("returnToMyNews"))
-                {
-                    return RedirectToPage("./MyNews");
-                }
-                
                 return RedirectToPage("./Index");
             }
             catch (Exception ex)

@@ -41,7 +41,6 @@ namespace NMS_Razor.Pages.NewsArticlePage
             // Check role
             var role = HttpContext.Session.GetInt32("AccountRole");
             var staffRole = 1;
-            var currentUserId = HttpContext.Session.GetInt32("AccountId");
 
             // Only Staff can delete
             if (role != staffRole)
@@ -58,12 +57,6 @@ namespace NMS_Razor.Pages.NewsArticlePage
             if (newsArticle == null)
             {
                 return NotFound();
-            }
-
-            // Check if the user is the creator of this article
-            if (newsArticle.CreatedById != currentUserId)
-            {
-                return RedirectToPage("/AccessDenied");
             }
 
             NewsArticle = newsArticle;
@@ -82,7 +75,6 @@ namespace NMS_Razor.Pages.NewsArticlePage
             // Check role
             var role = HttpContext.Session.GetInt32("AccountRole");
             var staffRole = 1;
-            var currentUserId = HttpContext.Session.GetInt32("AccountId");
 
             // Only Staff can delete
             if (role != staffRole)
@@ -101,17 +93,11 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 return NotFound();
             }
 
-            // Check if the user is the creator of this article
-            if (newsArticle.CreatedById != currentUserId)
-            {
-                return RedirectToPage("/AccessDenied");
-            }
-
             try
             {
                 _newsArticleRepository.DeleteNewsArticle(id);
                 SuccessMessage = "Article deleted successfully!";
-                return RedirectToPage("./MyNews");
+                return RedirectToPage("./Index");
             }
             catch (Exception ex)
             {

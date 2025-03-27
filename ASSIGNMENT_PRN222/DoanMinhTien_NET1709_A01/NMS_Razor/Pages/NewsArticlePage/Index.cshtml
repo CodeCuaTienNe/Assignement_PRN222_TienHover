@@ -104,7 +104,7 @@ else
                             <div class="btn-group" role="group">
                                 <a asp-page="./Details" asp-route-id="@item.NewsArticleId" class="btn btn-info btn-sm">Detail</a>
                                 
-                                @if (role == staffRole && item.CreatedById == currentUserId)
+                                @if (role == staffRole)
                                 {
                                     <a asp-page="./Edit" asp-route-id="@item.NewsArticleId" class="btn btn-primary btn-sm">Edit</a>
                                     <a asp-page="./Delete" asp-route-id="@item.NewsArticleId" class="btn btn-danger btn-sm">Delete</a>
