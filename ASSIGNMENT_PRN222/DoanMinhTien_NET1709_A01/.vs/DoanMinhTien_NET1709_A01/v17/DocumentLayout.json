@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -78,19 +82,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Program.cs",
+              "RelativeDocumentMoniker": "NMS_Razor\\Program.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Program.cs",
+              "RelativeToolTip": "NMS_Razor\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T14:49:20.972Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\appsettings.json",
               "RelativeDocumentMoniker": "NMS_Razor\\appsettings.json",
               "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\appsettings.json",
               "RelativeToolTip": "NMS_Razor\\appsettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAwAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAARAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-03-27T07:49:29.049Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "_Layout.cshtml.css",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Shared\\_Layout.cshtml.css",
               "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Shared\\_Layout.cshtml.css",
@@ -102,7 +119,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Index.cshtml",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Index.cshtml",
               "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Index.cshtml",
@@ -114,7 +131,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Shared\\_Layout.cshtml",
@@ -126,7 +143,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Create.cshtml.cs",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml.cs",
               "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml.cs",
@@ -138,7 +155,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Logout.cshtml.cs",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Logout.cshtml.cs",
               "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Logout.cshtml.cs",
@@ -150,7 +167,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "Logout.cshtml",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Logout.cshtml",
               "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Logout.cshtml",
@@ -162,7 +179,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "programsession.snippet",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\thitot\\thitot\\csharp\\programsession.snippet",
               "RelativeDocumentMoniker": "..\\..\\..\\thitot\\thitot\\csharp\\programsession.snippet",
@@ -174,7 +191,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Create.cshtml",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml",
               "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml",
@@ -186,7 +203,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "NewsArticleDAO.cs",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_DAOs\\NewsArticleDAO.cs",
               "RelativeDocumentMoniker": "NMS_DAOs\\NewsArticleDAO.cs",
@@ -198,7 +215,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "AccountDAO.cs",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_DAOs\\AccountDAO.cs",
               "RelativeDocumentMoniker": "NMS_DAOs\\AccountDAO.cs",
@@ -210,7 +227,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "Login.cshtml.cs",
               "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\Login.cshtml.cs",
               "RelativeDocumentMoniker": "NMS_Razor\\Pages\\Login.cshtml.cs",

@@ -1,0 +1,64 @@
+﻿@page "/newsarticles/details"
+@using Microsoft.EntityFrameworkCore
+@using NMS_BusinessObjects
+@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>NewsArticle</h2>
+    <hr />
+    @if (newsarticle is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">NewsTitle</dt>
+            <dd class="col-sm-10">@newsarticle.NewsTitle</dd>
+            <dt class="col-sm-2">Headline</dt>
+            <dd class="col-sm-10">@newsarticle.Headline</dd>
+            <dt class="col-sm-2">CreatedDate</dt>
+            <dd class="col-sm-10">@newsarticle.CreatedDate</dd>
+            <dt class="col-sm-2">NewsContent</dt>
+            <dd class="col-sm-10">@newsarticle.NewsContent</dd>
+            <dt class="col-sm-2">NewsSource</dt>
+            <dd class="col-sm-10">@newsarticle.NewsSource</dd>
+            <dt class="col-sm-2">CategoryId</dt>
+            <dd class="col-sm-10">@newsarticle.CategoryId</dd>
+            <dt class="col-sm-2">NewsStatus</dt>
+            <dd class="col-sm-10">@newsarticle.NewsStatus</dd>
+            <dt class="col-sm-2">CreatedById</dt>
+            <dd class="col-sm-10">@newsarticle.CreatedById</dd>
+            <dt class="col-sm-2">UpdatedById</dt>
+            <dd class="col-sm-10">@newsarticle.UpdatedById</dd>
+            <dt class="col-sm-2">ModifiedDate</dt>
+            <dd class="col-sm-10">@newsarticle.ModifiedDate</dd>
+        </dl>
+        <div>
+            <a href="@($"/newsarticles/edit?newsarticleid={newsarticle.NewsArticleId}")">Edit</a> |
+            <a href="@($"/newsarticles")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private NewsArticle? newsarticle;
+
+    [SupplyParameterFromQuery]
+    private string NewsArticleId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        newsarticle = await context.NewsArticles.FirstOrDefaultAsync(m => m.NewsArticleId == NewsArticleId);
+
+        if (newsarticle is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

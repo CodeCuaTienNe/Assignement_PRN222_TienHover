@@ -1,0 +1,94 @@
+﻿@page "/newsarticles"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using NMS_BusinessObjects
+@using NMS_DAOs
+@using NMS_Repositories
+@inject INewsArticleRepository NewsArticleRepository
+@inject NavigationManager NavigationManager
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="newsarticles/create">Create New</a>
+</p>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search articles..." @bind="SearchTerm" @bind:event="oninput" />
+            <button class="btn btn-primary" @onclick="SearchArticles">Search</button>
+            <button class="btn btn-secondary" @onclick="ClearSearch">Clear</button>
+        </div>
+    </div>
+</div>
+
+@if (newsArticles == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <QuickGrid Class="table" Items="@newsArticles.AsQueryable()" TGridItem="NewsArticle">
+        <PropertyColumn Property="newsarticle => newsarticle.NewsTitle" />
+        <PropertyColumn Property="newsarticle => newsarticle.Headline" />
+        <PropertyColumn Property="newsarticle => newsarticle.CreatedDate" />
+        <PropertyColumn Property="newsarticle => newsarticle.NewsContent" />
+        <PropertyColumn Property="newsarticle => newsarticle.NewsSource" />
+        <PropertyColumn Property="newsarticle => newsarticle.CategoryId" />
+        <PropertyColumn Property="newsarticle => newsarticle.NewsStatus" />
+        <PropertyColumn Property="newsarticle => newsarticle.CreatedById" />
+        <PropertyColumn Property="newsarticle => newsarticle.UpdatedById" />
+        <PropertyColumn Property="newsarticle => newsarticle.ModifiedDate" />
+
+        <TemplateColumn Context="newsarticle">
+            <a href="@($"newsarticles/edit?newsarticleid={newsarticle.NewsArticleId}")">Edit</a> |
+            <a href="@($"newsarticles/details?newsarticleid={newsarticle.NewsArticleId}")">Details</a> |
+            <a href="@($"newsarticles/delete?newsarticleid={newsarticle.NewsArticleId}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+}
+
+@code {
+    private List<NewsArticle> newsArticles;
+    private string SearchTerm { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoadNewsArticles();
+    }
+
+    private void LoadNewsArticles()
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(SearchTerm))
+            {
+                newsArticles = NewsArticleRepository.SearchNewsArticles(SearchTerm);
+            }
+            else
+            {
+                newsArticles = NewsArticleRepository.GetAllNewsArticles();
+            }
+        }
+        catch (Exception ex)
+        {
+            // In a real application, you might want to use a logger or display the error to the user
+            Console.WriteLine($"Error loading news articles: {ex.Message}");
+            newsArticles = new List<NewsArticle>();
+        }
+    }
+
+    private void SearchArticles()
+    {
+        LoadNewsArticles();
+    }
+
+    private void ClearSearch()
+    {
+        SearchTerm = string.Empty;
+        LoadNewsArticles();
+    }
+}
