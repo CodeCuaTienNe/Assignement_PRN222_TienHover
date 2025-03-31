@@ -1,0 +1,60 @@
+﻿@page "/systemaccounts"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using NMS_BusinessObjects
+@using NMS_DAOs
+@using NMS_Repositories
+@inject IAccountRepository AccountRepository
+@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
+
+<PageTitle>System Accounts</PageTitle>
+
+<h1>System Accounts</h1>
+
+<p>
+    <a href="systemaccounts/create">Create New</a>
+</p>
+
+@if (systemAccounts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <QuickGrid Class="table" Items="@systemAccounts.AsQueryable()" TGridItem="SystemAccount">
+        <PropertyColumn Property="account => account.AccountId" Title="ID" />
+        <PropertyColumn Property="account => account.AccountName" Title="Account Name" />
+        <PropertyColumn Property="account => account.AccountEmail" Title="Email" />
+        <PropertyColumn Property="account => account.AccountRole" Title="Role" />
+        <PropertyColumn Property="account => account.AccountPassword" Title="Password" />
+
+        <TemplateColumn Context="account">
+            <a href="@($"systemaccounts/edit?accountid={account.AccountId}")">Edit</a> |
+            <a href="@($"systemaccounts/details?accountid={account.AccountId}")">Details</a> |
+            <a href="@($"systemaccounts/delete?accountid={account.AccountId}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+}
+
+@code {
+    private List<SystemAccount> systemAccounts;
+
+    protected override void OnInitialized()
+    {
+        LoadSystemAccounts();
+    }
+
+    private void LoadSystemAccounts()
+    {
+        try
+        {
+            systemAccounts = AccountRepository.GetAccounts();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading system accounts: {ex.Message}");
+            systemAccounts = new List<SystemAccount>();
+        }
+    }
+}

@@ -1,0 +1,104 @@
+﻿@page "/systemaccounts/edit"
+@using Microsoft.EntityFrameworkCore
+@using NMS_BusinessObjects
+@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>SystemAccount</h2>
+<hr />
+@if (SystemAccount is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="SystemAccount" OnValidSubmit="UpdateSystemAccount" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="SystemAccount.AccountId" value="@SystemAccount.AccountId" />
+                <div class="mb-3">
+                    <label for="accountname" class="form-label">AccountName:</label>
+                    <InputText id="accountname" @bind-Value="SystemAccount.AccountName" class="form-control" />
+                    <ValidationMessage For="() => SystemAccount.AccountName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="accountemail" class="form-label">AccountEmail:</label>
+                    <InputText id="accountemail" @bind-Value="SystemAccount.AccountEmail" class="form-control" />
+                    <ValidationMessage For="() => SystemAccount.AccountEmail" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="accountrole" class="form-label">AccountRole:</label>
+                    <InputNumber id="accountrole" @bind-Value="SystemAccount.AccountRole" class="form-control" />
+                    <ValidationMessage For="() => SystemAccount.AccountRole" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="accountpassword" class="form-label">AccountPassword:</label>
+                    <InputText id="accountpassword" @bind-Value="SystemAccount.AccountPassword" class="form-control" />
+                    <ValidationMessage For="() => SystemAccount.AccountPassword" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/systemaccounts">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private short AccountId { get; set; }
+
+    [SupplyParameterFromForm]
+    private SystemAccount? SystemAccount { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        SystemAccount ??= await context.SystemAccounts.FirstOrDefaultAsync(m => m.AccountId == AccountId);
+
+        if (SystemAccount is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateSystemAccount()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(SystemAccount!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!SystemAccountExists(SystemAccount!.AccountId))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/systemaccounts");
+    }
+
+    private bool SystemAccountExists(short accountid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.SystemAccounts.Any(e => e.AccountId == accountid);
+    }
+}

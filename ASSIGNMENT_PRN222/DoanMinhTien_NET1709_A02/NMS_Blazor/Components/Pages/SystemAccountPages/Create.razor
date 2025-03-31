@@ -1,0 +1,59 @@
+﻿@page "/systemaccounts/create"
+@using Microsoft.EntityFrameworkCore
+@using NMS_BusinessObjects
+@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>SystemAccount</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="SystemAccount" OnValidSubmit="AddSystemAccount" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="accountname" class="form-label">AccountName:</label> 
+                <InputText id="accountname" @bind-Value="SystemAccount.AccountName" class="form-control" /> 
+                <ValidationMessage For="() => SystemAccount.AccountName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="accountemail" class="form-label">AccountEmail:</label> 
+                <InputText id="accountemail" @bind-Value="SystemAccount.AccountEmail" class="form-control" /> 
+                <ValidationMessage For="() => SystemAccount.AccountEmail" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="accountrole" class="form-label">AccountRole:</label> 
+                <InputNumber id="accountrole" @bind-Value="SystemAccount.AccountRole" class="form-control" /> 
+                <ValidationMessage For="() => SystemAccount.AccountRole" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="accountpassword" class="form-label">AccountPassword:</label> 
+                <InputText id="accountpassword" @bind-Value="SystemAccount.AccountPassword" class="form-control" /> 
+                <ValidationMessage For="() => SystemAccount.AccountPassword" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/systemaccounts">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private SystemAccount SystemAccount { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddSystemAccount()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.SystemAccounts.Add(SystemAccount);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/systemaccounts");
+    }
+}

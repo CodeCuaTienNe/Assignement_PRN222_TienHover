@@ -1,0 +1,52 @@
+﻿@page "/systemaccounts/details"
+@using Microsoft.EntityFrameworkCore
+@using NMS_BusinessObjects
+@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>SystemAccount</h2>
+    <hr />
+    @if (systemaccount is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">AccountName</dt>
+            <dd class="col-sm-10">@systemaccount.AccountName</dd>
+            <dt class="col-sm-2">AccountEmail</dt>
+            <dd class="col-sm-10">@systemaccount.AccountEmail</dd>
+            <dt class="col-sm-2">AccountRole</dt>
+            <dd class="col-sm-10">@systemaccount.AccountRole</dd>
+            <dt class="col-sm-2">AccountPassword</dt>
+            <dd class="col-sm-10">@systemaccount.AccountPassword</dd>
+        </dl>
+        <div>
+            <a href="@($"/systemaccounts/edit?accountid={systemaccount.AccountId}")">Edit</a> |
+            <a href="@($"/systemaccounts")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private SystemAccount? systemaccount;
+
+    [SupplyParameterFromQuery]
+    private short AccountId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        systemaccount = await context.SystemAccounts.FirstOrDefaultAsync(m => m.AccountId == AccountId);
+
+        if (systemaccount is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}
