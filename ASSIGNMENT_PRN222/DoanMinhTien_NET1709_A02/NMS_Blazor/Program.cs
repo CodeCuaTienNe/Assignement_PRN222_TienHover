@@ -1,4 +1,5 @@
 using NMS_Blazor.Components;
+using NMS_Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,15 +9,20 @@ builder.Services.AddRazorComponents()
 
 var app = builder.Build();
 
+//DI 
+//DI 
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
 }
-
-app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();

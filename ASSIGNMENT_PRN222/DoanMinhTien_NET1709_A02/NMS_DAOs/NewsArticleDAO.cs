@@ -141,16 +141,21 @@ namespace NMS_DAOs
         {
             try
             {
-                var newsArticle = GetNewsArticleById(id);
-                if (newsArticle != null)
+                var newsArticle = _context.NewsArticles
+                    .Include(n => n.Tags)
+                    .FirstOrDefault(n => n.NewsArticleId == id);
+
+                if (newsArticle == null)
                 {
-                    _context.NewsArticles.Remove(newsArticle);
-                    _context.SaveChanges();
+                    throw new Exception($"News article with ID '{id}' not found");
                 }
-                else
-                {
-                    throw new Exception("News article not found");
-                }
+
+                // Clear all tags associated with this article
+                newsArticle.Tags.Clear();
+
+                // Delete the NewsArticle
+                _context.NewsArticles.Remove(newsArticle);
+                _context.SaveChanges();
             }
             catch (Exception ex)
             {
