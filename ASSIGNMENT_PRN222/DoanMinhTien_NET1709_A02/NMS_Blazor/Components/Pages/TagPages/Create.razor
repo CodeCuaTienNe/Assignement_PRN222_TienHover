@@ -1,49 +1,206 @@
 ﻿@page "/tags/create"
 @using Microsoft.EntityFrameworkCore
 @using NMS_BusinessObjects
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@inject ITagRepository TagRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Create</PageTitle>
+<PageTitle>Create Tag</PageTitle>
 
-<h1>Create</h1>
-
-<h2>Tag</h2>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <EditForm method="post" Model="Tag" OnValidSubmit="AddTag" FormName="create" Enhance>
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert"/>
-            <div class="mb-3">
-                <label for="tagname" class="form-label">TagName:</label> 
-                <InputText id="tagname" @bind-Value="Tag.TagName" class="form-control" /> 
-                <ValidationMessage For="() => Tag.TagName" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="note" class="form-label">Note:</label> 
-                <InputText id="note" @bind-Value="Tag.Note" class="form-control" /> 
-                <ValidationMessage For="() => Tag.Note" class="text-danger" /> 
-            </div>        
-            <button type="submit" class="btn btn-primary">Create</button>
-        </EditForm>
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/tags">Tags</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Tag</li>
+                </ol>
+            </nav>
+        </div>
     </div>
-</div>
 
-<div>
-    <a href="/tags">Back to List</a>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+        </div>
+    }
+    
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading form...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-white py-3">
+                        <h3 class="card-title mb-0">Create New Tag</h3>
+                    </div>
+                    
+                    <div class="card-body">
+                        <EditForm Model="tag" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger mb-4" />
+                            
+                            <div class="mb-3">
+                                <label for="tagname" class="form-label">Tag Name <span class="text-danger">*</span></label>
+                                <InputText id="tagname" @bind-Value="tag.TagName" class="form-control" required placeholder="Enter tag name" />
+                                <ValidationMessage For="@(() => tag.TagName)" class="text-danger" />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="note" class="form-label">Description</label>
+                                <InputTextArea id="note" @bind-Value="tag.Note" class="form-control" rows="3" placeholder="Enter description (optional)" />
+                                <ValidationMessage For="@(() => tag.Note)" class="text-danger" />
+                                <small class="form-text text-muted">Optional information about this tag</small>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary px-4" disabled="@(!isUserLoggedIn)">
+                                    <i class="bi bi-plus-circle me-1"></i> Create Tag
+                                </button>
+                                <a href="/tags" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-lg me-1"></i> Cancel
+                                </a>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Tag Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">Create descriptive, concise tag names</li>
+                            <li class="list-group-item px-0">Tags should be specific enough to be meaningful</li>
+                            <li class="list-group-item px-0">Tags help users find related content</li>
+                            <li class="list-group-item px-0">Use consistent naming conventions for tags</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                @if (isUserLoggedIn)
+                {
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0">Author Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><i class="bi bi-person-circle me-2"></i> <strong>@userName</strong></p>
+                            <p class="text-muted mb-0">
+                                This tag will be created under your account.
+                            </p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Not logged in!</strong>
+                        <p class="mb-0">Please <a href="/login" class="alert-link">log in</a> to create new tags.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>
 
 @code {
-    [SupplyParameterFromForm]
-    private Tag Tag { get; set; } = new();
+    private Tag tag = new Tag();
+    private string errorMessage;
+    private bool isLoading = true;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private string userName = string.Empty;
+    private int? userRole = null;
 
-    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task AddTag()
+    protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Tags.Add(Tag);
-        await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/tags");
+        try {
+            // Check authentication status
+            await CheckAuthenticationStatus();
+            
+            // Set initial values for the new tag with TagId explicitly set to 0
+            tag = new Tag { TagId = 0 };
+
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error loading page: " + ex.Message;
+            isLoading = false;
+        }
+    }
+    
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
+        
+        // Check if user has staff/admin role
+        if (isUserLoggedIn && (userRole != 1 && userRole != 2)) // Not staff or admin
+        {
+            // Redirect to unauthorized page if not staff/admin
+            NavigationManager.NavigateTo("/unauthorized");
+        }
+    }
+
+    private void HandleValidSubmit()
+    {
+        try
+        {
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(tag.TagName))
+            {
+                errorMessage = "Tag name is required";
+                return;
+            }
+
+            // Check if user is logged in
+            if (!isUserLoggedIn)
+            {
+                errorMessage = "You must be logged in to create tags";
+                return;
+            }
+            
+            try
+            {
+                // Add the tag
+                TagRepository.AddTag(tag);
+
+                // Everything succeeded, redirect to the list page
+                NavigationManager.NavigateTo("/tags");
+            }
+            catch (Exception dbEx)
+            {
+                // Handle specific database exceptions
+                errorMessage = "Error saving tag: " + dbEx.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error creating tag: " + ex.Message;
+        }
     }
 }

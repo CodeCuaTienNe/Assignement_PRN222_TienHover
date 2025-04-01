@@ -1,124 +1,241 @@
 ﻿@page "/tags/edit"
 @using Microsoft.EntityFrameworkCore
 @using NMS_BusinessObjects
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@inject ITagRepository TagRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
 <PageTitle>Edit Tag</PageTitle>
 
-<div class="container my-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="mb-0">Edit Tag</h1>
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/tags">Tags</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Tag</li>
+                </ol>
+            </nav>
+        </div>
     </div>
 
-    @if (Tag is null)
+    @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <div class="d-flex justify-content-center">
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+        </div>
+    }
+    
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
+            <p class="mt-2 text-muted">Loading tag data...</p>
+        </div>
+    }
+    else if (tag == null)
+    {
+        <div class="alert alert-warning border-0 shadow-sm">
+            <i class="bi bi-exclamation-triangle me-2"></i> Tag not found.
         </div>
     }
     else
     {
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h2 class="mb-0 h4">Edit Tag Information</h2>
-            </div>
-            <div class="card-body">
-                <EditForm method="post" Model="Tag" OnValidSubmit="UpdateTag" FormName="edit" Enhance>
-                    <DataAnnotationsValidator />
-                    <ValidationSummary role="alert" class="text-danger"/>
-                    <input type="hidden" name="Tag.TagId" value="@Tag.TagId" />
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                        <h3 class="card-title mb-0">Edit Tag</h3>
+                    </div>
                     
-                    <div class="row">
-                        <div class="col-md-8">
+                    <div class="card-body">
+                        <EditForm Model="tag" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger mb-4" />
+                            
+                            <input type="hidden" name="Tag.TagId" value="@tag.TagId" />
+                            
                             <div class="mb-3">
-                                <label for="tagname" class="form-label">Tag Name:</label>
-                                <InputText id="tagname" @bind-Value="Tag.TagName" class="form-control" />
-                                <ValidationMessage For="() => Tag.TagName" class="text-danger" />
-                                <small class="form-text text-muted">The tag name must be unique.</small>
+                                <label for="tagname" class="form-label">Tag Name <span class="text-danger">*</span></label>
+                                <InputText id="tagname" @bind-Value="tag.TagName" class="form-control" required />
+                                <ValidationMessage For="@(() => tag.TagName)" class="text-danger" />
                             </div>
                             
                             <div class="mb-3">
-                                <label for="note" class="form-label">Note:</label>
-                                <InputTextArea id="note" @bind-Value="Tag.Note" class="form-control" rows="3" />
-                                <ValidationMessage For="() => Tag.Note" class="text-danger" />
-                                <small class="form-text text-muted">Optional additional information about this tag.</small>
+                                <label for="note" class="form-label">Description</label>
+                                <InputTextArea id="note" @bind-Value="tag.Note" class="form-control" rows="3" />
+                                <ValidationMessage For="@(() => tag.Note)" class="text-danger" />
+                                <small class="form-text text-muted">Optional information about this tag</small>
                             </div>
-                        </div>
-                        
-                        <div class="col-md-4">
-                            <div class="card mb-3">
-                                <div class="card-header bg-light">Tag Information</div>
-                                <div class="card-body">
-                                    <p><strong>Tag ID:</strong> @Tag.TagId</p>
-                                </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary" disabled="@(!isUserLoggedIn)">
+                                    <i class="bi bi-save me-1"></i> Save Changes
+                                </button>
+                                <a href="/tags" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                                </a>
+                                <a href="@($"/tags/details?tagid={tag.TagId}")" class="btn btn-outline-info">
+                                    <i class="bi bi-eye me-1"></i> View Details
+                                </a>
                             </div>
-                        </div>
+                        </EditForm>
                     </div>
-                    
-                    <div class="d-flex gap-2 mt-3">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg me-1"></i> Save Changes
-                        </button>
-                        <a href="/tags" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-1"></i> Back to List
-                        </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Tag Information</h5>
                     </div>
-                </EditForm>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Tag ID</dt>
+                            <dd class="col-sm-8">@tag.TagId</dd>
+                            
+                            @if (isInUse)
+                            {
+                                <dt class="col-sm-4">Usage</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge bg-info">Used by articles</span>
+                                </dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+                
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Editing Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">Tag name should be concise and descriptive</li>
+                            <li class="list-group-item px-0">Use tags to group related articles together</li>
+                            <li class="list-group-item px-0">Keep tag names consistent across your content</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     }
 </div>
 
 @code {
-    [SupplyParameterFromQuery]
-    private int TagId { get; set; }
+    private Tag tag;
+    private string errorMessage;
+    private bool isLoading = true;
+    private bool isInUse = false;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private string userName = string.Empty;
+    private int? userRole = null;
 
-    [SupplyParameterFromForm]
-    private Tag? Tag { get; set; }
+    [SupplyParameterFromQuery(Name = "tagid")]
+    private string TagIdString { get; set; }
+
+    private int TagId => string.IsNullOrEmpty(TagIdString) ? 0 : int.Parse(TagIdString);
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Tag ??= await context.Tags.FirstOrDefaultAsync(m => m.TagId == TagId);
+        try {
+            // Check authentication status
+            await CheckAuthenticationStatus();
+            
+            // Load tag data
+            LoadData();
 
-        if (Tag is null)
+            isLoading = false;
+        }
+        catch (Exception ex)
         {
-            NavigationManager.NavigateTo("notfound");
+            errorMessage = "Error loading tag: " + ex.Message;
+            isLoading = false;
+        }
+    }
+    
+    private void LoadData()
+    {
+        try {
+            // Load the tag
+            tag = TagRepository.GetTagById(TagId);
+            
+            if (tag == null)
+            {
+                errorMessage = "Tag not found.";
+                return;
+            }
+            
+            // Check if tag is in use
+            isInUse = TagRepository.IsTagInUse(TagId);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading tag data: {ex.Message}";
+        }
+    }
+    
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
+        
+        // Check if user has staff/admin role
+        if (isUserLoggedIn && (userRole != 1 && userRole != 2)) // Not staff or admin
+        {
+            // Redirect to unauthorized page if not staff/admin
+            NavigationManager.NavigateTo("/unauthorized");
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task UpdateTag()
+    private void HandleValidSubmit()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Tag!).State = EntityState.Modified;
-
         try
         {
-            await context.SaveChangesAsync();
+            if (tag == null) return;
+            
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(tag.TagName))
+            {
+                errorMessage = "Tag name is required";
+                return;
+            }
+
+            // Check if user is logged in
+            if (!isUserLoggedIn)
+            {
+                errorMessage = "You must be logged in to edit tags";
+                return;
+            }
+            
+            try
+            {
+                // Update the tag
+                TagRepository.UpdateTag(tag);
+
+                // Everything succeeded, redirect to the list page
+                NavigationManager.NavigateTo("/tags");
+            }
+            catch (Exception dbEx)
+            {
+                errorMessage = "Error updating tag: " + dbEx.Message;
+            }
         }
-        catch (DbUpdateConcurrencyException)
+        catch (Exception ex)
         {
-            if (!TagExists(Tag!.TagId))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
+            errorMessage = "Error updating tag: " + ex.Message;
         }
-
-        NavigationManager.NavigateTo("/tags");
-    }
-
-    private bool TagExists(int tagid)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.Tags.Any(e => e.TagId == tagid);
     }
 }

@@ -1,48 +1,216 @@
 ﻿@page "/tags/details"
 @using Microsoft.EntityFrameworkCore
 @using NMS_BusinessObjects
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@inject ITagRepository TagRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Details</PageTitle>
+<PageTitle>Tag Details</PageTitle>
 
-<h1>Details</h1>
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/tags">Tags</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tag Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
-<div>
-    <h2>Tag</h2>
-    <hr />
-    @if (tag is null)
+    @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <p><em>Loading...</em></p>
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+        </div>
     }
-    else {
-        <dl class="row">
-            <dt class="col-sm-2">TagName</dt>
-            <dd class="col-sm-10">@tag.TagName</dd>
-            <dt class="col-sm-2">Note</dt>
-            <dd class="col-sm-10">@tag.Note</dd>
-        </dl>
-        <div>
-            <a href="@($"/tags/edit?tagid={tag.TagId}")">Edit</a> |
-            <a href="@($"/tags")">Back to List</a>
+    
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading tag details...</p>
+        </div>
+    }
+    else if (tag == null)
+    {
+        <div class="alert alert-warning border-0 shadow-sm">
+            <i class="bi bi-exclamation-triangle me-2"></i> Tag not found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-white py-3">
+                        <div>
+                            <h3 class="card-title mb-0">
+                                <span class="badge bg-secondary me-2">@tag.TagName</span>
+                            </h3>
+                        </div>
+                        <div class="btn-group">
+                            @if (isUserLoggedIn && (userRole == 1 || userRole == 2))
+                            {
+                                <a href="@($"tags/edit?tagid={tag.TagId}")" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-pencil-square me-1"></i> Edit
+                                </a>
+                                <a href="@($"tags/delete?tagid={tag.TagId}")" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash me-1"></i> Delete
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h5>Description</h5>
+                            <p>@(string.IsNullOrEmpty(tag.Note) ? "No description provided." : tag.Note)</p>
+                        </div>
+                        
+                        @if (relatedArticles != null && relatedArticles.Any())
+                        {
+                            <div class="mb-4">
+                                <h5>Related Articles</h5>
+                                <div class="list-group">
+                                    @foreach (var article in relatedArticles.Take(5))
+                                    {
+                                        <a href="@($"newsarticles/details?newsarticleid={article.NewsArticleId}")" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">@article.NewsTitle</h6>
+                                                <small>@article.CreatedDate?.ToString("dd MMM yyyy")</small>
+                                            </div>
+                                            <p class="mb-1 small text-truncate">@article.Headline</p>
+                                        </a>
+                                    }
+                                </div>
+                                
+                                @if (relatedArticles.Count > 5)
+                                {
+                                    <div class="text-center mt-2">
+                                        <p class="text-muted small">Showing 5 of @relatedArticles.Count articles</p>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="card-footer bg-white">
+                        <a href="/tags" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Tag Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-5">Tag ID</dt>
+                            <dd class="col-sm-7 text-break">@tag.TagId</dd>
+                            
+                            <dt class="col-sm-5">Articles</dt>
+                            <dd class="col-sm-7">
+                                <span class="badge bg-primary rounded-pill">@(relatedArticles?.Count ?? 0)</span>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                
+                @if (isUserLoggedIn && (userRole == 1 || userRole == 2))
+                {
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0">Administrative Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="@($"tags/edit?tagid={tag.TagId}")" class="btn btn-outline-primary">
+                                    <i class="bi bi-pencil-square me-1"></i> Edit This Tag
+                                </a>
+                                <a href="@($"tags/delete?tagid={tag.TagId}")" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash me-1"></i> Delete This Tag
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     }
 </div>
 
 @code {
-    private Tag? tag;
+    private Tag tag;
+    private List<NewsArticle> relatedArticles;
+    private string errorMessage;
+    private bool isLoading = true;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private string userName = string.Empty;
+    private int? userRole = null;
 
-    [SupplyParameterFromQuery]
-    private int TagId { get; set; }
+    [SupplyParameterFromQuery(Name = "tagid")]
+    private string TagIdString { get; set; }
+
+    private int TagId => string.IsNullOrEmpty(TagIdString) ? 0 : int.Parse(TagIdString);
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        tag = await context.Tags.FirstOrDefaultAsync(m => m.TagId == TagId);
-
-        if (tag is null)
+        try
         {
-            NavigationManager.NavigateTo("notfound");
+            await CheckAuthenticationStatus();
+            LoadTagData();
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error loading tag: " + ex.Message;
+            isLoading = false;
+        }
+    }
+    
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
+    }
+    
+    private void LoadTagData()
+    {
+        try
+        {
+            // Get the tag by ID from the repository
+            tag = TagRepository.GetTagById(TagId);
+            
+            if (tag == null)
+            {
+                errorMessage = "Tag not found.";
+                return;
+            }
+            
+            // Load related articles
+            relatedArticles = TagRepository.GetArticlesByTag(TagId);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading tag data: {ex.Message}";
         }
     }
 }

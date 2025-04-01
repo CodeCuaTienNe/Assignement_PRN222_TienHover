@@ -62,6 +62,14 @@ namespace NMS_DAOs
                     throw new Exception($"Tag with name '{tag.TagName}' already exists");
                 }
 
+                // Auto-generate ID by finding the max ID and adding 1
+                int maxId = 0;
+                if (_context.Tags.Any())
+                {
+                    maxId = _context.Tags.Max(t => t.TagId);
+                }
+                tag.TagId = maxId + 1;
+
                 _context.Tags.Add(tag);
                 _context.SaveChanges();
             }

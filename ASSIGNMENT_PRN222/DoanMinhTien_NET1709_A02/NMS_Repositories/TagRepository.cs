@@ -10,18 +10,31 @@ namespace NMS_Repositories
 {
     public class TagRepository : ITagRepository
     {
-        public List<Tag> GetAllTags() => TagDAO.Instance.GetAllTags();
+        public List<Tag> GetAllTags()
+            => TagDAO.Instance.GetAllTags();
+        
+        public Tag GetTagById(int id)
+            => TagDAO.Instance.GetTagById(id);
 
-        public Tag GetTagById(int id) => TagDAO.Instance.GetTagById(id);
+        public Tag GetTagByName(string name)
+            => TagDAO.Instance.GetTagByName(name);
 
-        public Tag GetTagByName(string name) => TagDAO.Instance.GetTagByName(name);
+        public void AddTag(Tag tag)
+           => TagDAO.Instance.AddTag(tag);
 
-        public void AddTag(Tag tag) => TagDAO.Instance.AddTag(tag);
-
-        public void UpdateTag(Tag tag) => TagDAO.Instance.UpdateTag(tag);
-
-        public void DeleteTag(int id) => TagDAO.Instance.DeleteTag(id);
-
-        public bool IsTagInUse(int id) => TagDAO.Instance.IsTagInUse(id);
+        public void UpdateTag(Tag tag)
+           => TagDAO.Instance.UpdateTag(tag);
+        
+        public void DeleteTag(int id)
+           => TagDAO.Instance.DeleteTag(id);
+           
+        public bool IsTagInUse(int id)
+            => TagDAO.Instance.IsTagInUse(id);
+            
+        public List<Tag> SearchTags(string searchTerm)
+            => TagDAO.Instance.SearchTags(searchTerm);
+            
+        public List<NewsArticle> GetArticlesByTag(int tagId)
+            => TagDAO.Instance.GetArticlesByTag(tagId);
     }
 }

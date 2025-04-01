@@ -2,36 +2,212 @@
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using NMS_BusinessObjects
-@using NMS_DAOs
-@implements IAsyncDisposable
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@inject ITagRepository TagRepository
+@inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Tags Management</PageTitle>
 
-<h1>Index</h1>
+<div class="container-fluid p-4">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-sm-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-dark mb-0">Tags Management</h2>
+                    <p class="text-muted">Create, view and manage content tags</p>
+                </div>
+                
+                @if (isUserLoggedIn && (userRole == 1 || userRole == 2))
+                {
+                    <a href="tags/create" class="btn btn-success mt-2 mt-sm-0">
+                        <i class="bi bi-plus-circle me-1"></i> New Tag
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
 
-<p>
-    <a href="tags/create">Create New</a>
-</p>
-
-<QuickGrid Class="table" Items="context.Tags">
-    <PropertyColumn Property="tag => tag.TagName" />
-    <PropertyColumn Property="tag => tag.Note" />
-
-    <TemplateColumn Context="tag">
-        <a href="@($"tags/edit?tagid={tag.TagId}")">Edit</a> |
-        <a href="@($"tags/details?tagid={tag.TagId}")">Details</a> |
-        <a href="@($"tags/delete?tagid={tag.TagId}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
-
-@code {
-    private FunewsManagementContext context = default!;
-
-    protected override void OnInitialized()
+    @if (!string.IsNullOrEmpty(errorMessage))
     {
-        context = DbFactory.CreateDbContext();
+        <div class="alert alert-danger border-0 shadow-sm alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+            <button type="button" class="btn-close" @onclick="@(() => errorMessage = null)"></button>
+        </div>
     }
 
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-white py-3">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-7">
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" placeholder="Search tags..." 
+                                       @bind="SearchTerm" @bind:event="oninput" />
+                                <button class="btn btn-secondary" @onclick="SearchTags">Search</button>
+                                @if (!string.IsNullOrEmpty(SearchTerm))
+                                {
+                                    <button class="btn btn-outline-secondary" @onclick="ClearSearch">Clear</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    @if (isLoading)
+                    {
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Loading tags...</p>
+                        </div>
+                    }
+                    else if (tags == null || !tags.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-tags display-4 text-muted"></i>
+                            <p class="mt-2">No tags found matching your criteria.</p>
+                            @if (!string.IsNullOrEmpty(SearchTerm))
+                            {
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="ClearSearch">
+                                    Clear Search
+                                </button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Tag Name</th>
+                                        <th>Description</th>
+                                        <th class="text-end pe-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in tags)
+                                    {
+                                        <tr>
+                                            <td class="ps-4">
+                                                <span class="badge bg-secondary">@item.TagName</span>
+                                            </td>
+                                            <td>
+                                                <div class="small text-muted text-truncate" style="max-width: 350px;">
+                                                    @(string.IsNullOrEmpty(item.Note) ? "—" : item.Note)
+                                                </div>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <div class="btn-group">
+                                                    <a href="@($"tags/details?tagid={item.TagId.ToString()}")" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye me-1"></i> View
+                                                    </a>
+                                                    
+                                                    @if (isUserLoggedIn && (userRole == 1 || userRole == 2))
+                                                    {
+                                                        <a href="@($"tags/edit?tagid={item.TagId.ToString()}")" 
+                                                           class="btn btn-sm btn-outline-secondary">
+                                                            <i class="bi bi-pencil me-1"></i> Edit
+                                                        </a>
+                                                        <a href="@($"tags/delete?tagid={item.TagId.ToString()}")" 
+                                                           class="btn btn-sm btn-outline-danger">
+                                                            <i class="bi bi-trash me-1"></i> Delete
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Tag> tags;
+    private string SearchTerm { get; set; }
+    private string errorMessage;
+    private bool isLoading = true;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private string userName = string.Empty;
+    private int? userRole = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await CheckAuthenticationStatus();
+            LoadTags();
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading tags: {ex.Message}";
+            isLoading = false;
+        }
+    }
+
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
+    }
+
+    private void LoadTags()
+    {
+        try
+        {
+            isLoading = true;
+            
+            if (!string.IsNullOrEmpty(SearchTerm))
+            {
+                tags = TagRepository.SearchTags(SearchTerm);
+            }
+            else
+            {
+                tags = TagRepository.GetAllTags();
+            }
+            
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading tags: {ex.Message}";
+            tags = new List<Tag>();
+            isLoading = false;
+        }
+    }
+
+    private void SearchTags()
+    {
+        LoadTags();
+    }
+
+    private void ClearSearch()
+    {
+        SearchTerm = string.Empty;
+        LoadTags();
+    }
 }
