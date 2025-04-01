@@ -2,80 +2,256 @@
 @using Microsoft.EntityFrameworkCore
 @using NMS_BusinessObjects
 @using NMS_Repositories
+@using NMS_Blazor.Services
 @inject INewsArticleRepository NewsArticleRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Details</PageTitle>
+<PageTitle>Article Details</PageTitle>
 
-<h1>Details</h1>
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/newsarticles">News Articles</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Article Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
-<div>
-    <h2>NewsArticle</h2>
-    <hr />
-    @if (newsarticle is null)
+    @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <p><em>Loading...</em></p>
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+        </div>
     }
-    else {
-        <dl class="row">
-            <dt class="col-sm-2">NewsTitle</dt>
-            <dd class="col-sm-10">@newsarticle.NewsTitle</dd>
-            <dt class="col-sm-2">Headline</dt>
-            <dd class="col-sm-10">@newsarticle.Headline</dd>
-            <dt class="col-sm-2">CreatedDate</dt>
-            <dd class="col-sm-10">@newsarticle.CreatedDate</dd>
-            <dt class="col-sm-2">NewsContent</dt>
-            <dd class="col-sm-10">@newsarticle.NewsContent</dd>
-            <dt class="col-sm-2">NewsSource</dt>
-            <dd class="col-sm-10">@newsarticle.NewsSource</dd>
-            <dt class="col-sm-2">CategoryId</dt>
-            <dd class="col-sm-10">@newsarticle.CategoryId</dd>
-            <dt class="col-sm-2">NewsStatus</dt>
-            <dd class="col-sm-10">@newsarticle.NewsStatus</dd>
-            <dt class="col-sm-2">CreatedById</dt>
-            <dd class="col-sm-10">@newsarticle.CreatedById</dd>
-            <dt class="col-sm-2">UpdatedById</dt>
-            <dd class="col-sm-10">@newsarticle.UpdatedById</dd>
-            <dt class="col-sm-2">ModifiedDate</dt>
-            <dd class="col-sm-10">@newsarticle.ModifiedDate</dd>
-        </dl>
-        <div>
-            <a href="@($"/newsarticles/edit?newsarticleid={newsarticle.NewsArticleId}")">Edit</a> |
-            <a href="@($"/newsarticles")">Back to List</a>
+    
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading article details...</p>
+        </div>
+    }
+    else if (newsArticle == null)
+    {
+        <div class="alert alert-warning border-0 shadow-sm">
+            <i class="bi bi-exclamation-triangle me-2"></i> News article not found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-white py-3">
+                        <div>
+                            <h3 class="card-title mb-0">@newsArticle.NewsTitle</h3>
+                            @if (newsArticle.NewsStatus == true)
+                            {
+                                <span class="badge bg-success rounded-pill">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary rounded-pill">Inactive</span>
+                            }
+                        </div>
+                        <div class="btn-group">
+                            @if (isUserLoggedIn && (userRole == 1 || userRole == 2) && 
+                                (userRole == 1 && userId == newsArticle.CreatedById))
+                            {
+                                <a href="@($"newsarticles/edit?newsarticleid={newsArticle.NewsArticleId}")" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-pencil-square me-1"></i> Edit
+                                </a>
+                                <a href="@($"newsarticles/delete?newsarticleid={newsArticle.NewsArticleId}")" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash me-1"></i> Delete
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="mb-4 d-flex align-items-center text-muted small">
+                            <span class="me-3">
+                                <i class="bi bi-calendar3 me-1"></i> 
+                                @(newsArticle.CreatedDate?.ToString("dd MMMM yyyy"))
+                            </span>
+                            <span class="me-3">
+                                <i class="bi bi-person me-1"></i> 
+                                @(newsArticle.CreatedBy?.AccountName ?? "Unknown")
+                            </span>
+                            @if (newsArticle.Category != null)
+                            {
+                                <span class="badge bg-info text-dark">
+                                    @newsArticle.Category.CategoryName
+                                </span>
+                            }
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5>Headline</h5>
+                            <p class="lead">@newsArticle.Headline</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5>Content</h5>
+                            <div class="p-3 bg-light rounded">
+                                <p style="white-space: pre-line">@newsArticle.NewsContent</p>
+                            </div>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(newsArticle.NewsSource))
+                        {
+                            <div class="mb-4">
+                                <h5>Source</h5>
+                                <p>@newsArticle.NewsSource</p>
+                            </div>
+                        }
+                        
+                        @if (articleTags != null && articleTags.Any())
+                        {
+                            <div class="mb-4">
+                                <h5>Tags</h5>
+                                <div class="d-flex flex-wrap gap-1">
+                                    @foreach (var tag in articleTags)
+                                    {
+                                        <span class="badge bg-secondary">@tag.TagName</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="card-footer bg-white">
+                        <a href="/newsarticles" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Article Metadata</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-5">Article ID</dt>
+                            <dd class="col-sm-7 text-break">@newsArticle.NewsArticleId</dd>
+                            
+                            <dt class="col-sm-5">Created By</dt>
+                            <dd class="col-sm-7">@newsArticle.CreatedBy?.AccountName</dd>
+                            
+                            <dt class="col-sm-5">Created On</dt>
+                            <dd class="col-sm-7">@(newsArticle.CreatedDate?.ToString("dd/MM/yyyy HH:mm"))</dd>
+                            
+                            @if (newsArticle.UpdatedById.HasValue)
+                            {
+                                <dt class="col-sm-5">Last Updated By</dt>
+                                <dd class="col-sm-7">@newsArticle.UpdatedById</dd>
+                                
+                                <dt class="col-sm-5">Last Modified</dt>
+                                <dd class="col-sm-7">@(newsArticle.ModifiedDate?.ToString("dd/MM/yyyy HH:mm"))</dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+                
+                @if (isUserLoggedIn && (userRole == 1 || userRole == 2))
+                {
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0">Administrative Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="@($"newsarticles/edit?newsarticleid={newsArticle.NewsArticleId}")" class="btn btn-outline-primary">
+                                    <i class="bi bi-pencil-square me-1"></i> Edit This Article
+                                </a>
+                                <a href="@($"newsarticles/delete?newsarticleid={newsArticle.NewsArticleId}")" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash me-1"></i> Delete This Article
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     }
 </div>
 
 @code {
-    private NewsArticle? newsarticle;
+    private NewsArticle newsArticle;
+    private List<Tag> articleTags;
+    private string errorMessage;
+    private bool isLoading = true;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private string userName = string.Empty;
+    private int? userRole = null;
 
     [SupplyParameterFromQuery]
-    private string? NewsArticleId { get; set; }
+    private string NewsArticleId { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await CheckAuthenticationStatus();
+            LoadArticleData();
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error loading article: " + ex.Message;
+            isLoading = false;
+        }
+    }
+    
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
+    }
+    
+    private void LoadArticleData()
     {
         try
         {
             if (!string.IsNullOrEmpty(NewsArticleId))
             {
-                // Make sure to use the injected NewsArticleRepository instance
-                newsarticle = NewsArticleRepository.GetNewsArticleById(NewsArticleId);
-
-                if (newsarticle is null)
+                // Get the article by ID from the repository
+                newsArticle = NewsArticleRepository.GetNewsArticleById(NewsArticleId);
+                
+                if (newsArticle == null)
                 {
-                    NavigationManager.NavigateTo("notfound");
+                    errorMessage = "News article not found.";
+                    return;
                 }
+                
+                // Load article tags
+                articleTags = NewsArticleRepository.GetTagsForArticle(NewsArticleId);
             }
             else
             {
-                NavigationManager.NavigateTo("notfound");
+                errorMessage = "News article ID is required.";
             }
         }
         catch (Exception ex)
         {
-            // In a real application, you might want to use a logger or display the error to the user
-            Console.WriteLine($"Error loading news article: {ex.Message}");
-            NavigationManager.NavigateTo("notfound");
+            errorMessage = $"Error loading article data: {ex.Message}";
         }
     }
 }

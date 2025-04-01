@@ -4,42 +4,72 @@
 @inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Edit Tag</PageTitle>
 
-<h1>Edit</h1>
-
-<h2>Tag</h2>
-<hr />
-@if (Tag is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="Tag" OnValidSubmit="UpdateTag" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
-                <input type="hidden" name="Tag.TagId" value="@Tag.TagId" />
-                <div class="mb-3">
-                    <label for="tagname" class="form-label">TagName:</label>
-                    <InputText id="tagname" @bind-Value="Tag.TagName" class="form-control" />
-                    <ValidationMessage For="() => Tag.TagName" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="note" class="form-label">Note:</label>
-                    <InputText id="note" @bind-Value="Tag.Note" class="form-control" />
-                    <ValidationMessage For="() => Tag.Note" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
-        </div>
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Edit Tag</h1>
     </div>
-}
 
-<div>
-    <a href="/tags">Back to List</a>
+    @if (Tag is null)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0 h4">Edit Tag Information</h2>
+            </div>
+            <div class="card-body">
+                <EditForm method="post" Model="Tag" OnValidSubmit="UpdateTag" FormName="edit" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary role="alert" class="text-danger"/>
+                    <input type="hidden" name="Tag.TagId" value="@Tag.TagId" />
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="tagname" class="form-label">Tag Name:</label>
+                                <InputText id="tagname" @bind-Value="Tag.TagName" class="form-control" />
+                                <ValidationMessage For="() => Tag.TagName" class="text-danger" />
+                                <small class="form-text text-muted">The tag name must be unique.</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="note" class="form-label">Note:</label>
+                                <InputTextArea id="note" @bind-Value="Tag.Note" class="form-control" rows="3" />
+                                <ValidationMessage For="() => Tag.Note" class="text-danger" />
+                                <small class="form-text text-muted">Optional additional information about this tag.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">Tag Information</div>
+                                <div class="card-body">
+                                    <p><strong>Tag ID:</strong> @Tag.TagId</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i> Save Changes
+                        </button>
+                        <a href="/tags" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        </a>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    }
 </div>
 
 @code {

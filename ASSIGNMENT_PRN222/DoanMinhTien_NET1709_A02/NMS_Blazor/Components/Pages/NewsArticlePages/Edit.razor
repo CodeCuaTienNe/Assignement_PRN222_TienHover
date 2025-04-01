@@ -11,45 +11,68 @@
 
 <PageTitle>Edit News Article</PageTitle>
 
-<div class="container my-4">
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/newsarticles">News Articles</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Article</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
     @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <div class="alert alert-danger" role="alert">
-            @errorMessage
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
         </div>
     }
     
     @if (isLoading)
     {
-        <div class="d-flex justify-content-center">
-            <div class="spinner-border" role="status">
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
+            <p class="mt-2 text-muted">Loading article data...</p>
         </div>
     }
     else if (newsArticle == null)
     {
-        <div class="alert alert-warning">
-            News article not found.
+        <div class="alert alert-warning border-0 shadow-sm">
+            <i class="bi bi-exclamation-triangle me-2"></i> News article not found.
         </div>
     }
     else
     {
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">Edit News Article</h2>
-            </div>
-            <div class="card-body">
-                <EditForm Model="newsArticle" OnValidSubmit="HandleValidSubmit">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary class="text-danger" />
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                        <h3 class="card-title mb-0">Edit Article</h3>
+                        <div class="badge @(isActive ? "bg-success" : "bg-secondary") rounded-pill px-3 py-2">
+                            @(isActive ? "Active" : "Inactive")
+                        </div>
+                    </div>
                     
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="newsArticleId" class="form-label">Article ID</label>
-                                <InputText id="newsArticleId" @bind-Value="newsArticle.NewsArticleId" class="form-control" disabled readonly />
-                                <small class="form-text text-muted">Article ID cannot be changed.</small>
+                    <div class="card-body">
+                        <EditForm Model="newsArticle" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger mb-4" />
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="newsArticleId" class="form-label">Article ID</label>
+                                    <input id="newsArticleId" value="@newsArticle.NewsArticleId" class="form-control" disabled readonly />
+                                    <small class="form-text text-muted">Article IDs cannot be modified after creation.</small>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="createdInfo" class="form-label">Creation Info</label>
+                                    <input id="createdInfo" value="@(newsArticle.CreatedDate?.ToString("dd MMM yyyy") ?? "") by @(newsArticle.CreatedBy?.AccountName ?? "Unknown")" class="form-control" disabled readonly />
+                                </div>
                             </div>
                             
                             <div class="mb-3">
@@ -77,87 +100,105 @@
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label">Tags</label>
-                                <div class="d-flex flex-wrap gap-2 border rounded p-2">
-                                    @foreach (var tag in allTags)
-                                    {
-                                        int tagId = tag.TagId;
-                                        bool isSelected = selectedTagIds.Contains(tagId);
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="checkbox" 
-                                                   value="@tagId" 
-                                                   id="tag-@tagId" 
-                                                   checked="@isSelected" 
-                                                   @onchange="@(e => ToggleTag(tagId, e.Value != null && (bool)e.Value))" />
-                                            <label class="form-check-label" for="tag-@tagId">
-                                                @tag.TagName
-                                            </label>
-                                        </div>
-                                    }
-                                </div>
-                                <small class="form-text text-muted">You can select multiple tags for this article</small>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="mb-3">
                                 <label for="newsContent" class="form-label">Content <span class="text-danger">*</span></label>
-                                <InputTextArea id="newsContent" @bind-Value="newsArticle.NewsContent" class="form-control" rows="8" required />
+                                <InputTextArea id="newsContent" @bind-Value="newsArticle.NewsContent" class="form-control" rows="10" required />
                                 <ValidationMessage For="@(() => newsArticle.NewsContent)" class="text-danger" />
                             </div>
                             
                             <div class="mb-3">
                                 <label for="newsSource" class="form-label">Source</label>
-                                <InputText id="newsSource" @bind-Value="newsArticle.NewsSource" class="form-control" />
+                                <InputText id="newsSource" @bind-Value="newsArticle.NewsSource" class="form-control" placeholder="Enter the source of information (optional)" />
                                 <ValidationMessage For="@(() => newsArticle.NewsSource)" class="text-danger" />
                             </div>
                             
-                            <div class="form-check mb-3">
+                            <div class="mb-4">
+                                <label class="form-label">Tags</label>
+                                <div class="border rounded p-3">
+                                    <div class="row g-2">
+                                        @foreach (var tag in allTags)
+                                        {
+                                            int tagId = tag.TagId;
+                                            bool isSelected = selectedTagIds.Contains(tagId);
+                                            <div class="col-md-3 col-sm-4 col-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           value="@tagId" 
+                                                           id="tag-@tagId" 
+                                                           checked="@isSelected" 
+                                                           @onchange="@(e => ToggleTag(tagId, e.Value != null && (bool)e.Value))" />
+                                                    <label class="form-check-label" for="tag-@tagId">
+                                                        @tag.TagName
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Select one or more relevant tags for this article.</small>
+                            </div>
+                            
+                            <div class="form-check form-switch mb-4">
                                 <input class="form-check-input" type="checkbox" 
                                        id="newsStatus"
                                        checked="@isActive"
                                        @onchange="@(e => isActive = e.Value != null && (bool)e.Value)" />
                                 <label class="form-check-label" for="newsStatus">
-                                    Active
+                                    Article is active
                                 </label>
+                                <small class="d-block form-text text-muted">Inactive articles won't be visible to regular users.</small>
                             </div>
                             
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="createdDate" class="form-label">Created Date</label>
-                                        <InputDate id="createdDate" @bind-Value="newsArticle.CreatedDate" class="form-control" readonly disabled />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="modifiedDate" class="form-label">Modified Date</label>
-                                        <InputDate id="modifiedDate" @bind-Value="newsArticle.ModifiedDate" class="form-control" readonly disabled />
-                                    </div>
-                                </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary" disabled="@(!isUserLoggedIn)">
+                                    <i class="bi bi-save me-1"></i> Save Changes
+                                </button>
+                                <a href="/newsarticles" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                                </a>
+                                <a href="@($"/newsarticles/details?newsarticleid={newsArticle.NewsArticleId}")" class="btn btn-outline-info">
+                                    <i class="bi bi-eye me-1"></i> View Details
+                                </a>
                             </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Article History</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-12 col-sm-5">Created by</dt>
+                            <dd class="col-12 col-sm-7">@newsArticle.CreatedBy?.AccountName</dd>
                             
-                            @if (isUserLoggedIn)
+                            <dt class="col-12 col-sm-5">Created on</dt>
+                            <dd class="col-12 col-sm-7">@newsArticle.CreatedDate?.ToString("dd MMM yyyy")</dd>
+                            
+                            @if (newsArticle.ModifiedDate.HasValue)
                             {
-                                <div class="alert alert-info">
-                                    <i class="bi bi-info-circle me-2"></i> You are editing this article as: <strong>@userName</strong>
-                                </div>
+                                <dt class="col-12 col-sm-5">Last updated</dt>
+                                <dd class="col-12 col-sm-7">@newsArticle.ModifiedDate?.ToString("dd MMM yyyy")</dd>
                             }
-                            else
-                            {
-                                <div class="alert alert-warning">
-                                    <i class="bi bi-exclamation-triangle me-2"></i> Please <a href="/login" class="alert-link">log in</a> to edit articles
-                                </div>
-                            }
-                        </div>
+                        </dl>
                     </div>
-                    
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary" disabled="@(!isUserLoggedIn)">Save Changes</button>
-                        <a href="/newsarticles" class="btn btn-outline-secondary">Back to List</a>
-                        <a href="@($"/newsarticles/details?newsarticleid={newsArticle.NewsArticleId}")" class="btn btn-outline-info">View Details</a>
+                </div>
+                
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Editing Tips</h5>
                     </div>
-                </EditForm>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">All fields marked with <span class="text-danger">*</span> are required</li>
+                            <li class="list-group-item px-0">Keep headlines concise and informative</li>
+                            <li class="list-group-item px-0">Add relevant tags to improve discoverability</li>
+                            <li class="list-group-item px-0">Toggle the active status to control visibility</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     }
@@ -202,37 +243,43 @@
     
     private void LoadData()
     {
-        // Load categories and tags
-        categories = CategoryRepository.GetAllCategories();
-        allTags = TagRepository.GetAllTags();
-        
-        // Load the news article
-        if (!string.IsNullOrEmpty(NewsArticleId))
-        {
-            newsArticle = NewsArticleRepository.GetNewsArticleById(NewsArticleId);
+        try {
+            // Load categories and tags
+            categories = CategoryRepository.GetAllCategories();
+            allTags = TagRepository.GetAllTags();
             
-            if (newsArticle == null)
+            // Load the news article
+            if (!string.IsNullOrEmpty(NewsArticleId))
             {
-                errorMessage = "News article not found.";
-                return;
+                newsArticle = NewsArticleRepository.GetNewsArticleById(NewsArticleId);
+                
+                if (newsArticle == null)
+                {
+                    errorMessage = "News article not found.";
+                    return;
+                }
+                
+                // Set selected category ID from article
+                selectedCategoryId = newsArticle.CategoryId;
+                
+                // Set active status from article's NewsStatus
+                isActive = newsArticle.NewsStatus == true;
+                
+                // Load article tags
+                var articleTags = NewsArticleRepository.GetTagsForArticle(NewsArticleId);
+                if (articleTags != null && articleTags.Any())
+                {
+                    selectedTagIds = articleTags.Select(t => t.TagId).ToList();
+                }
             }
-            
-            // Set selected category ID from article
-            selectedCategoryId = newsArticle.CategoryId;
-            
-            // Set active status from article's NewsStatus
-            isActive = newsArticle.NewsStatus == true;
-            
-            // Load article tags
-            var articleTags = NewsArticleRepository.GetTagsForArticle(NewsArticleId);
-            if (articleTags != null && articleTags.Any())
+            else
             {
-                selectedTagIds = articleTags.Select(t => t.TagId).ToList();
+                errorMessage = "News article ID is required.";
             }
         }
-        else
+        catch (Exception ex)
         {
-            errorMessage = "News article ID is required.";
+            errorMessage = $"Error loading article data: {ex.Message}";
         }
     }
     

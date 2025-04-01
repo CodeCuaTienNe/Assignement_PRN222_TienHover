@@ -4,66 +4,218 @@
 @using NMS_BusinessObjects
 @using NMS_DAOs
 @using NMS_Repositories
+@using NMS_Blazor.Services
 @inject INewsArticleRepository NewsArticleRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Index</PageTitle>
+<PageTitle>News Articles</PageTitle>
 
-<h1>Index</h1>
+<div class="container-fluid p-4">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-sm-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-dark mb-0">News Articles Management</h2>
+                    <p class="text-muted">View, create and manage all news articles</p>
+                </div>
+                
+                @if (isUserLoggedIn && (userRole == 1 || userRole == 2))
+                {
+                    <a href="newsarticles/create" class="btn btn-success mt-2 mt-sm-0">
+                        <i class="bi bi-plus-circle me-1"></i> New Article
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
 
-<p>
-    <a href="newsarticles/create">Create New</a>
-</p>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger border-0 shadow-sm alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+            <button type="button" class="btn-close" @onclick="@(() => errorMessage = null)"></button>
+        </div>
+    }
 
-<div class="row mb-3">
-    <div class="col-md-6">
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search articles..." @bind="SearchTerm" @bind:event="oninput" />
-            <button class="btn btn-primary" @onclick="SearchArticles">Search</button>
-            <button class="btn btn-secondary" @onclick="ClearSearch">Clear</button>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-white py-3">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-7">
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" placeholder="Search by title, headline or content..." 
+                                       @bind="SearchTerm" @bind:event="oninput" />
+                                <button class="btn btn-secondary" @onclick="SearchArticles">Search</button>
+                                @if (!string.IsNullOrEmpty(SearchTerm))
+                                {
+                                    <button class="btn btn-outline-secondary" @onclick="ClearSearch">Clear</button>
+                                }
+                            </div>
+                        </div>
+                        
+                        @if (isUserLoggedIn && userRole == 1) // Staff only
+                        {
+                            <div class="col-md-5 text-end">
+                                <div class="form-check form-switch float-md-end">
+                                    <input class="form-check-input" type="checkbox" id="myArticlesSwitch" 
+                                           checked="@myArticlesOnly" 
+                                           @onchange="@(e => ToggleMyArticlesFilter(e.Value != null && (bool)e.Value))" />
+                                    <label class="form-check-label ms-2" for="myArticlesSwitch">My Articles Only</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    @if (isLoading)
+                    {
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Loading articles...</p>
+                        </div>
+                    }
+                    else if (newsArticles == null || !newsArticles.Any())
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-inbox display-4 text-muted"></i>
+                            <p class="mt-2">No articles found matching your criteria.</p>
+                            @if (!string.IsNullOrEmpty(SearchTerm))
+                            {
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="ClearSearch">
+                                    Clear Search
+                                </button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Title</th>
+                                        <th>Category</th>
+                                        <th>Created</th>
+                                        <th>Author</th>
+                                        <th class="text-center">Status</th>
+                                        <th class="text-end pe-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in newsArticles)
+                                    {
+                                        <tr>
+                                            <td class="ps-4">
+                                                <div class="fw-medium">@item.NewsTitle</div>
+                                                <div class="small text-muted text-truncate" style="max-width: 350px;">@item.Headline</div>
+                                            </td>
+                                            <td>
+                                                @if (item.Category != null)
+                                                {
+                                                    <span class="badge bg-info text-dark">@item.Category.CategoryName</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Uncategorized</span>
+                                                }
+                                            </td>
+                                            <td class="text-nowrap">@(item.CreatedDate?.ToString("dd MMM yyyy"))</td>
+                                            <td>@(item.CreatedBy?.AccountName ?? "Unknown")</td>
+                                            <td class="text-center">
+                                                @if (item.NewsStatus == true)
+                                                {
+                                                    <span class="badge bg-success rounded-pill px-3">Active</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary rounded-pill px-3">Inactive</span>
+                                                }
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <div class="btn-group">
+                                                    <a href="@($"newsarticles/details?newsarticleid={item.NewsArticleId}")" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="bi bi-eye me-1"></i> View
+                                                    </a>
+                                                    
+                                                    @if (isUserLoggedIn && (userRole == 1 || userRole == 2))
+                                                    {
+                                                        <a href="@($"newsarticles/edit?newsarticleid={item.NewsArticleId}")" 
+                                                           class="btn btn-sm btn-outline-secondary">
+                                                            <i class="bi bi-pencil me-1"></i> Edit
+                                                        </a>
+                                                        <a href="@($"newsarticles/delete?newsarticleid={item.NewsArticleId}")" 
+                                                           class="btn btn-sm btn-outline-danger">
+                                                            <i class="bi bi-trash me-1"></i> Delete
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-@if (newsArticles == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <QuickGrid Class="table" Items="@newsArticles.AsQueryable()" TGridItem="NewsArticle">
-        <PropertyColumn Property="newsarticle => newsarticle.NewsTitle" />
-        <PropertyColumn Property="newsarticle => newsarticle.Headline" />
-        <PropertyColumn Property="newsarticle => newsarticle.CreatedDate" />
-        <PropertyColumn Property="newsarticle => newsarticle.NewsContent" />
-        <PropertyColumn Property="newsarticle => newsarticle.NewsSource" />
-        <PropertyColumn Property="newsarticle => newsarticle.CategoryId" />
-        <PropertyColumn Property="newsarticle => newsarticle.NewsStatus" />
-        <PropertyColumn Property="newsarticle => newsarticle.CreatedById" />
-        <PropertyColumn Property="newsarticle => newsarticle.UpdatedById" />
-        <PropertyColumn Property="newsarticle => newsarticle.ModifiedDate" />
-
-        <TemplateColumn Context="newsarticle">
-            <a href="@($"newsarticles/edit?newsarticleid={newsarticle.NewsArticleId}")">Edit</a> |
-            <a href="@($"newsarticles/details?newsarticleid={newsarticle.NewsArticleId}")">Details</a> |
-            <a href="@($"newsarticles/delete?newsarticleid={newsarticle.NewsArticleId}")">Delete</a>
-        </TemplateColumn>
-    </QuickGrid>
-}
-
 @code {
     private List<NewsArticle> newsArticles;
     private string SearchTerm { get; set; }
+    private string errorMessage;
+    private bool isLoading = true;
+    private bool myArticlesOnly = false;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private string userName = string.Empty;
+    private int? userRole = null;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        LoadNewsArticles();
+        try
+        {
+            await CheckAuthenticationStatus();
+            LoadNewsArticles();
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading news articles: {ex.Message}";
+            isLoading = false;
+        }
+    }
+
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
     }
 
     private void LoadNewsArticles()
     {
         try
         {
+            isLoading = true;
+            
             if (!string.IsNullOrEmpty(SearchTerm))
             {
                 newsArticles = NewsArticleRepository.SearchNewsArticles(SearchTerm);
@@ -72,12 +224,20 @@ else
             {
                 newsArticles = NewsArticleRepository.GetAllNewsArticles();
             }
+            
+            // Filter by current user if requested and user is logged in
+            if (myArticlesOnly && isUserLoggedIn && userId.HasValue)
+            {
+                newsArticles = newsArticles.Where(a => a.CreatedById == userId).ToList();
+            }
+            
+            isLoading = false;
         }
         catch (Exception ex)
         {
-            // In a real application, you might want to use a logger or display the error to the user
-            Console.WriteLine($"Error loading news articles: {ex.Message}");
+            errorMessage = $"Error loading news articles: {ex.Message}";
             newsArticles = new List<NewsArticle>();
+            isLoading = false;
         }
     }
 
@@ -89,6 +249,12 @@ else
     private void ClearSearch()
     {
         SearchTerm = string.Empty;
+        LoadNewsArticles();
+    }
+    
+    private void ToggleMyArticlesFilter(bool value)
+    {
+        myArticlesOnly = value;
         LoadNewsArticles();
     }
 }

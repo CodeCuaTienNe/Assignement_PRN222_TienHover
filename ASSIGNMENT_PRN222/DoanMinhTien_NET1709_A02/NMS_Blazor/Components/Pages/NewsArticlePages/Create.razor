@@ -11,41 +11,76 @@
 
 <PageTitle>Create News Article</PageTitle>
 
-<div class="container my-4">
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/newsarticles">News Articles</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Article</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
     @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <div class="alert alert-danger" role="alert">
-            @errorMessage
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
         </div>
     }
     
     @if (isLoading)
     {
-        <div class="d-flex justify-content-center">
-            <div class="spinner-border" role="status">
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
+            <p class="mt-2 text-muted">Loading form...</p>
         </div>
     }
     else
     {
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">Create News Article</h2>
-            </div>
-            <div class="card-body">
-                <EditForm Model="newsArticle" OnValidSubmit="HandleValidSubmit">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary class="text-danger" />
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-white py-3">
+                        <h3 class="card-title mb-0">Create New Article</h3>
+                    </div>
                     
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="newsArticleId" class="form-label">Article ID <span class="text-danger">*</span></label>
-                                <InputText id="newsArticleId" @bind-Value="newsArticle.NewsArticleId" class="form-control" required placeholder="Enter a unique ID for this article" />
-                                <small class="form-text text-muted">This ID must be unique and cannot be changed later.</small>
-                                <ValidationMessage For="@(() => newsArticle.NewsArticleId)" class="text-danger" />
-                                <button type="button" class="btn btn-sm btn-outline-secondary mt-1" @onclick="GenerateId">Generate ID</button>
+                    <div class="card-body">
+                        <EditForm Model="newsArticle" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger mb-4" />
+                            
+                            <div class="row mb-3 g-3">
+                                <div class="col-md-6">
+                                    <label for="newsArticleId" class="form-label">Article ID <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <InputText id="newsArticleId" @bind-Value="newsArticle.NewsArticleId" class="form-control" required placeholder="Enter article ID" />
+                                        <button type="button" class="btn btn-outline-secondary" @onclick="GenerateId">
+                                            <i class="bi bi-magic me-1"></i> Generate ID
+                                        </button>
+                                    </div>
+                                    <ValidationMessage For="@(() => newsArticle.NewsArticleId)" class="text-danger" />
+                                    <small class="form-text text-muted">A unique identifier for this article.</small>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+                                    <InputSelect id="category" @bind-Value="newsArticle.CategoryId" class="form-select">
+                                        <option value="">-- Select a category --</option>
+                                        @if (categories != null)
+                                        {
+                                            @foreach (var category in categories)
+                                            {
+                                                <option value="@category.CategoryId">@category.CategoryName</option>
+                                            }
+                                        }
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => newsArticle.CategoryId)" class="text-danger" />
+                                    <small class="form-text text-muted">The primary category for this article.</small>
+                                </div>
                             </div>
                             
                             <div class="mb-3">
@@ -58,47 +93,12 @@
                                 <label for="headline" class="form-label">Headline <span class="text-danger">*</span></label>
                                 <InputText id="headline" @bind-Value="newsArticle.Headline" class="form-control" required placeholder="Enter a brief headline/summary" />
                                 <ValidationMessage For="@(() => newsArticle.Headline)" class="text-danger" />
+                                <small class="form-text text-muted">A concise summary of the article content.</small>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
-                                <InputSelect id="category" @bind-Value="newsArticle.CategoryId" class="form-select">
-                                    <option value="">-- Select a category --</option>
-                                    @foreach (var category in categories)
-                                    {
-                                        <option value="@category.CategoryId">@category.CategoryName</option>
-                                    }
-                                </InputSelect>
-                                <ValidationMessage For="@(() => newsArticle.CategoryId)" class="text-danger" />
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Tags</label>
-                                <div class="d-flex flex-wrap gap-2 border rounded p-2">
-                                    @foreach (var tag in allTags)
-                                    {
-                                        int tagId = tag.TagId;
-                                        bool isSelected = selectedTagIds.Contains(tagId);
-                                        <div class="form-check me-3">
-                                            <input class="form-check-input" type="checkbox" 
-                                                   value="@tagId" 
-                                                   id="tag-@tagId" 
-                                                   checked="@isSelected" 
-                                                   @onchange="@(e => ToggleTag(tagId, e.Value != null && (bool)e.Value))" />
-                                            <label class="form-check-label" for="tag-@tagId">
-                                                @tag.TagName
-                                            </label>
-                                        </div>
-                                    }
-                                </div>
-                                <small class="form-text text-muted">You can select multiple tags for this article</small>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="newsContent" class="form-label">Content <span class="text-danger">*</span></label>
-                                <InputTextArea id="newsContent" @bind-Value="newsArticle.NewsContent" class="form-control" rows="8" required placeholder="Enter the full article content" />
+                                <InputTextArea id="newsContent" @bind-Value="newsArticle.NewsContent" class="form-control" rows="10" required placeholder="Enter the article content" />
                                 <ValidationMessage For="@(() => newsArticle.NewsContent)" class="text-danger" />
                             </div>
                             
@@ -106,50 +106,97 @@
                                 <label for="newsSource" class="form-label">Source</label>
                                 <InputText id="newsSource" @bind-Value="newsArticle.NewsSource" class="form-control" placeholder="Enter the source of this information (optional)" />
                                 <ValidationMessage For="@(() => newsArticle.NewsSource)" class="text-danger" />
+                                <small class="form-text text-muted">Optional reference to the original source.</small>
                             </div>
                             
-                            <div class="form-check mb-3">
+                            <div class="mb-4">
+                                <label class="form-label">Tags</label>
+                                <div class="border rounded p-3">
+                                    <div class="row g-2">
+                                        @foreach (var tag in allTags)
+                                        {
+                                            int tagId = tag.TagId;
+                                            bool isSelected = selectedTagIds.Contains(tagId);
+                                            <div class="col-md-3 col-sm-4 col-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           value="@tagId" 
+                                                           id="tag-@tagId" 
+                                                           checked="@isSelected" 
+                                                           @onchange="@(e => ToggleTag(tagId, e.Value != null && (bool)e.Value))" />
+                                                    <label class="form-check-label" for="tag-@tagId">
+                                                        @tag.TagName
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Select one or more relevant tags for this article.</small>
+                            </div>
+                            
+                            <div class="form-check form-switch mb-4">
                                 <input class="form-check-input" type="checkbox" 
                                        id="newsStatus"
                                        checked="@isActive"
                                        @onchange="@(e => isActive = e.Value != null && (bool)e.Value)" />
                                 <label class="form-check-label" for="newsStatus">
-                                    Active
+                                    Publish article immediately
                                 </label>
+                                <small class="d-block form-text text-muted">Inactive articles won't be visible to regular users.</small>
                             </div>
                             
-                            @if (isUserLoggedIn)
-                            {
-                                <div class="alert alert-info">
-                                    <i class="bi bi-info-circle me-2"></i> You are creating this article as: <strong>@userName</strong>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="alert alert-warning">
-                                    <i class="bi bi-exclamation-triangle me-2"></i> Please <a href="/login" class="alert-link">log in</a> to create articles
-                                </div>
-                            }
-                            
-                            <div class="card">
-                                <div class="card-header bg-light">Tips</div>
-                                <div class="card-body">
-                                    <ul class="mb-0">
-                                        <li>All fields marked with <span class="text-danger">*</span> are required</li>
-                                        <li>Article ID must be unique - you can enter your own or click "Generate ID"</li>
-                                        <li>New articles are automatically set to Active status</li>
-                                        <li>You can edit the article after creation</li>
-                                    </ul>
-                                </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-send me-1"></i> Create Article
+                                </button>
+                                <a href="/newsarticles" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-lg me-1"></i> Cancel
+                                </a>
                             </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Article Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">All fields marked with <span class="text-danger">*</span> are required</li>
+                            <li class="list-group-item px-0">Choose a descriptive title and headline</li>
+                            <li class="list-group-item px-0">Provide detailed content for better reader engagement</li>
+                            <li class="list-group-item px-0">Always cite sources when referencing external content</li>
+                            <li class="list-group-item px-0">Select relevant tags to improve discoverability</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                @if (isUserLoggedIn)
+                {
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0">Author Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><i class="bi bi-person-circle me-2"></i> <strong>@userName</strong></p>
+                            <p class="text-muted mb-0">
+                                This article will be created under your account.
+                            </p>
                         </div>
                     </div>
-                    
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Create Article</button>
-                        <a href="/newsarticles" class="btn btn-outline-secondary">Cancel</a>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Not logged in!</strong>
+                        <p class="mb-0">Please <a href="/login" class="alert-link">log in</a> to create new articles.</p>
                     </div>
-                </EditForm>
+                }
             </div>
         </div>
     }
@@ -221,11 +268,18 @@
 
     private void LoadLookupData()
     {
-        // Load categories
-        categories = CategoryRepository.GetAllCategories();
-        
-        // Load tags
-        allTags = TagRepository.GetAllTags();
+        try
+        {
+            // Load categories
+            categories = CategoryRepository.GetAllCategories();
+            
+            // Load tags
+            allTags = TagRepository.GetAllTags();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading form data: {ex.Message}";
+        }
     }
 
     private void ToggleTag(int tagId, bool isChecked)
