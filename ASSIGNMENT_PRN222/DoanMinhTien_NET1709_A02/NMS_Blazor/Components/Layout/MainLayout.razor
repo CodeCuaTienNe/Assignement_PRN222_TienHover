@@ -1,4 +1,8 @@
 ﻿@inherits LayoutComponentBase
+@using NMS_Blazor.Services
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+@implements IDisposable
 
 <div class="page">
     <div class="sidebar">
@@ -7,7 +11,21 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            @if (!isUserLoggedIn)
+            {
+                <a href="/login">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                </a>
+            }
+            else
+            {
+                <span class="me-3">
+                    <i class="bi bi-person-circle me-1"></i> @userName
+                </span>
+                <button class="btn btn-link px-0" @onclick="Logout">
+                    <i class="bi bi-box-arrow-left me-1"></i> Logout
+                </button>
+            }
         </div>
 
         <article class="content px-4">
@@ -21,3 +39,47 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    // User information
+    private bool isUserLoggedIn = false;
+    private string userName = string.Empty;
+    private int? userRole = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckAuthenticationStatus();
+        
+        // Subscribe to auth state changes
+        AuthService.AuthenticationStateChanged += OnAuthenticationStateChanged;
+    }
+
+    private async void OnAuthenticationStateChanged(object sender, EventArgs e)
+    {
+        await InvokeAsync(async () => {
+            await CheckAuthenticationStatus();
+            StateHasChanged();
+        });
+    }
+
+    private async Task CheckAuthenticationStatus()
+    {
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.Logout();
+        NavigationManager.NavigateTo("/", true);
+    }
+
+    public void Dispose()
+    {
+        // Unsubscribe from the event when the component is disposed
+        AuthService.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}

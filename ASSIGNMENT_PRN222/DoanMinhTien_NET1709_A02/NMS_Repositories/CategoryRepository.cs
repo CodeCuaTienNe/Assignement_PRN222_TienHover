@@ -27,5 +27,17 @@ namespace NMS_Repositories
            
         public bool IsCategoryInUse(short id)
             => CategoryDAO.Instance.IsCategoryInUse(id);
+            
+        public List<Category> SearchCategories(string searchTerm)
+            => CategoryDAO.Instance.SearchCategories(searchTerm);
+            
+        public List<Category> GetChildCategories(short parentId)
+            => CategoryDAO.Instance.GetChildCategories(parentId);
+            
+        public int GetArticleCountForCategory(short categoryId)
+            => CategoryDAO.Instance.GetArticleCountForCategory(categoryId);
+            
+        public List<NewsArticle> GetArticlesByCategory(short categoryId)
+            => CategoryDAO.Instance.GetArticlesByCategory(categoryId);
     }
 }

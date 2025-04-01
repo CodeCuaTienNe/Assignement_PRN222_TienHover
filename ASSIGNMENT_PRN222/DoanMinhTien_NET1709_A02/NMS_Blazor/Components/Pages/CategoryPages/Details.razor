@@ -1,88 +1,274 @@
 ﻿@page "/categories/details"
 @using Microsoft.EntityFrameworkCore
 @using NMS_BusinessObjects
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@inject ICategoryRepository CategoryRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
 <PageTitle>Category Details</PageTitle>
 
-<div class="container my-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="mb-0">Category Details</h1>
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/categories">Categories</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Category Details</li>
+                </ol>
+            </nav>
+        </div>
     </div>
 
-    @if (category is null)
+    @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <div class="d-flex justify-content-center">
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+        </div>
+    }
+    
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
+            <p class="mt-2 text-muted">Loading category details...</p>
         </div>
     }
-    else 
+    else if (category == null)
     {
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h2 class="mb-0 h4">@category.CategoryName</h2>
-                <div class="badge @(category.IsActive == true ? "bg-success" : "bg-danger")">
-                    @(category.IsActive == true ? "Active" : "Inactive")
+        <div class="alert alert-warning border-0 shadow-sm">
+            <i class="bi bi-exclamation-triangle me-2"></i> Category not found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-white py-3">
+                        <div>
+                            <h3 class="card-title mb-0">@category.CategoryName</h3>
+                            @if (category.IsActive == true)
+                            {
+                                <span class="badge bg-success rounded-pill">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary rounded-pill">Inactive</span>
+                            }
+                        </div>
+                        <div class="btn-group">
+                            @if (isUserLoggedIn && (userRole == 1 || userRole == 2))
+                            {
+                                <a href="@($"categories/edit?categoryid={category.CategoryId}")" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-pencil-square me-1"></i> Edit
+                                </a>
+                                <a href="@($"categories/delete?categoryid={category.CategoryId}")" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash me-1"></i> Delete
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h5>Description</h5>
+                            <p>@(string.IsNullOrEmpty(category.CategoryDesciption) ? "No description provided." : category.CategoryDesciption)</p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5>Parent Category</h5>
+                            @if (category.ParentCategory != null)
+                            {
+                                <p>
+                                    <a href="@($"categories/details?categoryid={category.ParentCategoryId}")" class="badge bg-info text-dark">
+                                        @category.ParentCategory.CategoryName
+                                    </a>
+                                </p>
+                            }
+                            else
+                            {
+                                <p>No parent category.</p>
+                            }
+                        </div>
+                        
+                        @if (childCategories != null && childCategories.Any())
+                        {
+                            <div class="mb-4">
+                                <h5>Child Categories</h5>
+                                <div class="d-flex flex-wrap gap-1">
+                                    @foreach (var child in childCategories)
+                                    {
+                                        <a href="@($"categories/details?categoryid={child.CategoryId}")" class="badge bg-primary text-white">
+                                            @child.CategoryName
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (relatedArticles != null && relatedArticles.Any())
+                        {
+                            <div class="mb-4">
+                                <h5>Related Articles</h5>
+                                <div class="list-group">
+                                    @foreach (var article in relatedArticles.Take(5))
+                                    {
+                                        <a href="@($"newsarticles/details?newsarticleid={article.NewsArticleId}")" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">@article.NewsTitle</h6>
+                                                <small>@article.CreatedDate?.ToString("dd MMM yyyy")</small>
+                                            </div>
+                                            <p class="mb-1 small text-truncate">@article.Headline</p>
+                                        </a>
+                                    }
+                                </div>
+                                
+                                @if (relatedArticles.Count > 5)
+                                {
+                                    <div class="text-center mt-2">
+                                        <p class="text-muted small">Showing 5 of @relatedArticles.Count articles</p>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                    
+                    <div class="card-footer bg-white">
+                        <a href="/categories" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-3">Category ID</dt>
-                    <dd class="col-sm-9">@category.CategoryId</dd>
-                    
-                    <dt class="col-sm-3">Category Name</dt>
-                    <dd class="col-sm-9">@category.CategoryName</dd>
-                    
-                    <dt class="col-sm-3">Description</dt>
-                    <dd class="col-sm-9">@(string.IsNullOrEmpty(category.CategoryDesciption) ? "N/A" : category.CategoryDesciption)</dd>
-                    
-                    <dt class="col-sm-3">Parent Category</dt>
-                    <dd class="col-sm-9">@(category.ParentCategory?.CategoryName ?? "None")</dd>
-                    
-                    <dt class="col-sm-3">Status</dt>
-                    <dd class="col-sm-9">
-                        <span class="badge @(category.IsActive == true ? "bg-success" : "bg-danger")">
-                            @(category.IsActive == true ? "Active" : "Inactive")
-                        </span>
-                    </dd>
-                </dl>
-            </div>
-            <div class="card-footer">
-                <div class="d-flex gap-2">
-                    <a href="@($"/categories/edit?categoryid={category.CategoryId}")" class="btn btn-primary">
-                        <i class="bi bi-pencil me-1"></i> Edit
-                    </a>
-                    <a href="@($"/categories/delete?categoryid={category.CategoryId}")" class="btn btn-danger">
-                        <i class="bi bi-trash me-1"></i> Delete
-                    </a>
-                    <a href="/categories" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-1"></i> Back to List
-                    </a>
+            
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Category Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-5">Category ID</dt>
+                            <dd class="col-sm-7 text-break">@category.CategoryId</dd>
+                            
+                            <dt class="col-sm-5">Status</dt>
+                            <dd class="col-sm-7">
+                                @if (category.IsActive == true)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </dd>
+                            
+                            <dt class="col-sm-5">Articles</dt>
+                            <dd class="col-sm-7">
+                                <span class="badge bg-primary rounded-pill">@(relatedArticles?.Count ?? 0)</span>
+                            </dd>
+                            
+                            <dt class="col-sm-5">Child Categories</dt>
+                            <dd class="col-sm-7">
+                                <span class="badge bg-info rounded-pill">@(childCategories?.Count ?? 0)</span>
+                            </dd>
+                        </dl>
+                    </div>
                 </div>
+                
+                @if (isUserLoggedIn && (userRole == 1 || userRole == 2))
+                {
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0">Administrative Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="@($"categories/edit?categoryid={category.CategoryId}")" class="btn btn-outline-primary">
+                                    <i class="bi bi-pencil-square me-1"></i> Edit This Category
+                                </a>
+                                <a href="@($"categories/delete?categoryid={category.CategoryId}")" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash me-1"></i> Delete This Category
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     }
 </div>
 
 @code {
-    private Category? category;
+    private Category category;
+    private List<Category> childCategories;
+    private List<NewsArticle> relatedArticles;
+    private string errorMessage;
+    private bool isLoading = true;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private string userName = string.Empty;
+    private int? userRole = null;
 
-    [SupplyParameterFromQuery]
-    private short CategoryId { get; set; }
+    [SupplyParameterFromQuery(Name = "categoryid")]
+    private string CategoryIdString { get; set; }
+
+    private short CategoryId => string.IsNullOrEmpty(CategoryIdString) ? (short)0 : short.Parse(CategoryIdString);
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        category = await context.Categories
-            .Include(c => c.ParentCategory)
-            .FirstOrDefaultAsync(m => m.CategoryId == CategoryId);
-
-        if (category is null)
+        try
         {
-            NavigationManager.NavigateTo("notfound");
+            await CheckAuthenticationStatus();
+            LoadCategoryData();
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error loading category: " + ex.Message;
+            isLoading = false;
+        }
+    }
+    
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
+    }
+    
+    private void LoadCategoryData()
+    {
+        try
+        {
+            // Get the category by ID from the repository
+            category = CategoryRepository.GetCategoryById(CategoryId);
+            
+            if (category == null)
+            {
+                errorMessage = "Category not found.";
+                return;
+            }
+            
+            // Load child categories
+            childCategories = CategoryRepository.GetChildCategories(CategoryId);
+            
+            // Load related articles
+            relatedArticles = CategoryRepository.GetArticlesByCategory(CategoryId);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading category data: {ex.Message}";
         }
     }
 }

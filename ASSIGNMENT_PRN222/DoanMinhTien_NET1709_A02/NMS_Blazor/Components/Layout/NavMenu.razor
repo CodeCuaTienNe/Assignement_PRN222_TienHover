@@ -1,12 +1,17 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using NMS_Blazor.Services
+@inject AuthService AuthService
+@implements IDisposable
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">NMS_Blazor</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -15,16 +20,69 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link" href="newsarticles">
+                <span class="bi bi-newspaper" aria-hidden="true"></span> News Articles
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
+        @if (isUserLoggedIn && (userRole == 1 || userRole == 2)) @* Staff/Admin Role *@
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="categories">
+                    <span class="bi bi-folder" aria-hidden="true"></span> Categories
+                </NavLink>
+            </div>
+            
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="tags">
+                    <span class="bi bi-tags" aria-hidden="true"></span> Tags
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    // User information
+    private bool isUserLoggedIn = false;
+    private int? userRole = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckAuthenticationStatus();
+        
+        // Subscribe to auth state changes
+        AuthService.AuthenticationStateChanged += OnAuthenticationStateChanged;
+    }
+
+    private async void OnAuthenticationStateChanged(object sender, EventArgs e)
+    {
+        await InvokeAsync(async () => {
+            await CheckAuthenticationStatus();
+            StateHasChanged();
+        });
+    }
+
+    private async Task CheckAuthenticationStatus()
+    {
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userRole = userInfo.UserRole;
+    }
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    public void Dispose()
+    {
+        // Unsubscribe from the event when the component is disposed
+        AuthService.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}
 

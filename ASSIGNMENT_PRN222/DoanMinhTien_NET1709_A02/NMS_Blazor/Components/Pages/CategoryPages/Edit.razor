@@ -1,105 +1,287 @@
-﻿@* @page "/categories/edit"
+﻿@page "/categories/edit"
 @using Microsoft.EntityFrameworkCore
 @using NMS_BusinessObjects
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@inject ICategoryRepository CategoryRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Edit Category</PageTitle>
 
-<h1>Edit</h1>
-
-<h2>Category</h2>
-<hr />
-@if (Category is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="Category" OnValidSubmit="UpdateCategory" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
-                <input type="hidden" name="Category.CategoryId" value="@Category.CategoryId" />
-                <div class="mb-3">
-                    <label for="categoryname" class="form-label">CategoryName:</label>
-                    <InputText id="categoryname" @bind-Value="Category.CategoryName" class="form-control" />
-                    <ValidationMessage For="() => Category.CategoryName" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="categorydesciption" class="form-label">CategoryDesciption:</label>
-                    <InputText id="categorydesciption" @bind-Value="Category.CategoryDesciption" class="form-control" />
-                    <ValidationMessage For="() => Category.CategoryDesciption" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="parentcategoryid" class="form-label">ParentCategoryId:</label>
-                    <InputNumber id="parentcategoryid" @bind-Value="Category.ParentCategoryId" class="form-control" />
-                    <ValidationMessage For="() => Category.ParentCategoryId" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="isactive" class="form-label">IsActive:</label>
-                    <InputCheckbox id="isactive" @bind-Value="Category.IsActive" class="form-check-input" />
-                    <ValidationMessage For="() => Category.IsActive" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/categories">Categories</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Category</li>
+                </ol>
+            </nav>
         </div>
     </div>
-}
 
-<div>
-    <a href="/categories">Back to List</a>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+        </div>
+    }
+    
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading category data...</p>
+        </div>
+    }
+    else if (category == null)
+    {
+        <div class="alert alert-warning border-0 shadow-sm">
+            <i class="bi bi-exclamation-triangle me-2"></i> Category not found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                        <h3 class="card-title mb-0">Edit Category</h3>
+                    </div>
+                    
+                    <div class="card-body">
+                        <EditForm Model="category" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger mb-4" />
+                            
+                            <input type="hidden" name="Category.CategoryId" value="@category.CategoryId" />
+                            
+                            <div class="mb-3">
+                                <label for="categoryname" class="form-label">Category Name <span class="text-danger">*</span></label>
+                                <InputText id="categoryname" @bind-Value="category.CategoryName" class="form-control" required />
+                                <ValidationMessage For="@(() => category.CategoryName)" class="text-danger" />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="categorydesciption" class="form-label">Description</label>
+                                <InputTextArea id="categorydesciption" @bind-Value="category.CategoryDesciption" class="form-control" rows="3" />
+                                <ValidationMessage For="@(() => category.CategoryDesciption)" class="text-danger" />
+                                <small class="form-text text-muted">Optional information about this category</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="parentcategory" class="form-label">Parent Category</label>
+                                <InputSelect id="parentcategory" @bind-Value="parentCategoryId" class="form-select">
+                                    <option value="">-- None --</option>
+                                    @if (parentCategories != null)
+                                    {
+                                        @foreach (var parent in parentCategories)
+                                        {
+                                            if (parent.CategoryId != category.CategoryId) // Prevent self-reference
+                                            {
+                                                <option value="@parent.CategoryId">@parent.CategoryName</option>
+                                            }
+                                        }
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => category.ParentCategoryId)" class="text-danger" />
+                                <small class="form-text text-muted">Optional parent category for hierarchical organization</small>
+                            </div>
+                            
+                            <div class="form-check form-switch mb-4">
+                                <input class="form-check-input" type="checkbox" 
+                                       id="isactive"
+                                       checked="@isActive"
+                                       @onchange="@(e => isActive = e.Value != null && (bool)e.Value)" />
+                                <label class="form-check-label" for="isactive">
+                                    Category is active
+                                </label>
+                                <small class="d-block form-text text-muted">Inactive categories may not appear in article selections</small>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary" disabled="@(!isUserLoggedIn)">
+                                    <i class="bi bi-save me-1"></i> Save Changes
+                                </button>
+                                <a href="/categories" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                                </a>
+                                <a href="@($"/categories/details?categoryid={category.CategoryId}")" class="btn btn-outline-info">
+                                    <i class="bi bi-eye me-1"></i> View Details
+                                </a>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Category Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Category ID</dt>
+                            <dd class="col-sm-8">@category.CategoryId</dd>
+                            
+                            @if (articleCount > 0)
+                            {
+                                <dt class="col-sm-4">Articles</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge bg-primary rounded-pill">@articleCount</span>
+                                </dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+                
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Editing Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">Category name should be concise and descriptive</li>
+                            <li class="list-group-item px-0">A parent category creates hierarchical organization</li>
+                            <li class="list-group-item px-0">Inactive categories can still be used but aren't shown in primary lists</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
-    [SupplyParameterFromQuery]
-    private short CategoryId { get; set; }
+    private Category category;
+    private List<Category> parentCategories = new List<Category>();
+    private string errorMessage;
+    private bool isLoading = true;
+    private bool isActive;
+    private short? parentCategoryId;
+    private int articleCount = 0;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private string userName = string.Empty;
+    private int? userRole = null;
 
-    [SupplyParameterFromForm]
-    private Category? Category { get; set; }
+    [SupplyParameterFromQuery(Name = "categoryid")]
+    private string CategoryIdString { get; set; }
+
+    private short CategoryId => string.IsNullOrEmpty(CategoryIdString) ? (short)0 : short.Parse(CategoryIdString);
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Category ??= await context.Categories.FirstOrDefaultAsync(m => m.CategoryId == CategoryId);
+        try {
+            // Check authentication status
+            await CheckAuthenticationStatus();
+            
+            // Load category data
+            LoadData();
 
-        if (Category is null)
+            isLoading = false;
+        }
+        catch (Exception ex)
         {
-            NavigationManager.NavigateTo("notfound");
+            errorMessage = "Error loading category: " + ex.Message;
+            isLoading = false;
+        }
+    }
+    
+    private void LoadData()
+    {
+        try {
+            // Load the category
+            category = CategoryRepository.GetCategoryById(CategoryId);
+            
+            if (category == null)
+            {
+                errorMessage = "Category not found.";
+                return;
+            }
+            
+            // Set active status
+            isActive = category.IsActive == true;
+            
+            // Set parent category ID
+            parentCategoryId = category.ParentCategoryId;
+            
+            // Load parent categories for dropdown
+            parentCategories = CategoryRepository.GetAllCategories();
+            
+            // Get the count of articles in this category
+            articleCount = CategoryRepository.GetArticleCountForCategory(CategoryId);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading category data: {ex.Message}";
+        }
+    }
+    
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
+        
+        // Check if user has staff/admin role
+        if (isUserLoggedIn && (userRole != 1 && userRole != 2)) // Not staff or admin
+        {
+            // Redirect to unauthorized page if not staff/admin
+            NavigationManager.NavigateTo("/unauthorized");
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task UpdateCategory()
+    private void HandleValidSubmit()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Category!).State = EntityState.Modified;
-
         try
         {
-            await context.SaveChangesAsync();
+            if (category == null) return;
+            
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(category.CategoryName))
+            {
+                errorMessage = "Category name is required";
+                return;
+            }
+
+            // Check if user is logged in
+            if (!isUserLoggedIn)
+            {
+                errorMessage = "You must be logged in to edit categories";
+                return;
+            }
+            
+            // Update parent category and status from form values
+            category.ParentCategoryId = parentCategoryId;
+            category.IsActive = isActive;
+            
+            try
+            {
+                // Update the category
+                CategoryRepository.UpdateCategory(category);
+
+                // Everything succeeded, redirect to the list page
+                NavigationManager.NavigateTo("/categories");
+            }
+            catch (Exception dbEx)
+            {
+                errorMessage = "Error updating category: " + dbEx.Message;
+            }
         }
-        catch (DbUpdateConcurrencyException)
+        catch (Exception ex)
         {
-            if (!CategoryExists(Category!.CategoryId))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
+            errorMessage = "Error updating category: " + ex.Message;
         }
-
-        NavigationManager.NavigateTo("/categories");
-    }
-
-    private bool CategoryExists(short categoryid)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.Categories.Any(e => e.CategoryId == categoryid);
     }
 }
- *@

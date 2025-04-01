@@ -34,6 +34,9 @@ builder.Services.AddScoped<IReportRepository, ReportRepository>();
 // Add AuthService
 builder.Services.AddScoped<AuthService>();
 
+// Add ProtectedSessionStorage for AuthService to use
+builder.Services.AddScoped<Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage.ProtectedSessionStorage>();
+
 // Add memory cache and use it as distributed cache
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<IDistributedCache, MemoryDistributedCache>();

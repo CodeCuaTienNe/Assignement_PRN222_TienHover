@@ -48,6 +48,12 @@ namespace NMS_DAOs
         {
             try
             {
+                // Check if category name already exists
+                if (_context.Categories.Any(c => c.CategoryName.ToLower() == category.CategoryName.ToLower()))
+                {
+                    throw new Exception($"Category with name '{category.CategoryName}' already exists");
+                }
+                
                 _context.Categories.Add(category);
                 _context.SaveChanges();
             }
@@ -61,6 +67,26 @@ namespace NMS_DAOs
         {
             try
             {
+                // Check if name is duplicated with another category
+                if (!string.IsNullOrEmpty(category.CategoryName))
+                {
+                    string nameLower = category.CategoryName.ToLower();
+                    var duplicateCategory = _context.Categories
+                        .Where(c => c.CategoryId != category.CategoryId && c.CategoryName.ToLower() == nameLower)
+                        .FirstOrDefault();
+                    
+                    if (duplicateCategory != null)
+                    {
+                        throw new Exception($"Category with name '{category.CategoryName}' already exists");
+                    }
+                }
+                
+                // Check for circular references in parent-child relationships
+                if (category.ParentCategoryId.HasValue && category.ParentCategoryId.Value == category.CategoryId)
+                {
+                    throw new Exception("A category cannot be its own parent");
+                }
+                
                 var existingCategory = _context.Categories.Find(category.CategoryId);
                 if (existingCategory != null)
                 {
@@ -83,6 +109,11 @@ namespace NMS_DAOs
             return _context.NewsArticles.Any(a => a.CategoryId == id);
         }
 
+        public bool HasChildCategories(short id)
+        {
+            return _context.Categories.Any(c => c.ParentCategoryId == id);
+        }
+
         public void DeleteCategory(short id)
         {
             try
@@ -97,7 +128,7 @@ namespace NMS_DAOs
                 if (category != null)
                 {
                     // Check if this category is used as a parent category
-                    if (_context.Categories.Any(c => c.ParentCategoryId == id))
+                    if (HasChildCategories(id))
                     {
                         throw new Exception("Cannot delete this category because it is used as a parent category.");
                     }
@@ -114,6 +145,43 @@ namespace NMS_DAOs
             {
                 throw new Exception("Error deleting category: " + ex.Message);
             }
+        }
+
+        public List<Category> SearchCategories(string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+                return GetAllCategories();
+                
+            // Convert search term to lowercase for case-insensitive comparison
+            string searchTermLower = searchTerm.ToLower();
+            
+            return _context.Categories
+                .Include(c => c.ParentCategory)
+                .Where(c => c.CategoryName.ToLower().Contains(searchTermLower) || 
+                           (c.CategoryDesciption != null && c.CategoryDesciption.ToLower().Contains(searchTermLower)))
+                .ToList();
+        }
+
+        public List<Category> GetChildCategories(short parentId)
+        {
+            return _context.Categories
+                .Where(c => c.ParentCategoryId == parentId)
+                .ToList();
+        }
+
+        public int GetArticleCountForCategory(short categoryId)
+        {
+            return _context.NewsArticles
+                .Count(a => a.CategoryId == categoryId);
+        }
+
+        public List<NewsArticle> GetArticlesByCategory(short categoryId)
+        {
+            return _context.NewsArticles
+                .Include(a => a.CreatedBy)
+                .Where(a => a.CategoryId == categoryId)
+                .OrderByDescending(a => a.CreatedDate)
+                .ToList();
         }
     }
 }

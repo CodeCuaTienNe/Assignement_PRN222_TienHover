@@ -12,6 +12,9 @@ namespace NMS_Blazor.Services
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthService> _logger;
 
+        // Add this event for notifying about authentication state changes
+        public event EventHandler AuthenticationStateChanged;
+
         public AuthService(
             IAccountRepository accountRepository, 
             ProtectedSessionStorage sessionStorage,
@@ -47,6 +50,9 @@ namespace NMS_Blazor.Services
                     await _sessionStorage.SetAsync("UserRole", adminRole);
                     await _sessionStorage.SetAsync("UserName", _configuration.GetValue<string>("AdminAccount:Name", "Administrator"));
                     
+                    // Notify subscribers about the state change
+                    AuthenticationStateChanged?.Invoke(this, EventArgs.Empty);
+
                     return (true, null, adminRole);
                 }
 
@@ -67,6 +73,9 @@ namespace NMS_Blazor.Services
                 await _sessionStorage.SetAsync("UserRole", user.AccountRole);
                 await _sessionStorage.SetAsync("UserName", user.AccountName);
                 
+                // Notify subscribers about the state change
+                AuthenticationStateChanged?.Invoke(this, EventArgs.Empty);
+
                 return (true, null, user.AccountRole);
             }
             catch (Exception ex)
@@ -81,6 +90,10 @@ namespace NMS_Blazor.Services
             await _sessionStorage.DeleteAsync("UserId");
             await _sessionStorage.DeleteAsync("UserEmail");
             await _sessionStorage.DeleteAsync("UserRole");
+            await _sessionStorage.DeleteAsync("UserName");
+            
+            // Notify subscribers about the state change
+            AuthenticationStateChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public async Task<bool> IsUserAuthenticated()

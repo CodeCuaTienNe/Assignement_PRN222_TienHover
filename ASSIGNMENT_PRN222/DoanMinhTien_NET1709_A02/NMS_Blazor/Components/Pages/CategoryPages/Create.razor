@@ -1,60 +1,239 @@
-﻿@* @page "/categories/create"
-@using Microsoft.EntityFrameworkCore
+﻿@page "/categories/create"
 @using NMS_BusinessObjects
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@inject ICategoryRepository CategoryRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Create</PageTitle>
+<PageTitle>Create Category</PageTitle>
 
-<h1>Create</h1>
-
-<h2>Category</h2>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <EditForm method="post" Model="Category" OnValidSubmit="AddCategory" FormName="create" Enhance>
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert"/>
-            <div class="mb-3">
-                <label for="categoryname" class="form-label">CategoryName:</label> 
-                <InputText id="categoryname" @bind-Value="Category.CategoryName" class="form-control" /> 
-                <ValidationMessage For="() => Category.CategoryName" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="categorydesciption" class="form-label">CategoryDesciption:</label> 
-                <InputText id="categorydesciption" @bind-Value="Category.CategoryDesciption" class="form-control" /> 
-                <ValidationMessage For="() => Category.CategoryDesciption" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="parentcategoryid" class="form-label">ParentCategoryId:</label> 
-                <InputNumber id="parentcategoryid" @bind-Value="Category.ParentCategoryId" class="form-control" /> 
-                <ValidationMessage For="() => Category.ParentCategoryId" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="isactive" class="form-label">IsActive:</label> 
-                <InputCheckbox id="isactive" @bind-Value="Category.IsActive" class="form-check-input" /> 
-                <ValidationMessage For="() => Category.IsActive" class="text-danger" /> 
-            </div>        
-            <button type="submit" class="btn btn-primary">Create</button>
-        </EditForm>
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/categories">Categories</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Category</li>
+                </ol>
+            </nav>
+        </div>
     </div>
-</div>
 
-<div>
-    <a href="/categories">Back to List</a>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+        </div>
+    }
+    
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading form...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-white py-3">
+                        <h3 class="card-title mb-0">Create New Category</h3>
+                    </div>
+                    
+                    <div class="card-body">
+                        <EditForm Model="category" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger mb-4" />
+                            
+                            <div class="mb-3">
+                                <label for="categoryname" class="form-label">Category Name <span class="text-danger">*</span></label>
+                                <InputText id="categoryname" @bind-Value="category.CategoryName" class="form-control" required placeholder="Enter category name" />
+                                <ValidationMessage For="@(() => category.CategoryName)" class="text-danger" />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="categorydesciption" class="form-label">Description</label>
+                                <InputTextArea id="categorydesciption" @bind-Value="category.CategoryDesciption" class="form-control" rows="3" placeholder="Enter description (optional)" />
+                                <ValidationMessage For="@(() => category.CategoryDesciption)" class="text-danger" />
+                                <small class="form-text text-muted">Optional information about this category</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="parentcategory" class="form-label">Parent Category</label>
+                                <InputSelect id="parentcategory" @bind-Value="category.ParentCategoryId" class="form-select">
+                                    <option value="">-- None --</option>
+                                    @foreach (var parent in parentCategories)
+                                    {
+                                        <option value="@parent.CategoryId">@parent.CategoryName</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => category.ParentCategoryId)" class="text-danger" />
+                                <small class="form-text text-muted">Optional parent category for hierarchical organization</small>
+                            </div>
+                            
+                            <div class="form-check form-switch mb-4">
+                                <input class="form-check-input" type="checkbox" 
+                                       id="isactive"
+                                       checked="@isActive"
+                                       @onchange="@(e => isActive = e.Value != null && (bool)e.Value)" />
+                                <label class="form-check-label" for="isactive">
+                                    Category is active
+                                </label>
+                                <small class="d-block form-text text-muted">Inactive categories may not appear in article selections</small>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-plus-circle me-1"></i> Create Category
+                                </button>
+                                <a href="/categories" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-lg me-1"></i> Cancel
+                                </a>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Category Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">Create descriptive, concise category names</li>
+                            <li class="list-group-item px-0">Add a parent category to create a hierarchy</li>
+                            <li class="list-group-item px-0">Categories organize your news articles</li>
+                            <li class="list-group-item px-0">Set a category as inactive if it shouldn't be shown in lists</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                @if (!isUserLoggedIn)
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Not logged in!</strong>
+                        <p class="mb-0">Please <a href="/login" class="alert-link">log in</a> to create new categories.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>
 
 @code {
-    [SupplyParameterFromForm]
-    private Category Category { get; set; } = new();
+    private Category category = new Category();
+    private List<Category> parentCategories = new List<Category>();
+    private string errorMessage;
+    private bool isLoading = true;
+    private bool isActive = true;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private string userName = string.Empty;
+    private int? userRole = null;
 
-    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task AddCategory()
+    protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Categories.Add(Category);
-        await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/categories");
+        try {
+            // Check authentication status
+            await CheckAuthenticationStatus();
+            
+            // Load parent categories
+            LoadParentCategories();
+
+            // Set initial values for the new category
+            category = new Category
+            {
+                IsActive = true
+            };
+
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error loading page: " + ex.Message;
+            isLoading = false;
+        }
+    }
+    
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
+        
+        // Check if user has staff/admin role
+        if (isUserLoggedIn && (userRole != 1 && userRole != 2)) // Not staff or admin
+        {
+            // Redirect to unauthorized page if not staff/admin
+            NavigationManager.NavigateTo("/unauthorized");
+        }
+    }
+
+    private void LoadParentCategories()
+    {
+        try
+        {
+            // Load all categories to use as potential parents
+            parentCategories = CategoryRepository.GetAllCategories();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading parent categories: {ex.Message}";
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(category.CategoryName))
+            {
+                errorMessage = "Category name is required";
+                return;
+            }
+
+            // Check if user is logged in
+            if (!isUserLoggedIn)
+            {
+                errorMessage = "You must be logged in to create categories";
+                return;
+            }
+            
+            // Set status from checkbox
+            category.IsActive = isActive;
+
+            try
+            {
+                // Add the category
+                CategoryRepository.AddCategory(category);
+
+                // Everything succeeded, redirect to the list page
+                NavigationManager.NavigateTo("/categories");
+            }
+            catch (Exception dbEx)
+            {
+                // Handle specific database exceptions
+                errorMessage = "Error saving category: " + dbEx.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error creating category: " + ex.Message;
+        }
     }
 }
- *@

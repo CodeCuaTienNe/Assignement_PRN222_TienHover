@@ -10,10 +10,16 @@ namespace NMS_Repositories
     public interface ICategoryRepository
     {
         List<Category> GetAllCategories();
-        Category GetCategoryById(short id); // Changed from int to short to match the model
+        Category GetCategoryById(short id);
         void AddCategory(Category category);
         void UpdateCategory(Category category);
-        void DeleteCategory(short id); // Changed from int to short
-        bool IsCategoryInUse(short id); // Add method to check if category is used by articles
+        void DeleteCategory(short id);
+        bool IsCategoryInUse(short id);
+        
+        // Add these missing methods to match what's used in the Blazor components
+        List<Category> SearchCategories(string searchTerm);
+        List<Category> GetChildCategories(short parentId);
+        int GetArticleCountForCategory(short categoryId);
+        List<NewsArticle> GetArticlesByCategory(short categoryId);
     }
 }
