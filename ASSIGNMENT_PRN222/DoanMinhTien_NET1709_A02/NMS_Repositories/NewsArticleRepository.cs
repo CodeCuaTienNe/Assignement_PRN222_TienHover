@@ -13,6 +13,8 @@ namespace NMS_Repositories
         public List<NewsArticle> GetAllNewsArticles() => NewsArticleDAO.Instance.GetNewsArticles();
 
         public NewsArticle GetNewsArticleById(string id) => NewsArticleDAO.Instance.GetNewsArticleById(id);
+        
+        public NewsArticle GetNewsArticleByTitle(string title) => NewsArticleDAO.Instance.GetNewsArticleByTitle(title);
 
         public void AddNewsArticle(NewsArticle newsArticle) => NewsArticleDAO.Instance.AddNewsArticle(newsArticle);
 

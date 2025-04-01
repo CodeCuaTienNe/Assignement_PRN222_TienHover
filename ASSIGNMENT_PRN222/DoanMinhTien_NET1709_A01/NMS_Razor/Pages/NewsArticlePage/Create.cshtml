@@ -13,12 +13,7 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
-            <div class="form-group mb-3">
-                <label asp-for="NewsArticle.NewsArticleId" class="control-label">Article ID <span class="text-danger">*</span></label>
-                <input asp-for="NewsArticle.NewsArticleId" class="form-control" required placeholder="Enter a unique ID for this article" />
-                <small class="form-text text-muted">This ID must be unique and cannot be changed later.</small>
-                <span asp-validation-for="NewsArticle.NewsArticleId" class="text-danger"></span>
-            </div>
+            <!-- Remove the ID field completely since it will be auto-generated -->
             
             <div class="form-group mb-3">
                 <label asp-for="NewsArticle.NewsTitle" class="control-label">Title <span class="text-danger">*</span></label>
@@ -52,6 +47,26 @@
                 <span asp-validation-for="NewsArticle.CategoryId" class="text-danger"></span>
             </div>
             
+            <div class="form-group mb-3">
+                <label class="control-label">Tags</label>
+                <div class="border rounded p-3">
+                    <div class="d-flex flex-wrap gap-2">
+                        @for (var i = 0; i < Model.AvailableTags.Count; i++)
+                        {
+                            var tag = Model.AvailableTags[i];
+                            <div class="form-check me-3">
+                                <input type="checkbox" class="form-check-input" 
+                                       id="tag-@tag.TagId" 
+                                       name="SelectedTagIds" 
+                                       value="@tag.TagId" />
+                                <label class="form-check-label" for="tag-@tag.TagId">@tag.TagName</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <small class="form-text text-muted">Select one or more tags that apply to this article</small>
+            </div>
+            
             <!-- Hidden fields -->
             <input type="hidden" asp-for="NewsArticle.NewsStatus" value="true" />
             <input type="hidden" asp-for="NewsArticle.CreatedDate" />
@@ -59,7 +74,7 @@
             
             <div class="form-group mt-4 d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Create Article</button>
-                <a asp-page="MyNews" class="btn btn-secondary">Back to My News</a>
+                <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
@@ -69,8 +84,9 @@
             <div class="card-body">
                 <ul class="mb-0">
                     <li>All fields marked with <span class="text-danger">*</span> are required</li>
-                    <li>Article ID must be unique</li>
+                    <li>Article ID will be automatically generated</li>
                     <li>New articles are automatically set to Active status</li>
+                    <li>Select relevant tags to improve article discoverability</li>
                     <li>You can edit the article after creation</li>
                 </ul>
             </div>
@@ -80,4 +96,17 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Store form field values in local storage before form submission
+        document.querySelector('form').addEventListener('submit', function() {
+            // Get all selected tag IDs
+            var selectedTags = [];
+            document.querySelectorAll('input[name="SelectedTagIds"]:checked').forEach(function(checkbox) {
+                selectedTags.push(checkbox.value);
+            });
+            
+            // Store them in localStorage
+            localStorage.setItem('selectedTags', JSON.stringify(selectedTags));
+        });
+    </script>
 }

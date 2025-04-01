@@ -49,19 +49,16 @@ namespace NMS_DAOs
 
         public NewsArticle GetNewsArticleByTitle(string title)
         {
-            return _context.NewsArticles.SingleOrDefault(m=>m.NewsTitle.Equals(title));
+            return _context.NewsArticles.SingleOrDefault(m => m.NewsTitle.Equals(title));
         }
 
         public void AddNewsArticle(NewsArticle newsArticle)
         {
             try
             {
-                // Kiểm tra ID đã tồn tại chưa
-                var existingArticleById = _context.NewsArticles.FirstOrDefault(a => a.NewsArticleId == newsArticle.NewsArticleId);
-                if (existingArticleById != null)
-                {
-                    throw new Exception($"News article with ID '{newsArticle.NewsArticleId}' is already existed");
-                }
+                // Auto-generate news article ID
+                string newId = GenerateNewsArticleId();
+                newsArticle.NewsArticleId = newId;
 
                 // Kiểm tra tiêu đề đã tồn tại chưa
                 var existingArticleByTitle = GetNewsArticleByTitle(newsArticle.NewsTitle);
@@ -80,18 +77,49 @@ namespace NMS_DAOs
             }
         }
 
+        // New method to generate news article ID
+        private string GenerateNewsArticleId()
+        {
+            // Get the highest current ID
+            var existingIds = _context.NewsArticles
+                .Select(a => a.NewsArticleId)
+                .ToList();
+
+            // If no articles exist, start with "1"
+            if (!existingIds.Any())
+            {
+                return "1";
+            }
+
+            // Try to find numeric values in existing IDs
+            var numericIds = new List<int>();
+            foreach (var id in existingIds)
+            {
+                if (int.TryParse(id, out int numericId))
+                {
+                    numericIds.Add(numericId);
+                }
+            }
+
+            // Get the max numeric ID and add 1, or start with 1 if no valid numeric IDs found
+            int newNumericId = (numericIds.Any() ? numericIds.Max() : 0) + 1;
+
+            // Return the new ID as a simple string number
+            return newNumericId.ToString();
+        }
+
         public List<NewsArticle> SearchNewsArticles(string searchTerm)
         {
             try
             {
                 // Convert the search term to lowercase for case-insensitive comparison
                 string searchTermLower = searchTerm.ToLower();
-                
+
                 return _context.NewsArticles
                     .Include(n => n.Category)
                     .Include(n => n.CreatedBy)
-                    .Where(n => 
-                        (n.NewsTitle != null && n.NewsTitle.ToLower().Contains(searchTermLower)) || 
+                    .Where(n =>
+                        (n.NewsTitle != null && n.NewsTitle.ToLower().Contains(searchTermLower)) ||
                         (n.Headline != null && n.Headline.ToLower().Contains(searchTermLower)) ||
                         (n.NewsContent != null && n.NewsContent.ToLower().Contains(searchTermLower)))
                     .OrderByDescending(n => n.CreatedDate)
@@ -170,15 +198,15 @@ namespace NMS_DAOs
                 var newsArticle = _context.NewsArticles
                     .Include(n => n.Tags)
                     .FirstOrDefault(n => n.NewsArticleId == newsArticleId);
-                    
+
                 if (newsArticle == null)
                 {
                     throw new Exception("News article not found");
                 }
-                
+
                 // Clear existing tags
                 newsArticle.Tags.Clear();
-                
+
                 // Add selected tags
                 foreach (var tagId in tagIds)
                 {
@@ -188,7 +216,7 @@ namespace NMS_DAOs
                         newsArticle.Tags.Add(tag);
                     }
                 }
-                
+
                 _context.SaveChanges();
             }
             catch (Exception ex)
@@ -204,12 +232,12 @@ namespace NMS_DAOs
                 var newsArticle = _context.NewsArticles
                     .Include(n => n.Tags)
                     .FirstOrDefault(n => n.NewsArticleId == newsArticleId);
-                    
+
                 if (newsArticle == null)
                 {
                     throw new Exception("News article not found");
                 }
-                
+
                 return newsArticle.Tags.ToList();
             }
             catch (Exception ex)

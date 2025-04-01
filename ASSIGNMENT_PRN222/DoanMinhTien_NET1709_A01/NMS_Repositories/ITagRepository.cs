@@ -11,10 +11,12 @@ namespace NMS_Repositories
     {
         List<Tag> GetAllTags();
         Tag GetTagById(int id);
-        Tag GetTagByName(string name);
         void AddTag(Tag tag);
         void UpdateTag(Tag tag);
         void DeleteTag(int id);
         bool IsTagInUse(int id);
+        Tag GetTagByName(string name);
+        List<Tag> SearchTags(string searchTerm);
+        List<NewsArticle> GetArticlesByTag(int tagId);
     }
 }

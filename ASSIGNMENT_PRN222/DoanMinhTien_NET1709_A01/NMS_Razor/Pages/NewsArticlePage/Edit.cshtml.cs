@@ -31,6 +31,8 @@ namespace NMS_Razor.Pages.NewsArticlePage
         [BindProperty]
         public List<int> SelectedTagIds { get; set; } = new List<int>();
 
+        public List<Tag> AvailableTags { get; set; } = new List<Tag>();
+
         [TempData]
         public string SuccessMessage { get; set; }
         
@@ -71,11 +73,12 @@ namespace NMS_Razor.Pages.NewsArticlePage
             NewsArticle = newsArticle;
             ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
             
-            // Get all tags for the dropdown
-            ViewData["AvailableTags"] = new MultiSelectList(_tagRepository.GetAllTags(), "TagId", "TagName");
+            // Load available tags
+            AvailableTags = _tagRepository.GetAllTags();
             
-            // Preselect the tags that are already associated with this article
-            SelectedTagIds = _newsArticleRepository.GetTagsForArticle(id).Select(t => t.TagId).ToList();
+            // Load currently selected tags
+            var currentTags = _newsArticleRepository.GetTagsForArticle(id);
+            SelectedTagIds = currentTags.Select(t => t.TagId).ToList();
             
             return Page();
         }
@@ -102,8 +105,9 @@ namespace NMS_Razor.Pages.NewsArticlePage
 
             if (!ModelState.IsValid)
             {
+                // Re-populate dropdown lists
                 ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
-                ViewData["AvailableTags"] = new MultiSelectList(_tagRepository.GetAllTags(), "TagId", "TagName", SelectedTagIds);
+                AvailableTags = _tagRepository.GetAllTags();
                 return Page();
             }
 
@@ -126,7 +130,7 @@ namespace NMS_Razor.Pages.NewsArticlePage
             {
                 _newsArticleRepository.UpdateNewsArticle(NewsArticle);
                 
-                // Update the tags for this article
+                // Update tags
                 _newsArticleRepository.AddTagsToArticle(NewsArticle.NewsArticleId, SelectedTagIds);
                 
                 SuccessMessage = "Article updated successfully!";
@@ -137,7 +141,7 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 ErrorMessage = $"Failed to update article: {ex.Message}";
                 ModelState.AddModelError("", ErrorMessage);
                 ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
-                ViewData["AvailableTags"] = new MultiSelectList(_tagRepository.GetAllTags(), "TagId", "TagName", SelectedTagIds);
+                AvailableTags = _tagRepository.GetAllTags();
                 return Page();
             }
         }

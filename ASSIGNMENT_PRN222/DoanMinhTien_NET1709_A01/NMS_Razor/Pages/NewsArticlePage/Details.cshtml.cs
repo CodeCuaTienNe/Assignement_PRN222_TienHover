@@ -21,7 +21,7 @@ namespace NMS_Razor.Pages.NewsArticlePage
         }
 
         public NewsArticle NewsArticle { get; set; } = default!;
-        public List<Tag> Tags { get; set; } = new List<Tag>();
+        public List<Tag> ArticleTags { get; set; } = new List<Tag>();
 
         public IActionResult OnGet(string id)
         {
@@ -50,8 +50,8 @@ namespace NMS_Razor.Pages.NewsArticlePage
             
             NewsArticle = newsArticle;
             
-            // Get the tags for this article
-            Tags = _newsArticleRepository.GetTagsForArticle(id);
+            // Load tags for this article
+            ArticleTags = _newsArticleRepository.GetTagsForArticle(id);
             
             return Page();
         }

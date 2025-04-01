@@ -4,7 +4,7 @@
 @inject IConfiguration Configuration
 
 @{
-    ViewData["Title"] = "Chi tiết bài viết";
+    ViewData["Title"] = "Article Details";
     
     var role = HttpContext.Session.GetInt32("AccountRole");
     var adminRole = int.Parse(Configuration["AdminRole"] ?? "3");
@@ -84,6 +84,27 @@
         </dd>
     </dl>
 </div>
+
+<!-- Add a section for tags -->
+<div class="row mt-3">
+    <div class="col-md-12">
+        <h5>Tags</h5>
+        <div class="mb-3">
+            @if (Model.ArticleTags != null && Model.ArticleTags.Any())
+            {
+                @foreach (var tag in Model.ArticleTags)
+                {
+                    <span class="badge bg-secondary me-1">@tag.TagName</span>
+                }
+            }
+            else
+            {
+                <p class="text-muted">No tags associated with this article</p>
+            }
+        </div>
+    </div>
+</div>
+
 <div>
     @if (role == staffRole && Model.NewsArticle.CreatedById == currentUserId)
     {

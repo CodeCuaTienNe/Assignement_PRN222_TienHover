@@ -2,10 +2,10 @@
 @model NMS_Razor.Pages.NewsArticlePage.EditModel
 
 @{
-    ViewData["Title"] = "Edit News Article";
+    ViewData["Title"] = "Edit Article";
 }
 
-<h1>Edit News Article</h1>
+<h1>Edit Article</h1>
 
 <hr />
 <div class="row">
@@ -47,10 +47,25 @@
             </div>
 
             <div class="form-group mb-3">
-                <label for="SelectedTagIds" class="control-label">Tags</label>
-                <select multiple asp-for="SelectedTagIds" class="form-select select2" asp-items="ViewBag.AvailableTags">
-                </select>
-                <small class="form-text text-muted">You can select multiple tags for this article</small>
+                <label class="control-label">Tags</label>
+                <div class="border rounded p-3">
+                    <div class="d-flex flex-wrap gap-2">
+                        @for (var i = 0; i < Model.AvailableTags.Count; i++)
+                        {
+                            var tag = Model.AvailableTags[i];
+                            var isChecked = Model.SelectedTagIds.Contains(tag.TagId);
+                            <div class="form-check me-3">
+                                <input type="checkbox" class="form-check-input" 
+                                       id="tag-@tag.TagId" 
+                                       name="SelectedTagIds" 
+                                       value="@tag.TagId"
+                                       @(isChecked ? "checked" : "") />
+                                <label class="form-check-label" for="tag-@tag.TagId">@tag.TagName</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <small class="form-text text-muted">Select one or more tags that apply to this article</small>
             </div>
             
             <div class="form-group mb-3">
@@ -68,32 +83,31 @@
                 <span asp-validation-for="NewsArticle.NewsStatus" class="text-danger"></span>
             </div>
             
-            <div class="form-group mt-4">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <a asp-page="./MyNews" class="btn btn-secondary">Back to My News</a>
+            <div class="form-group mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
     <div class="col-md-4">
         <div class="card">
-            <div class="card-header bg-light">Article Info</div>
+            <div class="card-header bg-light">Article Information</div>
             <div class="card-body">
-                <dl>
-                    <dt>Article ID</dt>
-                    <dd>@Model.NewsArticle.NewsArticleId</dd>
-                    
-                    <dt>Created By</dt>
-                    <dd>@Model.NewsArticle.CreatedBy?.AccountName</dd>
-                    
-                    <dt>Created Date</dt>
-                    <dd>@Model.NewsArticle.CreatedDate?.ToString("dd/MM/yyyy HH:mm")</dd>
-                    
-                    @if (Model.NewsArticle.ModifiedDate.HasValue)
+                <p><strong>ID:</strong> @Model.NewsArticle.NewsArticleId</p>
+                <p><strong>Created:</strong> @(Model.NewsArticle.CreatedDate.HasValue ? Model.NewsArticle.CreatedDate.Value.ToString("g") : "Not set")</p>
+                <p><strong>Author:</strong> @Model.NewsArticle.CreatedBy?.AccountName</p>
+                <hr />
+                <p class="mb-0">
+                    <strong>Status:</strong>
+                    @if (Model.NewsArticle.NewsStatus == true)
                     {
-                        <dt>Last Modified</dt>
-                        <dd>@Model.NewsArticle.ModifiedDate?.ToString("dd/MM/yyyy HH:mm")</dd>
+                        <span class="badge bg-success">Active</span>
                     }
-                </dl>
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactive</span>
+                    }
+                </p>
             </div>
         </div>
     </div>
@@ -101,14 +115,4 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.select2').select2({
-                placeholder: "Select tags...",
-                allowClear: true
-            });
-        });
-    </script>
 }

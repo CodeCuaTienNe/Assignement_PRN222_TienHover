@@ -16,12 +16,15 @@ namespace NMS_Razor.Pages.NewsArticlePage
     {
         private readonly INewsArticleRepository _newsArticleRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ITagRepository _tagRepository;
         private readonly IConfiguration _configuration;
 
-        public CreateModel(INewsArticleRepository newsArticleRepository, ICategoryRepository categoryRepository, IConfiguration configuration)
+        public CreateModel(INewsArticleRepository newsArticleRepository, ICategoryRepository categoryRepository, 
+                          ITagRepository tagRepository, IConfiguration configuration)
         {
             _newsArticleRepository = newsArticleRepository;
             _categoryRepository = categoryRepository;
+            _tagRepository = tagRepository;
             _configuration = configuration;
         }
 
@@ -47,6 +50,9 @@ namespace NMS_Razor.Pages.NewsArticlePage
             // Get categories for dropdown
             ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
             
+            // Get tags for checkboxes
+            AvailableTags = _tagRepository.GetAllTags();
+            
             // Get current user ID from session
             var accountId = HttpContext.Session.GetInt32("AccountId");
             if (accountId.HasValue)
@@ -66,13 +72,17 @@ namespace NMS_Razor.Pages.NewsArticlePage
         [BindProperty]
         public NewsArticle NewsArticle { get; set; } = default!;
         
+        [BindProperty]
+        public List<int> SelectedTagIds { get; set; } = new List<int>();
+        
+        public List<Tag> AvailableTags { get; set; } = new List<Tag>();
+        
         [TempData]
         public string SuccessMessage { get; set; }
         
         [TempData]
         public string ErrorMessage { get; set; }
 
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public IActionResult OnPost()
         {
             // Check login and role again
@@ -90,16 +100,14 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 return RedirectToPage("/AccessDenied");
             }
 
-            // Kiểm tra NewsArticleId đã được nhập
-            if (string.IsNullOrEmpty(NewsArticle.NewsArticleId))
-            {
-                ModelState.AddModelError("NewsArticle.NewsArticleId", "Mã bài viết không được để trống");
-            }
-
+            // Remove validation of NewsArticleId since it will be auto-generated
+            ModelState.Remove("NewsArticle.NewsArticleId");
+            
             if (!ModelState.IsValid)
             {
                 // Re-populate dropdown lists if validation fails
                 ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
+                AvailableTags = _tagRepository.GetAllTags();
                 return Page();
             }
 
@@ -118,20 +126,29 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 }
             }
             
-            // Đảm bảo trạng thái luôn là active
+            // Ensure status is active
             NewsArticle.NewsStatus = true;
 
             try
             {
+                // ID will be auto-generated in the DAO
                 _newsArticleRepository.AddNewsArticle(NewsArticle);
-                SuccessMessage = "Bài viết đã được tạo thành công!";
+                
+                // Add tags if any are selected
+                if (SelectedTagIds != null && SelectedTagIds.Any())
+                {
+                    _newsArticleRepository.AddTagsToArticle(NewsArticle.NewsArticleId, SelectedTagIds);
+                }
+                
+                SuccessMessage = "Article created successfully!";
                 return RedirectToPage("./Index");
             }
             catch (Exception ex)
             {
-                ErrorMessage = "Lỗi khi tạo bài viết: " + ex.Message;
+                ErrorMessage = "Error creating article: " + ex.Message;
                 ModelState.AddModelError("", ErrorMessage);
                 ViewData["CategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
+                AvailableTags = _tagRepository.GetAllTags();
                 return Page();
             }
         }

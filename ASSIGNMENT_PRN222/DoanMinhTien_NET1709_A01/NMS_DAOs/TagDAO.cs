@@ -152,5 +152,36 @@ namespace NMS_DAOs
                 throw new Exception("Error deleting tag: " + ex.Message);
             }
         }
+
+        public List<Tag> SearchTags(string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+                return GetAllTags();
+                
+            // Convert search term to lowercase for case-insensitive comparison
+            string searchTermLower = searchTerm.ToLower();
+            
+            return _context.Tags
+                .Where(t => t.TagName.ToLower().Contains(searchTermLower) || 
+                          (t.Note != null && t.Note.ToLower().Contains(searchTermLower)))
+                .ToList();
+        }
+
+        public List<NewsArticle> GetArticlesByTag(int tagId)
+        {
+            var tag = _context.Tags
+                .Include(t => t.NewsArticles)
+                    .ThenInclude(a => a.CreatedBy)
+                .Include(t => t.NewsArticles)
+                    .ThenInclude(a => a.Category)
+                .FirstOrDefault(t => t.TagId == tagId);
+            
+            if (tag == null)
+            {
+                return new List<NewsArticle>();
+            }
+            
+            return tag.NewsArticles.OrderByDescending(a => a.CreatedDate).ToList();
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace NMS_Repositories
     {
         List<NewsArticle> GetAllNewsArticles();
         NewsArticle GetNewsArticleById(string id);
+        NewsArticle GetNewsArticleByTitle(string title);
         void AddNewsArticle(NewsArticle newsArticle);
         void UpdateNewsArticle(NewsArticle newsArticle);
         void DeleteNewsArticle(string id);

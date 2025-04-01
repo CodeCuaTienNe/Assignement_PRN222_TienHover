@@ -1,12 +1,14 @@
 ﻿@page "/newsarticles/create"
+@using Microsoft.AspNetCore.Components.Forms
 @using NMS_BusinessObjects
 @using NMS_Repositories
-@using Microsoft.AspNetCore.Components.Forms
 @using NMS_Blazor.Services
+@using System.ComponentModel.DataAnnotations
 @inject INewsArticleRepository NewsArticleRepository
 @inject ICategoryRepository CategoryRepository
 @inject ITagRepository TagRepository
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 @inject AuthService AuthService
 
 <PageTitle>Create News Article</PageTitle>
@@ -42,7 +44,7 @@
     else
     {
         <div class="row">
-            <div class="col-lg-9">
+            <div class="col-lg-8">
                 <div class="card border-0 shadow">
                     <div class="card-header bg-white py-3">
                         <h3 class="card-title mb-0">Create New Article</h3>
@@ -53,39 +55,9 @@
                             <DataAnnotationsValidator />
                             <ValidationSummary class="text-danger mb-4" />
                             
-                            <div class="row mb-3 g-3">
-                                <div class="col-md-6">
-                                    <label for="newsArticleId" class="form-label">Article ID <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <InputText id="newsArticleId" @bind-Value="newsArticle.NewsArticleId" class="form-control" required placeholder="Enter article ID" />
-                                        <button type="button" class="btn btn-outline-secondary" @onclick="GenerateId">
-                                            <i class="bi bi-magic me-1"></i> Generate ID
-                                        </button>
-                                    </div>
-                                    <ValidationMessage For="@(() => newsArticle.NewsArticleId)" class="text-danger" />
-                                    <small class="form-text text-muted">A unique identifier for this article.</small>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
-                                    <InputSelect id="category" @bind-Value="newsArticle.CategoryId" class="form-select">
-                                        <option value="">-- Select a category --</option>
-                                        @if (categories != null)
-                                        {
-                                            @foreach (var category in categories)
-                                            {
-                                                <option value="@category.CategoryId">@category.CategoryName</option>
-                                            }
-                                        }
-                                    </InputSelect>
-                                    <ValidationMessage For="@(() => newsArticle.CategoryId)" class="text-danger" />
-                                    <small class="form-text text-muted">The primary category for this article.</small>
-                                </div>
-                            </div>
-                            
                             <div class="mb-3">
-                                <label for="newsTitle" class="form-label">Title <span class="text-danger">*</span></label>
-                                <InputText id="newsTitle" @bind-Value="newsArticle.NewsTitle" class="form-control" required placeholder="Enter article title" />
+                                <label for="newstitle" class="form-label">Title <span class="text-danger">*</span></label>
+                                <InputText id="newstitle" @bind-Value="newsArticle.NewsTitle" class="form-control" required placeholder="Enter article title" />
                                 <ValidationMessage For="@(() => newsArticle.NewsTitle)" class="text-danger" />
                             </div>
                             
@@ -93,110 +65,79 @@
                                 <label for="headline" class="form-label">Headline <span class="text-danger">*</span></label>
                                 <InputText id="headline" @bind-Value="newsArticle.Headline" class="form-control" required placeholder="Enter a brief headline/summary" />
                                 <ValidationMessage For="@(() => newsArticle.Headline)" class="text-danger" />
-                                <small class="form-text text-muted">A concise summary of the article content.</small>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="newsContent" class="form-label">Content <span class="text-danger">*</span></label>
-                                <InputTextArea id="newsContent" @bind-Value="newsArticle.NewsContent" class="form-control" rows="10" required placeholder="Enter the article content" />
+                                <label for="newscontent" class="form-label">Content <span class="text-danger">*</span></label>
+                                <InputTextArea id="newscontent" @bind-Value="newsArticle.NewsContent" class="form-control" rows="10" required placeholder="Enter the full article content" />
                                 <ValidationMessage For="@(() => newsArticle.NewsContent)" class="text-danger" />
                             </div>
                             
                             <div class="mb-3">
-                                <label for="newsSource" class="form-label">Source</label>
-                                <InputText id="newsSource" @bind-Value="newsArticle.NewsSource" class="form-control" placeholder="Enter the source of this information (optional)" />
+                                <label for="newssource" class="form-label">Source</label>
+                                <InputText id="newssource" @bind-Value="newsArticle.NewsSource" class="form-control" placeholder="Enter the source of this information (optional)" />
                                 <ValidationMessage For="@(() => newsArticle.NewsSource)" class="text-danger" />
-                                <small class="form-text text-muted">Optional reference to the original source.</small>
                             </div>
                             
-                            <div class="mb-4">
-                                <label class="form-label">Tags</label>
-                                <div class="border rounded p-3">
-                                    <div class="row g-2">
-                                        @foreach (var tag in allTags)
+                            <div class="mb-3">
+                                <label for="categoryid" class="form-label">Category <span class="text-danger">*</span></label>
+                                <InputSelect id="categoryid" @bind-Value="newsArticle.CategoryId" class="form-select" required>
+                                    <option value="">-- Select a category --</option>
+                                    @if (categories != null)
+                                    {
+                                        @foreach (var category in categories)
                                         {
-                                            int tagId = tag.TagId;
-                                            bool isSelected = selectedTagIds.Contains(tagId);
-                                            <div class="col-md-3 col-sm-4 col-6">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" 
-                                                           value="@tagId" 
-                                                           id="tag-@tagId" 
-                                                           checked="@isSelected" 
-                                                           @onchange="@(e => ToggleTag(tagId, e.Value != null && (bool)e.Value))" />
-                                                    <label class="form-check-label" for="tag-@tagId">
-                                                        @tag.TagName
-                                                    </label>
-                                                </div>
+                                            <option value="@category.CategoryId">@category.CategoryName</option>
+                                        }
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => newsArticle.CategoryId)" class="text-danger" />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="control-label">Tags</label>
+                                <div class="border rounded p-3">
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach (var tag in tags)
+                                        {
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input" 
+                                                       type="checkbox" 
+                                                       id="tag_@tag.TagId" 
+                                                       checked="@IsTagSelected(tag.TagId)"
+                                                       @onchange="@(e => ToggleTagSelection(tag.TagId, e.Value != null && (bool)e.Value))" />
+                                                <label class="form-check-label" for="tag_@tag.TagId">@tag.TagName</label>
                                             </div>
                                         }
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">Select one or more relevant tags for this article.</small>
+                                <small class="form-text text-muted">Select one or more tags that apply to this article</small>
                             </div>
                             
-                            <div class="form-check form-switch mb-4">
-                                <input class="form-check-input" type="checkbox" 
-                                       id="newsStatus"
-                                       checked="@isActive"
-                                       @onchange="@(e => isActive = e.Value != null && (bool)e.Value)" />
-                                <label class="form-check-label" for="newsStatus">
-                                    Publish article immediately
-                                </label>
-                                <small class="d-block form-text text-muted">Inactive articles won't be visible to regular users.</small>
-                            </div>
+                            <!-- Hidden fields -->
+                            <input type="hidden" value="true" />
                             
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary px-4">
-                                    <i class="bi bi-send me-1"></i> Create Article
-                                </button>
-                                <a href="/newsarticles" class="btn btn-outline-secondary">
-                                    <i class="bi bi-x-lg me-1"></i> Cancel
-                                </a>
+                            <div class="form-group mt-4 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Create Article</button>
+                                <a href="/newsarticles" class="btn btn-secondary">Back to List</a>
                             </div>
                         </EditForm>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-lg-3 mt-4 mt-lg-0">
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white">
-                        <h5 class="card-title mb-0">Article Tips</h5>
-                    </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-light">Tips</div>
                     <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item px-0">All fields marked with <span class="text-danger">*</span> are required</li>
-                            <li class="list-group-item px-0">Choose a descriptive title and headline</li>
-                            <li class="list-group-item px-0">Provide detailed content for better reader engagement</li>
-                            <li class="list-group-item px-0">Always cite sources when referencing external content</li>
-                            <li class="list-group-item px-0">Select relevant tags to improve discoverability</li>
+                        <ul class="mb-0">
+                            <li>All fields marked with <span class="text-danger">*</span> are required</li>
+                            <li>Article ID will be automatically generated</li>
+                            <li>New articles are automatically set to Active status</li>
+                            <li>Select relevant tags to improve article discoverability</li>
+                            <li>You can edit the article after creation</li>
                         </ul>
                     </div>
                 </div>
-                
-                @if (isUserLoggedIn)
-                {
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white">
-                            <h5 class="card-title mb-0">Author Information</h5>
-                        </div>
-                        <div class="card-body">
-                            <p><i class="bi bi-person-circle me-2"></i> <strong>@userName</strong></p>
-                            <p class="text-muted mb-0">
-                                This article will be created under your account.
-                            </p>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <div class="alert alert-warning">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        <strong>Not logged in!</strong>
-                        <p class="mb-0">Please <a href="/login" class="alert-link">log in</a> to create new articles.</p>
-                    </div>
-                }
             </div>
         </div>
     }
@@ -205,13 +146,12 @@
 @code {
     private NewsArticle newsArticle = new NewsArticle();
     private List<Category> categories = new List<Category>();
-    private List<Tag> allTags = new List<Tag>();
-    private List<int> selectedTagIds = new List<int>();
-    private string? errorMessage;
+    private List<Tag> tags = new List<Tag>();
+    private HashSet<int> selectedTagIds = new HashSet<int>();
+    private string errorMessage;
     private bool isLoading = true;
-    private bool isActive = true;
     
-    // User information from session
+    // User information
     private bool isUserLoggedIn = false;
     private short? userId = null;
     private string userName = string.Empty;
@@ -223,27 +163,25 @@
             // Check authentication status
             await CheckAuthenticationStatus();
             
-            // Only Staff (role 1) should be able to create news articles
+            // Only staff can create news
             if (!isUserLoggedIn || userRole != 1)
             {
                 NavigationManager.NavigateTo("/unauthorized");
                 return;
             }
             
-            // Load categories and tags
-            LoadLookupData();
-
-            // Set initial values for the new article
+            // Get categories for dropdown
+            LoadCategories();
+            
+            // Get tags for checkboxes
+            LoadTags();
+            
+            // Initialize with default values
             newsArticle = new NewsArticle
             {
-                // Leave the ID empty for user input
-                NewsArticleId = "",
                 CreatedDate = DateTime.Now,
-                ModifiedDate = DateTime.Now,
-                NewsStatus = true,
-                Headline = string.Empty,
-                NewsTitle = string.Empty,
-                NewsContent = string.Empty
+                CreatedById = userId ?? 0,
+                NewsStatus = true // Active by default
             };
 
             isLoading = false;
@@ -264,60 +202,63 @@
         userId = userInfo.UserId;
         userName = userInfo.UserName;
         userRole = userInfo.UserRole;
-        
-        // Only Staff (role 1) should be able to create news articles
-        if (!isUserLoggedIn || userRole != 1)
-        {
-            NavigationManager.NavigateTo("/unauthorized");
-            return;
-        }
     }
 
-    private void LoadLookupData()
+    private void LoadCategories()
     {
-        try
+        try 
         {
-            // Load categories
             categories = CategoryRepository.GetAllCategories();
-            
-            // Load tags
-            allTags = TagRepository.GetAllTags();
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error loading form data: {ex.Message}";
+            errorMessage = $"Error loading categories: {ex.Message}";
         }
     }
 
-    private void ToggleTag(int tagId, bool isChecked)
+    private void LoadTags()
     {
-        if (isChecked && !selectedTagIds.Contains(tagId))
+        try 
+        {
+            tags = TagRepository.GetAllTags();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading tags: {ex.Message}";
+        }
+    }
+
+    // Tag selection methods
+    private bool IsTagSelected(int tagId)
+    {
+        return selectedTagIds.Contains(tagId);
+    }
+    
+    private void ToggleTagSelection(int tagId, bool isSelected)
+    {
+        if (isSelected)
         {
             selectedTagIds.Add(tagId);
         }
-        else if (!isChecked && selectedTagIds.Contains(tagId))
+        else
         {
             selectedTagIds.Remove(tagId);
         }
+        
+        StateHasChanged(); // Ensure UI updates
     }
 
     private async Task HandleValidSubmit()
     {
         try
         {
-            // Add validation for required fields
-            if (string.IsNullOrWhiteSpace(newsArticle.NewsArticleId))
-            {
-                errorMessage = "Article ID is required. Please enter a unique ID or click 'Generate ID'";
-                return;
-            }
-
+            // Validate required fields
             if (string.IsNullOrWhiteSpace(newsArticle.NewsTitle))
             {
                 errorMessage = "Title is required";
                 return;
             }
-
+            
             if (string.IsNullOrWhiteSpace(newsArticle.Headline))
             {
                 errorMessage = "Headline is required";
@@ -330,91 +271,53 @@
                 return;
             }
             
-            if (newsArticle.CategoryId == null)
+            if (newsArticle.CategoryId == 0)
             {
-                errorMessage = "Category is required";
-                return;
-            }
-
-            // Ensure dates are set
-            DateTime now = DateTime.Now;
-            newsArticle.CreatedDate = now;
-            newsArticle.ModifiedDate = now;
-
-            // Set user IDs from logged-in user
-            if (isUserLoggedIn && userId.HasValue)
-            {
-                newsArticle.CreatedById = userId;
-                newsArticle.UpdatedById = userId;
-            }
-            else
-            {
-                // Redirect to login if not logged in
-                NavigationManager.NavigateTo("/login");
+                errorMessage = "Please select a category";
                 return;
             }
             
-            // Set status from checkbox
-            newsArticle.NewsStatus = isActive;
-
-            Console.WriteLine("Creating article with ID: " + newsArticle.NewsArticleId);
-            Console.WriteLine("Category ID: " + newsArticle.CategoryId);
-            Console.WriteLine("Selected tags: " + string.Join(", ", selectedTagIds));
-
+            // Ensure user is logged in
+            if (!isUserLoggedIn || !userId.HasValue)
+            {
+                errorMessage = "You must be logged in to create articles";
+                return;
+            }
+            
+            // Set/update values
+            newsArticle.CreatedById = userId;
+            newsArticle.CreatedDate = DateTime.Now;
+            
+            // Save the article - ID is automatically generated in the repository/DAO
             try
             {
-                // First, add the news article without tags
+                // Add the article
                 NewsArticleRepository.AddNewsArticle(newsArticle);
                 
-                // Then, add tags to the article if any are selected
-                if (selectedTagIds.Any())
+                // Retrieve the created article to get its ID for tag association
+                var createdArticle = NewsArticleRepository.GetNewsArticleByTitle(newsArticle.NewsTitle);
+                if (createdArticle != null && selectedTagIds.Any())
                 {
-                    try
-                    {
-                        NewsArticleRepository.AddTagsToArticle(newsArticle.NewsArticleId, selectedTagIds);
-                    }
-                    catch (Exception tagEx)
-                    {
-                        // Log the tag error but continue - we've already created the article
-                        Console.WriteLine($"Error adding tags: {tagEx.Message}");
-                        errorMessage = $"Article created, but there was an error adding tags: {tagEx.Message}";
-                        
-                        // Still redirect to the list page since the article was created
-                        NavigationManager.NavigateTo("/newsarticles");
-                        return;
-                    }
+                    // Add selected tags to the article
+                    await JSRuntime.InvokeVoidAsync("console.log", "Adding tags to article", createdArticle.NewsArticleId);
+                    await JSRuntime.InvokeVoidAsync("console.log", "Selected tag IDs", selectedTagIds);
+                    
+                    NewsArticleRepository.AddTagsToArticle(createdArticle.NewsArticleId, selectedTagIds.ToList());
                 }
-
-                // Everything succeeded, redirect to the list page
+                
+                // Navigate to the list view
                 NavigationManager.NavigateTo("/newsarticles");
             }
-            catch (Exception dbEx)
+            catch (Exception ex)
             {
-                // Handle specific database exceptions
-                if (dbEx.Message.Contains("News article with ID") || dbEx.Message.Contains("News article with title"))
-                {
-                    errorMessage = dbEx.Message;
-                }
-                else if (dbEx is Microsoft.EntityFrameworkCore.DbUpdateException updateEx)
-                {
-                    errorMessage = "Database error when saving: " + updateEx.InnerException?.Message ?? updateEx.Message;
-                }
-                else
-                {
-                    errorMessage = "Error saving article: " + dbEx.Message;
-                }
+                errorMessage = "Error saving article: " + ex.Message;
+                await JSRuntime.InvokeVoidAsync("console.error", "Error saving article", ex.Message);
             }
         }
         catch (Exception ex)
         {
             errorMessage = "Error creating article: " + ex.Message;
+            await JSRuntime.InvokeVoidAsync("console.error", "Error creating article", ex.Message);
         }
-    }
-
-    // Method to generate an ID when the user clicks the button
-    private void GenerateId()
-    {
-        // Generate a short, user-friendly ID
-        newsArticle.NewsArticleId = $"ART-{DateTime.Now.ToString("yyMMdd")}-{Guid.NewGuid().ToString().Substring(0, 5)}";
     }
 }
