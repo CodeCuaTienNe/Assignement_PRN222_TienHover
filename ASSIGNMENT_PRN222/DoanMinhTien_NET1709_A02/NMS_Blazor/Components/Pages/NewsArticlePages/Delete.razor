@@ -178,6 +178,13 @@
             // Check authentication status
             await CheckAuthenticationStatus();
             
+            // Only Staff (role 1) should be able to delete news articles
+            if (!isUserLoggedIn || userRole != 1)
+            {
+                NavigationManager.NavigateTo("/unauthorized");
+                return;
+            }
+            
             // Load article data
             LoadArticleData();
 
@@ -226,6 +233,13 @@
         userId = userInfo.UserId;
         userName = userInfo.UserName;
         userRole = userInfo.UserRole;
+        
+        // Only Staff (role 1) should be able to delete news articles
+        if (!isUserLoggedIn || userRole != 1)
+        {
+            NavigationManager.NavigateTo("/unauthorized");
+            return;
+        }
     }
 
     private void DeleteArticle()
@@ -235,9 +249,9 @@
             if (newsArticle == null) return;
             
             // Verify user permissions
-            if (!isUserLoggedIn || (userRole != 1 && userRole != 2))
+            if (!isUserLoggedIn || userRole != 1)
             {
-                errorMessage = "You don't have permission to delete articles.";
+                errorMessage = "You don't have permission to delete news articles.";
                 return;
             }
             

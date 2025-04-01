@@ -229,6 +229,13 @@
             // Check authentication status
             await CheckAuthenticationStatus();
             
+            // Only Staff (role 1) should be able to edit news articles
+            if (!isUserLoggedIn || userRole != 1)
+            {
+                NavigationManager.NavigateTo("/unauthorized");
+                return;
+            }
+            
             // Load article data
             LoadData();
 
@@ -293,11 +300,11 @@
         userName = userInfo.UserName;
         userRole = userInfo.UserRole;
         
-        // Check if user has staff/admin role
-        if (isUserLoggedIn && (userRole != 1 && userRole != 2)) // Not staff or admin
+        // Only Staff (role 1) should be able to edit news articles
+        if (!isUserLoggedIn || userRole != 1)
         {
-            // Redirect to unauthorized page if not staff/admin
             NavigationManager.NavigateTo("/unauthorized");
+            return;
         }
     }
 
