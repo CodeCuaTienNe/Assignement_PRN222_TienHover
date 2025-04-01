@@ -45,6 +45,7 @@
                                 <InputText id="newsArticleId" @bind-Value="newsArticle.NewsArticleId" class="form-control" required placeholder="Enter a unique ID for this article" />
                                 <small class="form-text text-muted">This ID must be unique and cannot be changed later.</small>
                                 <ValidationMessage For="@(() => newsArticle.NewsArticleId)" class="text-danger" />
+                                <button type="button" class="btn btn-sm btn-outline-secondary mt-1" @onclick="GenerateId">Generate ID</button>
                             </div>
                             
                             <div class="mb-3">
@@ -135,7 +136,7 @@
                                 <div class="card-body">
                                     <ul class="mb-0">
                                         <li>All fields marked with <span class="text-danger">*</span> are required</li>
-                                        <li>Article ID must be unique</li>
+                                        <li>Article ID must be unique - you can enter your own or click "Generate ID"</li>
                                         <li>New articles are automatically set to Active status</li>
                                         <li>You can edit the article after creation</li>
                                     </ul>
@@ -181,7 +182,8 @@
             // Set initial values for the new article
             newsArticle = new NewsArticle
             {
-                NewsArticleId = Guid.NewGuid().ToString().Substring(0, 12),
+                // Leave the ID empty for user input
+                NewsArticleId = "",
                 CreatedDate = DateTime.Now,
                 ModifiedDate = DateTime.Now,
                 NewsStatus = true,
@@ -245,7 +247,7 @@
             // Add validation for required fields
             if (string.IsNullOrWhiteSpace(newsArticle.NewsArticleId))
             {
-                errorMessage = "Article ID is required";
+                errorMessage = "Article ID is required. Please enter a unique ID or click 'Generate ID'";
                 return;
             }
 
@@ -346,5 +348,12 @@
         {
             errorMessage = "Error creating article: " + ex.Message;
         }
+    }
+
+    // Method to generate an ID when the user clicks the button
+    private void GenerateId()
+    {
+        // Generate a short, user-friendly ID
+        newsArticle.NewsArticleId = $"ART-{DateTime.Now.ToString("yyMMdd")}-{Guid.NewGuid().ToString().Substring(0, 5)}";
     }
 }
