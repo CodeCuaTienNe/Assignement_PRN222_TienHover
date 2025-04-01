@@ -180,6 +180,27 @@ namespace NMS_Blazor.Services
             }
         }
 
+        public async Task RefreshUserSession()
+        {
+            var user = await GetCurrentUser();
+            
+            if (user.IsLoggedIn && user.UserId.HasValue)
+            {
+                var account = _accountRepository.GetAccountById(user.UserId.Value);
+                if (account != null)
+                {
+                    // Update session data
+                    await _sessionStorage.SetAsync("userId", account.AccountId);
+                    await _sessionStorage.SetAsync("userName", account.AccountName);
+                    await _sessionStorage.SetAsync("userEmail", account.AccountEmail);
+                    await _sessionStorage.SetAsync("userRole", account.AccountRole);
+                    
+                    // Notify subscribers that authentication state has changed
+                    OnAuthenticationStateChanged();
+                }
+            }
+        }
+
         protected virtual void OnAuthenticationStateChanged()
         {
             AuthenticationStateChanged?.Invoke(this, EventArgs.Empty);

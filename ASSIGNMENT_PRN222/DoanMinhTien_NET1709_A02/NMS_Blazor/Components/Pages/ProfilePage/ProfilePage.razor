@@ -1,0 +1,312 @@
+﻿@page "/profile"
+@using NMS_BusinessObjects
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@using System.ComponentModel.DataAnnotations
+@inject IAccountRepository AccountRepository
+@inject NavigationManager NavigationManager
+@inject AuthService AuthService
+@inject ILogger<ProfilePage> Logger
+
+<PageTitle>My Profile</PageTitle>
+
+<div class="container-fluid p-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-dark mb-0">My Profile</h2>
+            <p class="text-muted">View and update your account information</p>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @successMessage
+            <button type="button" class="btn-close" @onclick="@(() => successMessage = null)"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+            <button type="button" class="btn-close" @onclick="@(() => errorMessage = null)"></button>
+        </div>
+    }
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading profile data...</p>
+        </div>
+    }
+    else if (!isUserLoggedIn)
+    {
+        <div class="alert alert-warning border-0 shadow-sm">
+            <i class="bi bi-exclamation-triangle me-2"></i> 
+            You need to <a href="/login" class="alert-link">log in</a> to view your profile.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card border-0 shadow mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Account Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <EditForm Model="profileModel" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger mb-4" />
+
+                            <div class="mb-3">
+                                <label for="accountName" class="form-label">Name</label>
+                                <InputText id="accountName" @bind-Value="profileModel.AccountName" class="form-control" />
+                                <ValidationMessage For="@(() => profileModel.AccountName)" class="text-danger" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="accountEmail" class="form-label">Email</label>
+                                <input id="accountEmail" class="form-control" value="@profileModel.AccountEmail" readonly />
+                                <small class="form-text text-muted">Email cannot be changed.</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="roleName" class="form-label">Role</label>
+                                <input id="roleName" class="form-control" value="@profileModel.RoleName" readonly />
+                                <small class="form-text text-muted">Role cannot be changed. Contact administrator for role changes.</small>
+                            </div>
+
+                            <hr />
+                            <h5>Change Password (Optional)</h5>
+                            <p class="text-muted">Leave blank if you don't want to change your password.</p>
+
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <InputText id="newPassword" @bind-Value="profileModel.NewPassword" type="@(showPassword ? "text" : "password")" class="form-control" />
+                                <ValidationMessage For="@(() => profileModel.NewPassword)" class="text-danger" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <div class="input-group">
+                                    <InputText id="confirmPassword" @bind-Value="profileModel.ConfirmPassword" type="@(showPassword ? "text" : "password")" class="form-control" />
+                                    <button class="btn btn-outline-secondary" type="button" @onclick="TogglePasswordVisibility">
+                                        <i class="bi @(showPassword ? "bi-eye-slash" : "bi-eye")"></i>
+                                    </button>
+                                </div>
+                                <ValidationMessage For="@(() => profileModel.ConfirmPassword)" class="text-danger" />
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-1"></i> Save Changes
+                            </button>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">About Your Account</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            This is your personal account profile where you can update your name and 
+                            optionally change your password.
+                        </p>
+                        <p>
+                            For any other account-related changes such as changing your email or role,
+                            please contact the system administrator.
+                        </p>
+                        <hr />
+                        <h6>Security Tips:</h6>
+                        <ul>
+                            <li>Use a strong password with at least 8 characters</li>
+                            <li>Include numbers, special characters, and mixed case</li>
+                            <li>Change your password regularly</li>
+                            <li>Don't share your login credentials with others</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private int? userRole = null;
+
+    // Form model
+    private ProfileViewModel profileModel = new();
+
+    // UI state
+    private bool isLoading = true;
+    private bool showPassword = false;
+    private string errorMessage;
+    private string successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try 
+        {
+            await CheckAuthenticationStatus();
+            
+            if (isUserLoggedIn)
+            {
+                LoadProfileData();
+            }
+            
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading profile: {ex.Message}";
+            Logger.LogError(ex, "Error loading profile");
+            isLoading = false;
+        }
+    }
+
+    private async Task CheckAuthenticationStatus()
+    {
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userRole = userInfo.UserRole;
+        
+        if (!isUserLoggedIn)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+    }
+
+    private void LoadProfileData()
+    {
+        try
+        {
+            if (!userId.HasValue)
+            {
+                errorMessage = "Unable to retrieve user ID";
+                return;
+            }
+
+            var account = AccountRepository.GetAccountById(userId.Value);
+            if (account == null)
+            {
+                errorMessage = "Unable to find your account";
+                return;
+            }
+
+            // Map account data to view model
+            profileModel.AccountName = account.AccountName;
+            profileModel.AccountEmail = account.AccountEmail;
+            
+            string roleName = account.AccountRole switch
+            {
+                1 => "Staff",
+                2 => "Lecturer",
+                3 => "Admin",
+                _ => "Unknown"
+            };
+            
+            profileModel.RoleName = roleName;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading profile data: {ex.Message}";
+            Logger.LogError(ex, "Error loading profile data");
+        }
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        showPassword = !showPassword;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            errorMessage = null;
+            successMessage = null;
+            
+            // First check if password fields match
+            if (!string.IsNullOrEmpty(profileModel.NewPassword) && 
+                profileModel.NewPassword != profileModel.ConfirmPassword)
+            {
+                errorMessage = "The new password and confirmation password do not match.";
+                return;
+            }
+
+            if (!userId.HasValue)
+            {
+                errorMessage = "Unable to retrieve user ID";
+                return;
+            }
+
+            var account = AccountRepository.GetAccountById(userId.Value);
+            if (account == null)
+            {
+                errorMessage = "Unable to find your account";
+                return;
+            }
+
+            // Update basic info
+            account.AccountName = profileModel.AccountName;
+            
+            // Update password if provided
+            if (!string.IsNullOrEmpty(profileModel.NewPassword))
+            {
+                account.AccountPassword = profileModel.NewPassword;
+            }
+
+            // Save changes
+            AccountRepository.UpdateAccount(account);
+            
+            // Update session data
+            await AuthService.RefreshUserSession();
+            
+            // Clear password fields
+            profileModel.NewPassword = string.Empty;
+            profileModel.ConfirmPassword = string.Empty;
+            
+            successMessage = "Your profile has been updated successfully!";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating profile: {ex.Message}";
+            Logger.LogError(ex, "Error updating profile");
+        }
+    }
+
+    // View model class for the profile form
+    public class ProfileViewModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        [Display(Name = "Name")]
+        public string AccountName { get; set; }
+        
+        [Display(Name = "Email")]
+        public string AccountEmail { get; set; }
+        
+        [Display(Name = "Role")]
+        public string RoleName { get; set; }
+        
+        [Display(Name = "New Password")]
+        [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
+        public string NewPassword { get; set; }
+        
+        [Display(Name = "Confirm New Password")]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+    }
+}
