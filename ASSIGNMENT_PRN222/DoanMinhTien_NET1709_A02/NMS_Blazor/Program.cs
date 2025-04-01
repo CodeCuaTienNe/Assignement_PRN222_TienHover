@@ -9,9 +9,20 @@ using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// Log the admin account settings (email only, never log passwords)
+var adminEmail = builder.Configuration.GetValue<string>("AdminAccount:Email");
+var adminRole = builder.Configuration.GetValue<int>("AdminRole", 3);
+Console.WriteLine($"Admin settings loaded - Email: {adminEmail}, Role: {adminRole}");
 
 //DI 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
@@ -41,6 +52,10 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
+}
+else
+{
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseSession();
