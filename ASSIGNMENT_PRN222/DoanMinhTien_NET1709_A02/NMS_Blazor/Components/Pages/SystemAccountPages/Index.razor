@@ -19,7 +19,7 @@
                     <p class="text-muted">View, create and manage system accounts</p>
                 </div>
                 
-                @if (isUserLoggedIn && (userRole == 2 || userRole == 3)) @* Admin and System Admin *@
+                @if (isUserLoggedIn && ( userRole == 3)) @* Admin and System Admin *@
                 {
                     <a href="systemaccounts/create" class="btn btn-success mt-2 mt-sm-0">
                         <i class="bi bi-person-plus me-1"></i> New Account
@@ -82,7 +82,7 @@
                                                 <span class="badge bg-info">Staff</span>
                                                 break;
                                             case 2:
-                                                <span class="badge bg-danger">Admin</span>
+                                                <span class="badge bg-danger">Lecture</span>
                                                 break;
                                             case 3:
                                                 <span class="badge bg-primary">System Admin</span>
@@ -99,7 +99,7 @@
                                                 <i class="bi bi-eye me-1"></i> View
                                             </a>
                                             
-                                            @if (isUserLoggedIn && (userRole == 2 || userRole == 3)) @* Admin and System Admin *@
+                                            @if (isUserLoggedIn && (userRole == 3)) 
                                             {
                                                 <a href="@($"systemaccounts/edit?accountid={account.AccountId}")" 
                                                    class="btn btn-sm btn-outline-secondary">
