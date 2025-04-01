@@ -1,0 +1,39 @@
+﻿@page "/categories"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using NMS_BusinessObjects
+@using NMS_DAOs
+@implements IAsyncDisposable
+@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="categories/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Categories">
+    <PropertyColumn Property="category => category.CategoryName" />
+    <PropertyColumn Property="category => category.CategoryDesciption" />
+    <PropertyColumn Property="category => category.ParentCategoryId" />
+    <PropertyColumn Property="category => category.IsActive" />
+
+    <TemplateColumn Context="category">
+        <a href="@($"categories/edit?categoryid={category.CategoryId}")">Edit</a> |
+        <a href="@($"categories/details?categoryid={category.CategoryId}")">Details</a> |
+        <a href="@($"categories/delete?categoryid={category.CategoryId}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private FunewsManagementContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

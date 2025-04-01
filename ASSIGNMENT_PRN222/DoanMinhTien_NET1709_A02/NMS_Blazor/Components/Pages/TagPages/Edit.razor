@@ -1,0 +1,94 @@
+﻿@page "/tags/edit"
+@using Microsoft.EntityFrameworkCore
+@using NMS_BusinessObjects
+@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Tag</h2>
+<hr />
+@if (Tag is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Tag" OnValidSubmit="UpdateTag" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Tag.TagId" value="@Tag.TagId" />
+                <div class="mb-3">
+                    <label for="tagname" class="form-label">TagName:</label>
+                    <InputText id="tagname" @bind-Value="Tag.TagName" class="form-control" />
+                    <ValidationMessage For="() => Tag.TagName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="note" class="form-label">Note:</label>
+                    <InputText id="note" @bind-Value="Tag.Note" class="form-control" />
+                    <ValidationMessage For="() => Tag.Note" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/tags">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int TagId { get; set; }
+
+    [SupplyParameterFromForm]
+    private Tag? Tag { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Tag ??= await context.Tags.FirstOrDefaultAsync(m => m.TagId == TagId);
+
+        if (Tag is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateTag()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Tag!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!TagExists(Tag!.TagId))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/tags");
+    }
+
+    private bool TagExists(int tagid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Tags.Any(e => e.TagId == tagid);
+    }
+}

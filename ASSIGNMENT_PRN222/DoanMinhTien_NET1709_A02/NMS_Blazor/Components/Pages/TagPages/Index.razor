@@ -1,0 +1,37 @@
+﻿@page "/tags"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using NMS_BusinessObjects
+@using NMS_DAOs
+@implements IAsyncDisposable
+@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="tags/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Tags">
+    <PropertyColumn Property="tag => tag.TagName" />
+    <PropertyColumn Property="tag => tag.Note" />
+
+    <TemplateColumn Context="tag">
+        <a href="@($"tags/edit?tagid={tag.TagId}")">Edit</a> |
+        <a href="@($"tags/details?tagid={tag.TagId}")">Details</a> |
+        <a href="@($"tags/delete?tagid={tag.TagId}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private FunewsManagementContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

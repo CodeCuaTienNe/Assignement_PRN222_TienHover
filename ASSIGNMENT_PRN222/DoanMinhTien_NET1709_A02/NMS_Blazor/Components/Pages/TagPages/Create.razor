@@ -1,0 +1,49 @@
+﻿@page "/tags/create"
+@using Microsoft.EntityFrameworkCore
+@using NMS_BusinessObjects
+@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Tag</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Tag" OnValidSubmit="AddTag" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="tagname" class="form-label">TagName:</label> 
+                <InputText id="tagname" @bind-Value="Tag.TagName" class="form-control" /> 
+                <ValidationMessage For="() => Tag.TagName" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="note" class="form-label">Note:</label> 
+                <InputText id="note" @bind-Value="Tag.Note" class="form-control" /> 
+                <ValidationMessage For="() => Tag.Note" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/tags">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Tag Tag { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddTag()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Tags.Add(Tag);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/tags");
+    }
+}
