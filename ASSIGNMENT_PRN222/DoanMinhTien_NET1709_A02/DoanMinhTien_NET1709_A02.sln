@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NMS_DAOs", "NMS_DAOs\NMS_DA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NMS_BusinessObjects", "NMS_BusinessObjects\NMS_BusinessObjects.csproj", "{C7128E66-DFE2-4FE8-9132-B9976A2AD632}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NMS_Blazor", "NMS_Blazor\NMS_Blazor.csproj", "{C1FDB5A7-FD21-4F3F-927C-F8A7812576FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NMS_Blazor", "NMS_Blazor\NMS_Blazor.csproj", "{C1FDB5A7-FD21-4F3F-927C-F8A7812576FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
