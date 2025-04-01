@@ -1,91 +1,224 @@
 ﻿@page "/newsarticles/delete"
 @using Microsoft.EntityFrameworkCore
 @using NMS_BusinessObjects
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@inject INewsArticleRepository NewsArticleRepository
+@inject ICategoryRepository CategoryRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Delete</PageTitle>
+<PageTitle>Delete News Article</PageTitle>
 
-<h1>Delete</h1>
-
-<p>Are you sure you want to delete this?</p>
-<div>
-    <h2>NewsArticle</h2>
-    <hr />
-    @if (newsarticle is null)
+<div class="container my-4">
+    @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <p><em>Loading...</em></p>
+        <div class="alert alert-danger" role="alert">
+            @errorMessage
+        </div>
     }
-    else {
-        <dl class="row">
-            <dt class="col-sm-2">NewsTitle</dt>
-            <dd class="col-sm-10">@newsarticle.NewsTitle</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">Headline</dt>
-            <dd class="col-sm-10">@newsarticle.Headline</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">CreatedDate</dt>
-            <dd class="col-sm-10">@newsarticle.CreatedDate</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">NewsContent</dt>
-            <dd class="col-sm-10">@newsarticle.NewsContent</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">NewsSource</dt>
-            <dd class="col-sm-10">@newsarticle.NewsSource</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">CategoryId</dt>
-            <dd class="col-sm-10">@newsarticle.CategoryId</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">NewsStatus</dt>
-            <dd class="col-sm-10">@newsarticle.NewsStatus</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">CreatedById</dt>
-            <dd class="col-sm-10">@newsarticle.CreatedById</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">UpdatedById</dt>
-            <dd class="col-sm-10">@newsarticle.UpdatedById</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">ModifiedDate</dt>
-            <dd class="col-sm-10">@newsarticle.ModifiedDate</dd>
-        </dl>
-        <EditForm method="post" Model="newsarticle" OnValidSubmit="DeleteNewsArticle" FormName="delete" Enhance>
-            <button type="submit" class="btn btn-danger" disabled="@(newsarticle is null)">Delete</button> |
-            <a href="/newsarticles">Back to List</a>
-        </EditForm>
+    
+    @if (isLoading)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (newsArticle == null)
+    {
+        <div class="alert alert-warning">
+            News article not found.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-header bg-danger text-white">
+                <h2 class="mb-0">Confirm Delete</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Are you sure you want to delete this news article? This action cannot be undone.
+                </div>
+                
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title h5 mb-0">Article Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-3">Article ID</dt>
+                            <dd class="col-sm-9">@newsArticle.NewsArticleId</dd>
+                            
+                            <dt class="col-sm-3">Title</dt>
+                            <dd class="col-sm-9">@newsArticle.NewsTitle</dd>
+                            
+                            <dt class="col-sm-3">Headline</dt>
+                            <dd class="col-sm-9">@newsArticle.Headline</dd>
+                            
+                            <dt class="col-sm-3">Category</dt>
+                            <dd class="col-sm-9">@(newsArticle.Category?.CategoryName ?? "None")</dd>
+                            
+                            <dt class="col-sm-3">Created Date</dt>
+                            <dd class="col-sm-9">@(newsArticle.CreatedDate?.ToString("yyyy-MM-dd HH:mm") ?? "Not specified")</dd>
+                            
+                            <dt class="col-sm-3">Modified Date</dt>
+                            <dd class="col-sm-9">@(newsArticle.ModifiedDate?.ToString("yyyy-MM-dd HH:mm") ?? "Not specified")</dd>
+                            
+                            <dt class="col-sm-3">Status</dt>
+                            <dd class="col-sm-9">
+                                @if (newsArticle.NewsStatus == true)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </dd>
+                            
+                            <dt class="col-sm-3">Created By</dt>
+                            <dd class="col-sm-9">@(newsArticle.CreatedBy?.AccountName ?? "Unknown")</dd>
+                        </dl>
+                    </div>
+                </div>
+                
+                @if (!isUserLoggedIn)
+                {
+                    <div class="alert alert-danger mb-4">
+                        <i class="bi bi-shield-exclamation me-2"></i>
+                        You must be logged in as a staff member to delete articles.
+                        <a href="/login" class="alert-link">Log in</a>
+                    </div>
+                }
+                else if (userRole != 1 && userRole != 2)
+                {
+                    <div class="alert alert-danger mb-4">
+                        <i class="bi bi-shield-exclamation me-2"></i>
+                        You don't have permission to delete articles. Staff or admin role required.
+                    </div>
+                }
+                
+                <div class="d-flex gap-2">
+                    <button @onclick="DeleteArticle" class="btn btn-danger" disabled="@(!isUserLoggedIn || (userRole != 1 && userRole != 2))">
+                        <i class="bi bi-trash me-2"></i>Delete Permanently
+                    </button>
+                    <a href="/newsarticles" class="btn btn-outline-secondary">Cancel</a>
+                    <a href="@($"/newsarticles/details?newsarticleid={newsArticle.NewsArticleId}")" class="btn btn-outline-info">View Details</a>
+                </div>
+            </div>
+        </div>
     }
 </div>
 
 @code {
-    private NewsArticle? newsarticle;
+    private NewsArticle? newsArticle;
+    private string? errorMessage;
+    private bool isLoading = true;
+    private bool isDeleting = false;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private short? userId = null;
+    private string userName = string.Empty;
+    private int? userRole = null;
 
     [SupplyParameterFromQuery]
-    private string NewsArticleId { get; set; }
+    private string? NewsArticleId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        newsarticle = await context.NewsArticles.FirstOrDefaultAsync(m => m.NewsArticleId == NewsArticleId);
+        try {
+            // Check authentication status
+            await CheckAuthenticationStatus();
+            
+            // Load article data
+            LoadArticleData();
 
-        if (newsarticle is null)
+            isLoading = false;
+        }
+        catch (Exception ex)
         {
-            NavigationManager.NavigateTo("notfound");
+            errorMessage = "Error loading article: " + ex.Message;
+            isLoading = false;
         }
     }
-
-    private async Task DeleteNewsArticle()
+    
+    private void LoadArticleData()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.NewsArticles.Remove(newsarticle!);
-        await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/newsarticles");
+        try
+        {
+            // Load the news article
+            if (!string.IsNullOrEmpty(NewsArticleId))
+            {
+                // Get the article by ID from the repository
+                newsArticle = NewsArticleRepository.GetNewsArticleById(NewsArticleId);
+                
+                if (newsArticle == null)
+                {
+                    errorMessage = "News article not found.";
+                    return;
+                }
+            }
+            else
+            {
+                errorMessage = "News article ID is required.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading article data: {ex.Message}";
+        }
+    }
+    
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userId = userInfo.UserId;
+        userName = userInfo.UserName;
+        userRole = userInfo.UserRole;
+    }
+
+    private void DeleteArticle()
+    {
+        try
+        {
+            if (newsArticle == null) return;
+            
+            // Verify user permissions
+            if (!isUserLoggedIn || (userRole != 1 && userRole != 2))
+            {
+                errorMessage = "You don't have permission to delete articles.";
+                return;
+            }
+            
+            // Set deleting state to prevent multiple clicks
+            isDeleting = true;
+
+            // Delete the article using the repository
+            try 
+            {
+                NewsArticleRepository.DeleteNewsArticle(newsArticle.NewsArticleId);
+                
+                // Redirect to the list page after successful deletion
+                NavigationManager.NavigateTo("/newsarticles");
+            }
+            catch (Exception deleteEx)
+            {
+                isDeleting = false;
+                errorMessage = $"Error deleting article: {deleteEx.Message}";
+            }
+        }
+        catch (Exception ex)
+        {
+            isDeleting = false;
+            errorMessage = "Error: " + ex.Message;
+        }
     }
 }

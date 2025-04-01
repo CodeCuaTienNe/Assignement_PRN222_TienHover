@@ -50,15 +50,23 @@
     private NewsArticle? newsarticle;
 
     [SupplyParameterFromQuery]
-    private string NewsArticleId { get; set; }
+    private string? NewsArticleId { get; set; }
 
     protected override void OnInitialized()
     {
         try
         {
-            newsarticle = NewsArticleRepository.GetNewsArticleById(NewsArticleId);
+            if (!string.IsNullOrEmpty(NewsArticleId))
+            {
+                // Make sure to use the injected NewsArticleRepository instance
+                newsarticle = NewsArticleRepository.GetNewsArticleById(NewsArticleId);
 
-            if (newsarticle is null)
+                if (newsarticle is null)
+                {
+                    NavigationManager.NavigateTo("notfound");
+                }
+            }
+            else
             {
                 NavigationManager.NavigateTo("notfound");
             }
