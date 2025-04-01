@@ -1,0 +1,27 @@
+@inherits LayoutComponentBase
+
+
+<div class="page">
+    <main>
+        <article class="content px-4 py-5">
+            @Body
+        </article>
+    </main>
+</div>
+
+<style>
+    .page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background-color: #f8f9fa;
+    }
+    
+    main {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
