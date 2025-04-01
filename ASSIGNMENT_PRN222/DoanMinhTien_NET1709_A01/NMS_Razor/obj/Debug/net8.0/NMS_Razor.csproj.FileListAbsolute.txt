@@ -310,3 +310,4 @@ D:\TIEN'S LIBRABRY\STUDY\PRN222\Assignement_PRN222_TienHover\ASSIGNMENT_PRN222\D
 D:\TIEN'S LIBRABRY\STUDY\PRN222\Assignement_PRN222_TienHover\ASSIGNMENT_PRN222\DoanMinhTien_NET1709_A01\NMS_Razor\obj\Debug\net8.0\NMS_Razor.pdb
 D:\TIEN'S LIBRABRY\STUDY\PRN222\Assignement_PRN222_TienHover\ASSIGNMENT_PRN222\DoanMinhTien_NET1709_A01\NMS_Razor\obj\Debug\net8.0\NMS_Razor.genruntimeconfig.cache
 D:\TIEN'S LIBRABRY\STUDY\PRN222\Assignement_PRN222_TienHover\ASSIGNMENT_PRN222\DoanMinhTien_NET1709_A01\NMS_Razor\obj\Debug\net8.0\ref\NMS_Razor.dll
+D:\TIEN'S LIBRABRY\STUDY\PRN222\Assignement_PRN222_TienHover\ASSIGNMENT_PRN222\DoanMinhTien_NET1709_A01\NMS_Razor\bin\Debug\net8.0\libman.json

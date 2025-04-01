@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "defaultProvider": "jsdelivr",
+  "libraries": [
+    {
+      "library": "@microsoft/signalr@8.0.7",
+      "destination": "wwwroot/microsoft/signalr/",
+      "files": ["dist/browser/signalr.js", "dist/browser/signalr.min.js"]
+    }
+  ]
+}

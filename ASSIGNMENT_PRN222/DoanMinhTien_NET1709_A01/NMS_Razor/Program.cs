@@ -1,3 +1,4 @@
+using NMS_Razor.Hubs;
 using NMS_Repositories;
 using System;
 
@@ -12,6 +13,7 @@ builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddSignalR();
 
 //Session
 builder.Services.AddSession(options =>
@@ -33,6 +35,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.MapHub<SignalRHub>("/sinalRHub");
 
 app.MapRazorPages();
 //Use Session
