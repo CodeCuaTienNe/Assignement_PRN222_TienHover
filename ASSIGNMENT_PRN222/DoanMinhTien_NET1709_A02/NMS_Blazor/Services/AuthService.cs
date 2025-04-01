@@ -108,5 +108,27 @@ namespace NMS_Blazor.Services
                 return null;
             }
         }
+
+        public async Task<(bool IsLoggedIn, short? UserId, string UserName, int? UserRole)> GetCurrentUser()
+        {
+            try
+            {
+                var userIdResult = await _sessionStorage.GetAsync<short>("UserId");
+                var userNameResult = await _sessionStorage.GetAsync<string>("UserName");
+                var userRoleResult = await _sessionStorage.GetAsync<int>("UserRole");
+                
+                bool isLoggedIn = userIdResult.Success;
+                short? userId = userIdResult.Success ? userIdResult.Value : null;
+                string userName = userNameResult.Success ? userNameResult.Value : string.Empty;
+                int? userRole = userRoleResult.Success ? userRoleResult.Value : null;
+                
+                return (isLoggedIn, userId, userName, userRole);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving user information from session");
+                return (false, null, string.Empty, null);
+            }
+        }
     }
 }
