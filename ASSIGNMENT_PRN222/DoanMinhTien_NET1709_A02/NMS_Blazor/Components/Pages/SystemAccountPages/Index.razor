@@ -2,47 +2,165 @@
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using NMS_BusinessObjects
-@using NMS_DAOs
 @using NMS_Repositories
+@using NMS_Blazor.Services
 @inject IAccountRepository AccountRepository
 @inject NavigationManager NavigationManager
-@inject IConfiguration Configuration
+@inject AuthService AuthService
 
 <PageTitle>System Accounts</PageTitle>
 
-<h1>System Accounts</h1>
+<div class="container-fluid p-4">
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-sm-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-dark mb-0">Account Management</h2>
+                    <p class="text-muted">View, create and manage system accounts</p>
+                </div>
+                
+                @if (isUserLoggedIn && (userRole == 2 || userRole == 3)) @* Admin and System Admin *@
+                {
+                    <a href="systemaccounts/create" class="btn btn-success mt-2 mt-sm-0">
+                        <i class="bi bi-person-plus me-1"></i> New Account
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
 
-<p>
-    <a href="systemaccounts/create">Create New</a>
-</p>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger border-0 shadow-sm alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+            <button type="button" class="btn-close" @onclick="@(() => errorMessage = null)"></button>
+        </div>
+    }
 
-@if (systemAccounts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <QuickGrid Class="table" Items="@systemAccounts.AsQueryable()" TGridItem="SystemAccount">
-        <PropertyColumn Property="account => account.AccountId" Title="ID" />
-        <PropertyColumn Property="account => account.AccountName" Title="Account Name" />
-        <PropertyColumn Property="account => account.AccountEmail" Title="Email" />
-        <PropertyColumn Property="account => account.AccountRole" Title="Role" />
-        <PropertyColumn Property="account => account.AccountPassword" Title="Password" />
-
-        <TemplateColumn Context="account">
-            <a href="@($"systemaccounts/edit?accountid={account.AccountId}")">Edit</a> |
-            <a href="@($"systemaccounts/details?accountid={account.AccountId}")">Details</a> |
-            <a href="@($"systemaccounts/delete?accountid={account.AccountId}")">Delete</a>
-        </TemplateColumn>
-    </QuickGrid>
-}
+    <div class="card border-0 shadow">
+        <div class="card-body p-0">
+            @if (isLoading)
+            {
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Loading accounts...</p>
+                </div>
+            }
+            else if (systemAccounts == null || !systemAccounts.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-people display-4 text-muted"></i>
+                    <p class="mt-2">No accounts found.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var account in systemAccounts)
+                            {
+                                <tr>
+                                    <td class="ps-4">@account.AccountId</td>
+                                    <td>@account.AccountName</td>
+                                    <td>@account.AccountEmail</td>
+                                    <td>
+                                        @switch (account.AccountRole)
+                                        {
+                                            case 1:
+                                                <span class="badge bg-info">Staff</span>
+                                                break;
+                                            case 2:
+                                                <span class="badge bg-danger">Admin</span>
+                                                break;
+                                            case 3:
+                                                <span class="badge bg-primary">System Admin</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-secondary">User (@account.AccountRole)</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group">
+                                            <a href="@($"systemaccounts/details?accountid={account.AccountId}")" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye me-1"></i> View
+                                            </a>
+                                            
+                                            @if (isUserLoggedIn && (userRole == 2 || userRole == 3)) @* Admin and System Admin *@
+                                            {
+                                                <a href="@($"systemaccounts/edit?accountid={account.AccountId}")" 
+                                                   class="btn btn-sm btn-outline-secondary">
+                                                    <i class="bi bi-pencil me-1"></i> Edit
+                                                </a>
+                                                <a href="@($"systemaccounts/delete?accountid={account.AccountId}")" 
+                                                   class="btn btn-sm btn-outline-danger">
+                                                    <i class="bi bi-trash me-1"></i> Delete
+                                                </a>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 
 @code {
     private List<SystemAccount> systemAccounts;
+    private string errorMessage;
+    private bool isLoading = true;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private int? userRole = null;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        LoadSystemAccounts();
+        try
+        {
+            await CheckAuthenticationStatus();
+            
+            // Allow both admin (role 2) and system admin (role 3) to access this page
+            if (!isUserLoggedIn || (userRole != 2 && userRole != 3))
+            {
+                NavigationManager.NavigateTo("/unauthorized");
+                return;
+            }
+            
+            LoadSystemAccounts();
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading accounts: {ex.Message}";
+            isLoading = false;
+        }
+    }
+
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userRole = userInfo.UserRole;
     }
 
     private void LoadSystemAccounts()
@@ -53,7 +171,7 @@ else
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading system accounts: {ex.Message}");
+            errorMessage = $"Error loading system accounts: {ex.Message}";
             systemAccounts = new List<SystemAccount>();
         }
     }

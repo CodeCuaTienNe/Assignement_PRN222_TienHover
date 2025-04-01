@@ -1,147 +1,204 @@
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using NMS_BusinessObjects;
 using NMS_Repositories;
-using System.Diagnostics;
+using System.Text.Json;
 
 namespace NMS_Blazor.Services
 {
     public class AuthService
     {
-        private readonly IAccountRepository _accountRepository;
         private readonly ProtectedSessionStorage _sessionStorage;
-        private readonly IConfiguration _configuration;
+        private readonly IAccountRepository _accountRepository;
         private readonly ILogger<AuthService> _logger;
-
-        // Add this event for notifying about authentication state changes
+        private readonly IConfiguration _configuration;
+        
+        // Session storage keys
+        private const string USER_ID_KEY = "UserId";
+        private const string USER_NAME_KEY = "UserName";
+        private const string USER_ROLE_KEY = "UserRole";
+        private const string IS_LOGGED_IN_KEY = "IsLoggedIn";
+        
+        // Event to notify components when authentication state changes
         public event EventHandler AuthenticationStateChanged;
 
         public AuthService(
-            IAccountRepository accountRepository, 
             ProtectedSessionStorage sessionStorage,
+            IAccountRepository accountRepository,
             IConfiguration configuration,
             ILogger<AuthService> logger)
         {
-            _accountRepository = accountRepository;
             _sessionStorage = sessionStorage;
+            _accountRepository = accountRepository;
             _configuration = configuration;
             _logger = logger;
         }
 
-        public async Task<(bool Success, string? ErrorMessage, int? UserRole)> Login(string email, string password)
+        public async Task<LoginResult> Login(string email, string password)
         {
+            _logger.LogInformation($"Login attempt for: {email}");
+
             try
             {
-                // Check if it's the admin account from appsettings.json
-                var adminEmail = _configuration.GetValue<string>("AdminAccount:Email");
-                var adminPassword = _configuration.GetValue<string>("AdminAccount:Password");
-                var adminRole = _configuration.GetValue<int>("AdminRole", 3);
-
-                _logger.LogInformation($"Attempting login for: {email}");
-                _logger.LogDebug($"Admin email from config: {adminEmail}");
-
-                // Check if this is the admin account from configuration
-                if (email == adminEmail && password == adminPassword)
+                // Check for admin account credentials from appsettings.json
+                string adminEmail = _configuration["AdminAccount:Email"];
+                string adminPassword = _configuration["AdminAccount:Password"];
+                string adminName = _configuration["AdminAccount:Name"] ?? "Administrator";
+                
+                // Parse admin role properly - could be string "3" or int 3
+                int adminRole;
+                if (!int.TryParse(_configuration["AdminRole"], out adminRole))
                 {
-                    _logger.LogInformation("Admin credentials matched from configuration");
-                    
-                    // Store admin info in session
-                    await _sessionStorage.SetAsync("UserId", (short)1); // Default admin ID
-                    await _sessionStorage.SetAsync("UserEmail", adminEmail);
-                    await _sessionStorage.SetAsync("UserRole", adminRole);
-                    await _sessionStorage.SetAsync("UserName", _configuration.GetValue<string>("AdminAccount:Name", "Administrator"));
-                    
-                    // Notify subscribers about the state change
-                    AuthenticationStateChanged?.Invoke(this, EventArgs.Empty);
-
-                    return (true, null, adminRole);
+                    adminRole = 3; // Default if parsing fails
                 }
 
-                // Otherwise check against database
-                var user = _accountRepository.GetAccount(email, password);
-                
-                if (user == null)
+                _logger.LogDebug($"Admin config: Email={adminEmail}, Role={adminRole}");
+
+                // Case-insensitive comparison for admin email
+                if (!string.IsNullOrEmpty(adminEmail) && !string.IsNullOrEmpty(adminPassword) &&
+                    email.Equals(adminEmail, StringComparison.OrdinalIgnoreCase) &&
+                    password.Equals(adminPassword))
                 {
-                    _logger.LogWarning($"Invalid login attempt for {email} - user not found in database");
-                    return (false, "Invalid email or password", null);
+                    // Admin login successful
+                    _logger.LogInformation($"Admin login successful, role: {adminRole}, name: {adminName}");
+                    
+                    // For admin user, there's no accountId in database
+                    await StoreUserSession(null, adminName, adminRole);
+                    
+                    return new LoginResult
+                    {
+                        Success = true,
+                        UserName = adminName,
+                        UserRole = adminRole
+                    };
                 }
 
-                _logger.LogInformation($"User found in database: {user.AccountName}, Role: {user.AccountRole}");
-
-                // Store user info in session
-                await _sessionStorage.SetAsync("UserId", user.AccountId);
-                await _sessionStorage.SetAsync("UserEmail", user.AccountEmail);
-                await _sessionStorage.SetAsync("UserRole", user.AccountRole);
-                await _sessionStorage.SetAsync("UserName", user.AccountName);
+                // If not admin, check database
+                var account = _accountRepository.GetAccount(email, password);
                 
-                // Notify subscribers about the state change
-                AuthenticationStateChanged?.Invoke(this, EventArgs.Empty);
+                if (account != null)
+                {
+                    _logger.LogInformation($"Database login successful for {email}, role: {account.AccountRole}");
+                    await StoreUserSession(account.AccountId, account.AccountName, account.AccountRole.Value);
+                    
+                    return new LoginResult
+                    {
+                        Success = true,
+                        UserName = account.AccountName,
+                        UserRole = account.AccountRole.Value
+                    };
+                }
 
-                return (true, null, user.AccountRole);
+                _logger.LogWarning($"Login failed for {email}: Invalid credentials");
+                return new LoginResult
+                {
+                    Success = false,
+                    ErrorMessage = "Invalid email or password"
+                };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Login failed with exception");
-                return (false, $"Login failed: {ex.Message}", null);
+                _logger.LogError(ex, "Login error");
+                return new LoginResult
+                {
+                    Success = false,
+                    ErrorMessage = $"Login error: {ex.Message}"
+                };
             }
+        }
+
+        private async Task StoreUserSession(short? userId, string userName, int userRole)
+        {
+            await _sessionStorage.SetAsync(IS_LOGGED_IN_KEY, true);
+            
+            if (userId.HasValue)
+            {
+                await _sessionStorage.SetAsync(USER_ID_KEY, userId.Value);
+            }
+            
+            await _sessionStorage.SetAsync(USER_NAME_KEY, userName);
+            await _sessionStorage.SetAsync(USER_ROLE_KEY, userRole);
+            
+            _logger.LogInformation($"User session stored - Name: {userName}, Role: {userRole}");
+            
+            // Notify components that authentication state has changed
+            OnAuthenticationStateChanged();
         }
 
         public async Task Logout()
         {
-            await _sessionStorage.DeleteAsync("UserId");
-            await _sessionStorage.DeleteAsync("UserEmail");
-            await _sessionStorage.DeleteAsync("UserRole");
-            await _sessionStorage.DeleteAsync("UserName");
-            
-            // Notify subscribers about the state change
-            AuthenticationStateChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        public async Task<bool> IsUserAuthenticated()
-        {
             try
             {
-                var result = await _sessionStorage.GetAsync<short>("UserId");
-                return result.Success;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public async Task<int?> GetUserRole()
-        {
-            try
-            {
-                var result = await _sessionStorage.GetAsync<int?>("UserRole");
-                return result.Success ? result.Value : null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public async Task<(bool IsLoggedIn, short? UserId, string UserName, int? UserRole)> GetCurrentUser()
-        {
-            try
-            {
-                var userIdResult = await _sessionStorage.GetAsync<short>("UserId");
-                var userNameResult = await _sessionStorage.GetAsync<string>("UserName");
-                var userRoleResult = await _sessionStorage.GetAsync<int>("UserRole");
+                // Clear all session data
+                await _sessionStorage.DeleteAsync(USER_ID_KEY);
+                await _sessionStorage.DeleteAsync(USER_NAME_KEY);
+                await _sessionStorage.DeleteAsync(USER_ROLE_KEY);
+                await _sessionStorage.DeleteAsync(IS_LOGGED_IN_KEY);
                 
-                bool isLoggedIn = userIdResult.Success;
-                short? userId = userIdResult.Success ? userIdResult.Value : null;
-                string userName = userNameResult.Success ? userNameResult.Value : string.Empty;
-                int? userRole = userRoleResult.Success ? userRoleResult.Value : null;
+                // Notify components about the change
+                OnAuthenticationStateChanged();
                 
-                return (isLoggedIn, userId, userName, userRole);
+                _logger.LogInformation("User logged out successfully");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving user information from session");
-                return (false, null, string.Empty, null);
+                _logger.LogError(ex, "Error during logout");
+                throw;
             }
         }
+
+        public async Task<UserInfo> GetCurrentUser()
+        {
+            try
+            {
+                var userInfo = new UserInfo();
+                
+                // Read login info from browser storage
+                var isLoggedInResult = await _sessionStorage.GetAsync<bool>(IS_LOGGED_IN_KEY);
+                userInfo.IsLoggedIn = isLoggedInResult.Success ? isLoggedInResult.Value : false;
+                
+                if (userInfo.IsLoggedIn)
+                {
+                    // Only get these values if user is logged in
+                    var userIdResult = await _sessionStorage.GetAsync<short>(USER_ID_KEY);
+                    var userNameResult = await _sessionStorage.GetAsync<string>(USER_NAME_KEY);
+                    var userRoleResult = await _sessionStorage.GetAsync<int>(USER_ROLE_KEY);
+                    
+                    if (userIdResult.Success) userInfo.UserId = userIdResult.Value;
+                    if (userNameResult.Success) userInfo.UserName = userNameResult.Value;
+                    if (userRoleResult.Success) userInfo.UserRole = userRoleResult.Value;
+                    
+                    _logger.LogDebug($"Retrieved user info - Name: {userInfo.UserName}, Role: {userInfo.UserRole}");
+                }
+                
+                return userInfo;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving current user");
+                // Return not logged in if there's an error
+                return new UserInfo();
+            }
+        }
+
+        protected virtual void OnAuthenticationStateChanged()
+        {
+            AuthenticationStateChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public class UserInfo
+    {
+        public bool IsLoggedIn { get; set; }
+        public short? UserId { get; set; }
+        public string UserName { get; set; } = string.Empty;
+        public int? UserRole { get; set; }
+    }
+
+    public class LoginResult
+    {
+        public bool Success { get; set; }
+        public string UserName { get; set; } = string.Empty;
+        public int UserRole { get; set; }
+        public string ErrorMessage { get; set; } = string.Empty;
     }
 }

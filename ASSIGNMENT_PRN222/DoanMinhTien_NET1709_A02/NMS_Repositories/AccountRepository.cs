@@ -11,25 +11,44 @@ namespace NMS_Repositories
 {
     public class AccountRepository : IAccountRepository
     {
-        public SystemAccount GetAccount(string email, string password)
-            => AccountDAO.Instance().GetAccount(email, password);
-            
-        public SystemAccount GetAccountById(short id)
-            => AccountDAO.Instance().GetAccountById(id);
-            
         public List<SystemAccount> GetAccounts()
-            => AccountDAO.Instance().GetAccounts();
-            
+        {
+            return AccountDAO.Instance.GetAccounts();
+        }
+
+        public SystemAccount GetAccountById(short id)
+        {
+            return AccountDAO.Instance.GetAccountById(id);
+        }
+
+        public SystemAccount GetAccount(string email, string password)
+        {
+            return AccountDAO.Instance.GetAccount(email, password);
+        }
+
         public void AddAccount(SystemAccount account)
-            => AccountDAO.Instance().AddAccount(account);
-            
+        {
+            AccountDAO.Instance.AddAccount(account);
+        }
+
         public void UpdateAccount(SystemAccount account)
-            => AccountDAO.Instance().UpdateAccount(account);
-            
+        {
+            AccountDAO.Instance.UpdateAccount(account);
+        }
+
         public void DeleteAccount(short id)
-            => AccountDAO.Instance().DeleteAccount(id);
-            
+        {
+            AccountDAO.Instance.DeleteAccount(id);
+        }
+
         public bool IsEmailExists(string email)
-            => AccountDAO.Instance().GetAccountByEmail(email) != null;
+        {
+            return AccountDAO.Instance.IsEmailExists(email);
+        }
+
+        public bool IsAccountInUse(short id)
+        {
+            return AccountDAO.Instance.IsAccountInUse(id);
+        }
     }
 }

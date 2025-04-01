@@ -1,34 +1,33 @@
-﻿using System;
+﻿using NMS_BusinessObjects;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using NMS_BusinessObjects;
+
 namespace NMS_DAOs
 {
     public class AccountDAO
     {
         private FunewsManagementContext _context;
-        private static AccountDAO instance;
+        private static AccountDAO _instance;
 
         public AccountDAO()
         {
-            _context = new FunewsManagementContext();   
+            _context = new FunewsManagementContext();
         }
 
-        public static AccountDAO Instance() 
+        public static AccountDAO Instance
         {
-            if (instance == null)
+            get
             {
-                instance = new AccountDAO();
+                if (_instance == null)
+                {
+                    _instance = new AccountDAO();
+                }
+                return _instance;
             }
-            return instance;
-        }
-        
-        public SystemAccount GetAccount(String email, String password)
-        {
-            return _context.SystemAccounts.FirstOrDefault(m => m.AccountEmail.Equals(email) && m.AccountPassword.Equals(password));
         }
 
         public List<SystemAccount> GetAccounts()
@@ -38,30 +37,40 @@ namespace NMS_DAOs
 
         public SystemAccount GetAccountById(short id)
         {
-            return _context.SystemAccounts.FirstOrDefault(m => m.AccountId == id);
+            return _context.SystemAccounts.FirstOrDefault(a => a.AccountId == id);
         }
 
-        public SystemAccount GetAccountByEmail(string email)
+        public SystemAccount GetAccount(string email, string password)
         {
-            return _context.SystemAccounts.FirstOrDefault(a => a.AccountEmail.Equals(email));
+            return _context.SystemAccounts.FirstOrDefault(a => 
+                a.AccountEmail.ToLower() == email.ToLower() && 
+                a.AccountPassword == password);
         }
 
         public void AddAccount(SystemAccount account)
         {
             try
             {
-                var existingAccount = GetAccountByEmail(account.AccountEmail);
-                if (existingAccount != null)
+                // Check if email already exists
+                if (IsEmailExists(account.AccountEmail))
                 {
-                    throw new Exception($"Account with email '{account.AccountEmail}' is already exist");
+                    throw new Exception($"Account with email '{account.AccountEmail}' already exists");
                 }
+
+                // Auto-generate ID by finding the max ID and adding 1
+                short maxId = 0;
+                if (_context.SystemAccounts.Any())
+                {
+                    maxId = _context.SystemAccounts.Max(a => a.AccountId);
+                }
+                account.AccountId = (short)(maxId + 1);
 
                 _context.SystemAccounts.Add(account);
                 _context.SaveChanges();
             }
             catch (Exception ex)
             {
-                throw new Exception("Fail to create account: " + ex.Message);
+                throw new Exception("Error adding account: " + ex.Message);
             }
         }
 
@@ -69,61 +78,78 @@ namespace NMS_DAOs
         {
             try
             {
-                var existingAccount = GetAccountById(account.AccountId);
-                if (existingAccount == null)
+                // Check if email is duplicated with another account (if email changed)
+                if (!string.IsNullOrEmpty(account.AccountEmail))
                 {
-                    throw new Exception($"No ID for account {account.AccountId}");
-                }
-
-                if (account.AccountEmail != existingAccount.AccountEmail)
-                {
-                    var emailExists = GetAccountByEmail(account.AccountEmail);
-                    if (emailExists != null)
+                    string emailLower = account.AccountEmail.ToLower();
+                    var duplicateAccount = _context.SystemAccounts
+                        .Where(a => a.AccountId != account.AccountId && a.AccountEmail.ToLower() == emailLower)
+                        .FirstOrDefault();
+                    
+                    if (duplicateAccount != null)
                     {
-                        throw new Exception($"Account with email '{account.AccountEmail}' is already exist");
+                        throw new Exception($"Account with email '{account.AccountEmail}' already exists");
                     }
                 }
-
-                existingAccount.AccountName = account.AccountName;
-                existingAccount.AccountEmail = account.AccountEmail;
-                existingAccount.AccountRole = account.AccountRole;
-
-                if (!string.IsNullOrEmpty(account.AccountPassword))
+                
+                var existingAccount = _context.SystemAccounts.Find(account.AccountId);
+                if (existingAccount != null)
                 {
-                    existingAccount.AccountPassword = account.AccountPassword;
+                    _context.Entry(existingAccount).CurrentValues.SetValues(account);
+                    _context.SaveChanges();
                 }
-
-                _context.SaveChanges();
+                else
+                {
+                    throw new Exception("Account not found");
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception("Fail to update account: " + ex.Message);
+                throw new Exception("Error updating account: " + ex.Message);
             }
+        }
+
+        public bool IsEmailExists(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return false;
+                
+            string emailLower = email.ToLower();
+            return _context.SystemAccounts.Any(a => a.AccountEmail.ToLower() == emailLower);
+        }
+
+        public bool IsAccountInUse(short id)
+        {
+            // Check if account is used as author of any news articles
+            bool hasArticles = _context.NewsArticles.Any(a => a.CreatedById == id || a.UpdatedById == id);
+            
+            return hasArticles;
         }
 
         public void DeleteAccount(short id)
         {
             try
             {
-                var account = GetAccountById(id);
-                if (account == null)
+                // Check if the account is in use
+                if (IsAccountInUse(id))
                 {
-                    throw new Exception($"Cannot find account with ID: {id}");
+                    throw new Exception("Cannot delete this account because it is associated with news articles");
                 }
 
-                // Kiểm tra xem tài khoản có liên quan đến bài viết tin tức không
-                var hasRelatedNews = _context.NewsArticles.Any(n => n.CreatedById == id || n.UpdatedById == id);
-                if (hasRelatedNews)
+                var account = _context.SystemAccounts.Find(id);
+                if (account != null)
                 {
-                    throw new Exception("Cannot delete account because it is associated with news article");
+                    _context.SystemAccounts.Remove(account);
+                    _context.SaveChanges();
                 }
-
-                _context.SystemAccounts.Remove(account);
-                _context.SaveChanges();
+                else
+                {
+                    throw new Exception("Account not found");
+                }
             }
             catch (Exception ex)
             {
-                throw new Exception("Error when delete account: " + ex.Message);
+                throw new Exception("Error deleting account: " + ex.Message);
             }
         }
     }

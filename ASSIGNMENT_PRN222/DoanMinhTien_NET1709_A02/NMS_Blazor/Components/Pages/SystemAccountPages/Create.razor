@@ -1,59 +1,256 @@
 ﻿@page "/systemaccounts/create"
 @using Microsoft.EntityFrameworkCore
 @using NMS_BusinessObjects
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@inject IAccountRepository AccountRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Create</PageTitle>
+<PageTitle>Create Account</PageTitle>
 
-<h1>Create</h1>
-
-<h2>SystemAccount</h2>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <EditForm method="post" Model="SystemAccount" OnValidSubmit="AddSystemAccount" FormName="create" Enhance>
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert"/>
-            <div class="mb-3">
-                <label for="accountname" class="form-label">AccountName:</label> 
-                <InputText id="accountname" @bind-Value="SystemAccount.AccountName" class="form-control" /> 
-                <ValidationMessage For="() => SystemAccount.AccountName" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="accountemail" class="form-label">AccountEmail:</label> 
-                <InputText id="accountemail" @bind-Value="SystemAccount.AccountEmail" class="form-control" /> 
-                <ValidationMessage For="() => SystemAccount.AccountEmail" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="accountrole" class="form-label">AccountRole:</label> 
-                <InputNumber id="accountrole" @bind-Value="SystemAccount.AccountRole" class="form-control" /> 
-                <ValidationMessage For="() => SystemAccount.AccountRole" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="accountpassword" class="form-label">AccountPassword:</label> 
-                <InputText id="accountpassword" @bind-Value="SystemAccount.AccountPassword" class="form-control" /> 
-                <ValidationMessage For="() => SystemAccount.AccountPassword" class="text-danger" /> 
-            </div>        
-            <button type="submit" class="btn btn-primary">Create</button>
-        </EditForm>
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/systemaccounts">Accounts</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Account</li>
+                </ol>
+            </nav>
+        </div>
     </div>
-</div>
 
-<div>
-    <a href="/systemaccounts">Back to List</a>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+        </div>
+    }
+    
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading form...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-white py-3">
+                        <h3 class="card-title mb-0">Create New Account</h3>
+                    </div>
+                    
+                    <div class="card-body">
+                        <EditForm Model="account" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger mb-4" />
+                            
+                            <div class="mb-3">
+                                <label for="accountname" class="form-label">Account Name <span class="text-danger">*</span></label>
+                                <InputText id="accountname" @bind-Value="account.AccountName" class="form-control" required placeholder="Enter name" />
+                                <ValidationMessage For="@(() => account.AccountName)" class="text-danger" />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="accountemail" class="form-label">Email <span class="text-danger">*</span></label>
+                                <InputText id="accountemail" @bind-Value="account.AccountEmail" class="form-control" required placeholder="Enter email address" />
+                                <ValidationMessage For="@(() => account.AccountEmail)" class="text-danger" />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="accountrole" class="form-label">Role <span class="text-danger">*</span></label>
+                                <InputSelect id="accountrole" @bind-Value="account.AccountRole" class="form-select">
+                                    <option value="1">Staff (Content Management)</option>
+                                    <option value="2">Admin (Full Access)</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => account.AccountRole)" class="text-danger" />
+                                <small class="form-text text-muted">
+                                    Staff can manage content. Admins have full system access.
+                                </small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="accountpassword" class="form-label">Password <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    @if (showPassword)
+                                    {
+                                        <InputText id="accountpassword" @bind-Value="account.AccountPassword" class="form-control" required placeholder="Enter password" />
+                                        <button class="btn btn-outline-secondary" type="button" @onclick="TogglePassword">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <InputText id="accountpassword" @bind-Value="account.AccountPassword" type="password" class="form-control" required placeholder="Enter password" />
+                                        <button class="btn btn-outline-secondary" type="button" @onclick="TogglePassword">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    }
+                                </div>
+                                <ValidationMessage For="@(() => account.AccountPassword)" class="text-danger" />
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary px-4" disabled="@(!isUserLoggedIn || (userRole != 2 && userRole != 3))">
+                                    <i class="bi bi-person-plus me-1"></i> Create Account
+                                </button>
+                                <a href="/systemaccounts" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-lg me-1"></i> Cancel
+                                </a>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Account Creation Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">Use clear, professional names for accounts</li>
+                            <li class="list-group-item px-0">Email addresses should be unique for each account</li>
+                            <li class="list-group-item px-0">Strong passwords include a mix of letters, numbers, and symbols</li>
+                            <li class="list-group-item px-0">Assign appropriate roles based on responsibilities</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                @if (!isUserLoggedIn || (userRole != 2 && userRole != 3))
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Permissions Required</strong>
+                        <p class="mb-0">Admin privileges are required to create new system accounts.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>
 
 @code {
-    [SupplyParameterFromForm]
-    private SystemAccount SystemAccount { get; set; } = new();
+    private SystemAccount account = new SystemAccount();
+    private string errorMessage;
+    private bool isLoading = true;
+    private bool showPassword = false;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private int? userRole = null;
 
-    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task AddSystemAccount()
+    protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.SystemAccounts.Add(SystemAccount);
-        await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/systemaccounts");
+        try {
+            // Check authentication status
+            await CheckAuthenticationStatus();
+            
+            // Only admin (role 2) or system admin (role 3) should access this page
+            if (!isUserLoggedIn || (userRole != 2 && userRole != 3))
+            {
+                NavigationManager.NavigateTo("/unauthorized");
+                return;
+            }
+            
+            // Set initial values for the new account
+            account = new SystemAccount 
+            { 
+                AccountId = 0,
+                AccountRole = 1 // Default to Staff role
+            };
+
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error loading page: " + ex.Message;
+            isLoading = false;
+        }
+    }
+    
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userRole = userInfo.UserRole;
+        
+        // Only admin (role 2) or system admin (role 3) should access this page
+        if (!isUserLoggedIn || (userRole != 2 && userRole != 3))
+        {
+            NavigationManager.NavigateTo("/unauthorized");
+            return;
+        }
+    }
+
+    private void HandleValidSubmit()
+    {
+        try
+        {
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(account.AccountName))
+            {
+                errorMessage = "Account name is required";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(account.AccountEmail))
+            {
+                errorMessage = "Email is required";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(account.AccountPassword))
+            {
+                errorMessage = "Password is required";
+                return;
+            }
+
+            // Check if user is logged in with admin role
+            if (!isUserLoggedIn || (userRole != 2 && userRole != 3))
+            {
+                errorMessage = "You must be logged in as an admin to create accounts";
+                return;
+            }
+            
+            try
+            {
+                // Add the account
+                AccountRepository.AddAccount(account);
+
+                // Everything succeeded, redirect to the list page
+                NavigationManager.NavigateTo("/systemaccounts");
+            }
+            catch (Exception dbEx)
+            {
+                // Handle specific database exceptions
+                if (dbEx.Message.Contains("already exists"))
+                {
+                    errorMessage = dbEx.Message;
+                }
+                else
+                {
+                    errorMessage = "Error creating account: " + dbEx.Message;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error creating account: " + ex.Message;
+        }
+    }
+    
+    private void TogglePassword()
+    {
+        showPassword = !showPassword;
     }
 }

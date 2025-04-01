@@ -20,9 +20,16 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 // Log the admin account settings (email only, never log passwords)
-var adminEmail = builder.Configuration.GetValue<string>("AdminAccount:Email");
-var adminRole = builder.Configuration.GetValue<int>("AdminRole", 3);
-Console.WriteLine($"Admin settings loaded - Email: {adminEmail}, Role: {adminRole}");
+var adminEmail = builder.Configuration["AdminAccount:Email"];
+Console.WriteLine($"Admin Email from config: {adminEmail}");
+
+// Try to parse and print the admin role
+try {
+    var adminRole = builder.Configuration.GetValue<int>("AdminRole");
+    Console.WriteLine($"Admin Role from config: {adminRole}");
+} catch {
+    Console.WriteLine("Could not parse AdminRole from configuration");
+}
 
 //DI 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();

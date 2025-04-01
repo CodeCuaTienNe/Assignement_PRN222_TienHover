@@ -1,104 +1,281 @@
 ﻿@page "/systemaccounts/edit"
 @using Microsoft.EntityFrameworkCore
 @using NMS_BusinessObjects
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@using NMS_Blazor.Services
+@inject IAccountRepository AccountRepository
 @inject NavigationManager NavigationManager
+@inject AuthService AuthService
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Edit Account</PageTitle>
 
-<h1>Edit</h1>
-
-<h2>SystemAccount</h2>
-<hr />
-@if (SystemAccount is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="SystemAccount" OnValidSubmit="UpdateSystemAccount" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
-                <input type="hidden" name="SystemAccount.AccountId" value="@SystemAccount.AccountId" />
-                <div class="mb-3">
-                    <label for="accountname" class="form-label">AccountName:</label>
-                    <InputText id="accountname" @bind-Value="SystemAccount.AccountName" class="form-control" />
-                    <ValidationMessage For="() => SystemAccount.AccountName" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="accountemail" class="form-label">AccountEmail:</label>
-                    <InputText id="accountemail" @bind-Value="SystemAccount.AccountEmail" class="form-control" />
-                    <ValidationMessage For="() => SystemAccount.AccountEmail" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="accountrole" class="form-label">AccountRole:</label>
-                    <InputNumber id="accountrole" @bind-Value="SystemAccount.AccountRole" class="form-control" />
-                    <ValidationMessage For="() => SystemAccount.AccountRole" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="accountpassword" class="form-label">AccountPassword:</label>
-                    <InputText id="accountpassword" @bind-Value="SystemAccount.AccountPassword" class="form-control" />
-                    <ValidationMessage For="() => SystemAccount.AccountPassword" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
+<div class="container-fluid p-4">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/systemaccounts">Accounts</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Account</li>
+                </ol>
+            </nav>
         </div>
     </div>
-}
 
-<div>
-    <a href="/systemaccounts">Back to List</a>
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger border-0 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+        </div>
+    }
+    
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading account data...</p>
+        </div>
+    }
+    else if (account == null)
+    {
+        <div class="alert alert-warning border-0 shadow-sm">
+            <i class="bi bi-exclamation-triangle me-2"></i> Account not found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                        <h3 class="card-title mb-0">Edit Account</h3>
+                    </div>
+                    
+                    <div class="card-body">
+                        <EditForm Model="account" OnValidSubmit="HandleValidSubmit">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary class="text-danger mb-4" />
+                            
+                            <input type="hidden" name="account.AccountId" value="@account.AccountId" />
+                            
+                            <div class="mb-3">
+                                <label for="accountname" class="form-label">Account Name <span class="text-danger">*</span></label>
+                                <InputText id="accountname" @bind-Value="account.AccountName" class="form-control" required />
+                                <ValidationMessage For="@(() => account.AccountName)" class="text-danger" />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="accountemail" class="form-label">Email <span class="text-danger">*</span></label>
+                                <InputText id="accountemail" @bind-Value="account.AccountEmail" class="form-control" required />
+                                <ValidationMessage For="@(() => account.AccountEmail)" class="text-danger" />
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="accountrole" class="form-label">Role <span class="text-danger">*</span></label>
+                                <InputSelect id="accountrole" @bind-Value="account.AccountRole" class="form-select">
+                                    <option value="1">Staff (Content Management)</option>
+                                    <option value="2">Admin (Full Access)</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => account.AccountRole)" class="text-danger" />
+                                <small class="form-text text-muted">
+                                    Staff can manage content. Admins have full system access.
+                                </small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="accountpassword" class="form-label">Password <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    @if (showPassword)
+                                    {
+                                        <InputText id="accountpassword" @bind-Value="account.AccountPassword" class="form-control" required />
+                                        <button class="btn btn-outline-secondary" type="button" @onclick="TogglePassword">
+                                            <i class="bi bi-eye-slash"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <InputText id="accountpassword" @bind-Value="account.AccountPassword" type="password" class="form-control" required />
+                                        <button class="btn btn-outline-secondary" type="button" @onclick="TogglePassword">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    }
+                                </div>
+                                <ValidationMessage For="@(() => account.AccountPassword)" class="text-danger" />
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary" disabled="@(!isUserLoggedIn || (userRole != 2 && userRole != 3))">
+                                    <i class="bi bi-save me-1"></i> Save Changes
+                                </button>
+                                <a href="/systemaccounts" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                                </a>
+                                <a href="@($"/systemaccounts/details?accountid={account.AccountId}")" class="btn btn-outline-info">
+                                    <i class="bi bi-eye me-1"></i> View Details
+                                </a>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Account Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">Account ID</dt>
+                            <dd class="col-sm-8">@account.AccountId</dd>
+                        </dl>
+                    </div>
+                </div>
+                
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Editing Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item px-0">Use clear, professional names for accounts</li>
+                            <li class="list-group-item px-0">Strong passwords should include a mix of letters, numbers, and symbols</li>
+                            <li class="list-group-item px-0">Assign appropriate roles based on responsibilities</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
-    [SupplyParameterFromQuery]
-    private short AccountId { get; set; }
+    private SystemAccount account;
+    private string errorMessage;
+    private bool isLoading = true;
+    private bool showPassword = false;
+    
+    // User information
+    private bool isUserLoggedIn = false;
+    private int? userRole = null;
 
-    [SupplyParameterFromForm]
-    private SystemAccount? SystemAccount { get; set; }
+    [SupplyParameterFromQuery(Name = "accountid")]
+    private string AccountIdString { get; set; }
+
+    private short AccountId => string.IsNullOrEmpty(AccountIdString) ? (short)0 : short.Parse(AccountIdString);
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        SystemAccount ??= await context.SystemAccounts.FirstOrDefaultAsync(m => m.AccountId == AccountId);
+        try {
+            // Check authentication status
+            await CheckAuthenticationStatus();
+            
+            // Only admin (role 2) or system admin (role 3) should access this page
+            if (!isUserLoggedIn || (userRole != 2 && userRole != 3))
+            {
+                NavigationManager.NavigateTo("/unauthorized");
+                return;
+            }
+            
+            // Load account data
+            LoadData();
 
-        if (SystemAccount is null)
+            isLoading = false;
+        }
+        catch (Exception ex)
         {
-            NavigationManager.NavigateTo("notfound");
+            errorMessage = "Error loading account: " + ex.Message;
+            isLoading = false;
+        }
+    }
+    
+    private void LoadData()
+    {
+        try {
+            // Load the account
+            account = AccountRepository.GetAccountById(AccountId);
+            
+            if (account == null)
+            {
+                errorMessage = "Account not found.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading account data: {ex.Message}";
+        }
+    }
+    
+    private async Task CheckAuthenticationStatus()
+    {
+        // Get user information from AuthService
+        var userInfo = await AuthService.GetCurrentUser();
+        
+        isUserLoggedIn = userInfo.IsLoggedIn;
+        userRole = userInfo.UserRole;
+        
+        // Only admin (role 2) or system admin (role 3) should access this page
+        if (!isUserLoggedIn || (userRole != 2 && userRole != 3))
+        {
+            NavigationManager.NavigateTo("/unauthorized");
+            return;
         }
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
-    private async Task UpdateSystemAccount()
+    private void HandleValidSubmit()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(SystemAccount!).State = EntityState.Modified;
-
         try
         {
-            await context.SaveChangesAsync();
+            if (account == null) return;
+            
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(account.AccountName))
+            {
+                errorMessage = "Account name is required";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(account.AccountEmail))
+            {
+                errorMessage = "Email is required";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(account.AccountPassword))
+            {
+                errorMessage = "Password is required";
+                return;
+            }
+
+            // Check if user is logged in with admin role
+            if (!isUserLoggedIn || (userRole != 2 && userRole != 3))
+            {
+                errorMessage = "You must be logged in as an admin to edit accounts";
+                return;
+            }
+            
+            try
+            {
+                // Update the account
+                AccountRepository.UpdateAccount(account);
+
+                // Everything succeeded, redirect to the list page
+                NavigationManager.NavigateTo("/systemaccounts");
+            }
+            catch (Exception dbEx)
+            {
+                errorMessage = "Error updating account: " + dbEx.Message;
+            }
         }
-        catch (DbUpdateConcurrencyException)
+        catch (Exception ex)
         {
-            if (!SystemAccountExists(SystemAccount!.AccountId))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
+            errorMessage = "Error updating account: " + ex.Message;
         }
-
-        NavigationManager.NavigateTo("/systemaccounts");
     }
-
-    private bool SystemAccountExists(short accountid)
+    
+    private void TogglePassword()
     {
-        using var context = DbFactory.CreateDbContext();
-        return context.SystemAccounts.Any(e => e.AccountId == accountid);
+        showPassword = !showPassword;
     }
 }

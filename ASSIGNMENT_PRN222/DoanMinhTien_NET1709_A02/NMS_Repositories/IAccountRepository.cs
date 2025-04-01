@@ -16,5 +16,6 @@ namespace NMS_Repositories
         void UpdateAccount(SystemAccount account);
         void DeleteAccount(short id);
         bool IsEmailExists(string email);
+        bool IsAccountInUse(short id);
     }
 }

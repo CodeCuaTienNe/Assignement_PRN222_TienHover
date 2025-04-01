@@ -64,7 +64,7 @@
     {
         // Get admin role from configuration
         adminRole = Configuration.GetValue<int>("AdminRole", 3);
-        
+
         // Pre-fill admin email in development environment
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
         {
@@ -89,19 +89,22 @@
             if (result.Success)
             {
                 Logger.LogInformation($"Login successful for: {loginModel.Email}, Role: {result.UserRole}");
-                
-                // Redirect based on role
+                int adminRole = 3;
+                int staffRole = 1;
+                int lectureRole = 2;
+
+            // Redirect based on role
                 if (result.UserRole == adminRole)
                 {
                     NavManager.NavigateTo("/systemaccounts");
                 }
-                else if (result.UserRole == 1) // Staff role
+                else if (result.UserRole == staffRole || result.UserRole == lectureRole) // Staff role
                 {
                     NavManager.NavigateTo("/newsarticles");
                 }
                 else
                 {
-                    NavManager.NavigateTo("/unauthorized");
+                    NavManager.NavigateTo("/systemaccounts");
                 }
             }
             else
