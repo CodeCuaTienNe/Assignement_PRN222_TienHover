@@ -1,0 +1,31 @@
+@page "/logout"
+@using NMS_Blazor.Services
+@inject AuthService AuthService
+@inject NavigationManager NavManager
+
+<PageTitle>Logout</PageTitle>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Logout</h3>
+                </div>
+                <div class="card-body">
+                    <p>You have been logged out.</p>
+                    <div class="d-grid">
+                        <a href="/" class="btn btn-primary">Return to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthService.Logout();
+    }
+}

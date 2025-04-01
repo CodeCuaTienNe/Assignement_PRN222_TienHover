@@ -1,0 +1,94 @@
+@page "/login"
+@using NMS_Blazor.Services
+@using System.ComponentModel.DataAnnotations
+@inject AuthService AuthService
+@inject NavigationManager NavManager
+@inject IConfiguration Configuration
+
+<PageTitle>Login</PageTitle>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Login</h3>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(ErrorMessage))
+                    {
+                        <div class="alert alert-danger">
+                            @ErrorMessage
+                        </div>
+                    }
+                    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                        <DataAnnotationsValidator />
+                        <div class="form-group mb-3">
+                            <label for="email">Email:</label>
+                            <InputText @bind-Value="loginModel.Email" class="form-control" id="email" required />
+                            <ValidationMessage For="@(() => loginModel.Email)" />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="password">Password:</label>
+                            <InputText @bind-Value="loginModel.Password" type="password" class="form-control" id="password" required />
+                            <ValidationMessage For="@(() => loginModel.Password)" />
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private string? ErrorMessage;
+    private int adminRole;
+
+    protected override void OnInitialized()
+    {
+        // Get admin role from configuration
+        adminRole = Configuration.GetValue<int>("AdminRole", 3);
+    }
+
+    private async Task HandleLogin()
+    {
+        ErrorMessage = null;
+
+        var result = await AuthService.Login(loginModel.Email, loginModel.Password);
+
+        if (result.Success)
+        {
+            // Redirect based on role
+            if (result.UserRole == adminRole)
+            {
+                NavManager.NavigateTo("/systemaccounts");
+            }
+            else if (result.UserRole == 1) // Staff role
+            {
+                NavManager.NavigateTo("/newsarticles");
+            }
+            else
+            {
+                NavManager.NavigateTo("/unauthorized");
+            }
+        }
+        else
+        {
+            ErrorMessage = result.ErrorMessage;
+        }
+    }
+
+    public class LoginModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        public string Password { get; set; } = string.Empty;
+    }
+}
