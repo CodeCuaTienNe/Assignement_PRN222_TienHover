@@ -1,7 +1,8 @@
 ﻿@page "/newsarticles/details"
 @using Microsoft.EntityFrameworkCore
 @using NMS_BusinessObjects
-@inject IDbContextFactory<NMS_DAOs.FunewsManagementContext> DbFactory
+@using NMS_Repositories
+@inject INewsArticleRepository NewsArticleRepository
 @inject NavigationManager NavigationManager
 
 <PageTitle>Details</PageTitle>
@@ -51,13 +52,21 @@
     [SupplyParameterFromQuery]
     private string NewsArticleId { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        using var context = DbFactory.CreateDbContext();
-        newsarticle = await context.NewsArticles.FirstOrDefaultAsync(m => m.NewsArticleId == NewsArticleId);
-
-        if (newsarticle is null)
+        try
         {
+            newsarticle = NewsArticleRepository.GetNewsArticleById(NewsArticleId);
+
+            if (newsarticle is null)
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+        }
+        catch (Exception ex)
+        {
+            // In a real application, you might want to use a logger or display the error to the user
+            Console.WriteLine($"Error loading news article: {ex.Message}");
             NavigationManager.NavigateTo("notfound");
         }
     }
