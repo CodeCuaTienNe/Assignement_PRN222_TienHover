@@ -85,6 +85,9 @@ namespace NMS_Razor.Pages.CategoryPage
                 return RedirectToPage("/AccessDenied");
             }
 
+            // Remove validation for ParentCategoryId to allow null values
+            ModelState.Remove("Category.ParentCategoryId");
+
             if (!ModelState.IsValid)
             {
                 ViewData["ParentCategoryId"] = new SelectList(_categoryRepository.GetAllCategories(), "CategoryId", "CategoryName");
@@ -93,6 +96,12 @@ namespace NMS_Razor.Pages.CategoryPage
 
             try
             {
+                // Handle empty parent category - convert empty string to null
+                if (Category.ParentCategoryId == 0)
+                {
+                    Category.ParentCategoryId = null;
+                }
+
                 // Assign the IsActive value
                 Category.IsActive = IsActive;
                 

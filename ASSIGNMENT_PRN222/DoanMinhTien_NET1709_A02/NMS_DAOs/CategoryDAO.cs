@@ -48,14 +48,25 @@ namespace NMS_DAOs
         {
             try
             {
-                // Check if category name already exists
-                if (_context.Categories.Any(c => c.CategoryName.ToLower() == category.CategoryName.ToLower()))
+                // Ensure ParentCategoryId is properly handled when empty string is passed
+                if (category.ParentCategoryId.HasValue && category.ParentCategoryId.Value == 0)
                 {
-                    throw new Exception($"Category with name '{category.CategoryName}' already exists");
+                    // Set to null if it's 0 (default value when no selection is made)
+                    category.ParentCategoryId = null;
                 }
-                
+
+                // Don't set CategoryId - let the database generate it
+                // Remove any existing value to ensure the identity column works
+                category.CategoryId = 0;  // This will be ignored by EF Core for identity columns
+
                 _context.Categories.Add(category);
                 _context.SaveChanges();
+            }
+            catch (DbUpdateException dbEx)
+            {
+                // Log the detailed exception for debugging
+                Console.WriteLine($"Database error: {dbEx.InnerException?.Message}");
+                throw new Exception($"Error adding category to database: {dbEx.InnerException?.Message ?? dbEx.Message}");
             }
             catch (Exception ex)
             {
