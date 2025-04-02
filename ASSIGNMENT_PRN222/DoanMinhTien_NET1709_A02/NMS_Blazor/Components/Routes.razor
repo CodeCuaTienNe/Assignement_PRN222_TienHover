@@ -1,6 +1,28 @@
 ﻿<Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <RouteView RouteData="routeData" DefaultLayout="@GetLayoutType(routeData)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(Layout.MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
 </Router>
+
+@code {
+    private Type GetLayoutType(RouteData routeData)
+    {
+        var pagePath = routeData.PageType.FullName;
+        
+        // Use EmptyLayout for Auth pages
+        if (pagePath != null && pagePath.Contains(".Auth."))
+        {
+            return typeof(Layout.EmptyLayout);
+        }
+        
+        // Default to MainLayout for all other pages
+        return typeof(Layout.MainLayout);
+    }
+}

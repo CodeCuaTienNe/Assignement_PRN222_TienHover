@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.AspNetCore.Http;
+using NMS_Blazor.Components.Layout; // Add this import for layout components
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +20,9 @@ builder.Logging.SetMinimumLevel(LogLevel.Debug);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Log the admin account settings (email only, never log passwords)
-var adminEmail = builder.Configuration["AdminAccount:Email"];
-Console.WriteLine($"Admin Email from config: {adminEmail}");
+// Comment out or remove any code that logs admin emails to the console
+// var adminEmail = builder.Configuration["AdminAccount:Email"];
+// Console.WriteLine($"Admin Email from config: {adminEmail}");
 
 // Try to parse and print the admin role
 try {
@@ -40,6 +41,9 @@ builder.Services.AddScoped<IReportRepository, ReportRepository>();
 
 // Add AuthService
 builder.Services.AddScoped<AuthService>();
+
+// Add NotificationService
+builder.Services.AddScoped<NotificationService>();
 
 // Add ProtectedSessionStorage for AuthService to use
 builder.Services.AddScoped<Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage.ProtectedSessionStorage>();
