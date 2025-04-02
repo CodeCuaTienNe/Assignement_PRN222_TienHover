@@ -67,12 +67,14 @@
                                 <label for="accountName" class="form-label">Name</label>
                                 <InputText id="accountName" @bind-Value="profileModel.AccountName" class="form-control" />
                                 <ValidationMessage For="@(() => profileModel.AccountName)" class="text-danger" />
+                                <small class="form-text text-muted">Your display name in the system.</small>
                             </div>
 
                             <div class="mb-3">
                                 <label for="accountEmail" class="form-label">Email</label>
-                                <input id="accountEmail" class="form-control" value="@profileModel.AccountEmail" readonly />
-                                <small class="form-text text-muted">Email cannot be changed.</small>
+                                <InputText id="accountEmail" @bind-Value="profileModel.AccountEmail" class="form-control" />
+                                <ValidationMessage For="@(() => profileModel.AccountEmail)" class="text-danger" />
+                                <small class="form-text text-muted">Your email address for login and notifications.</small>
                             </div>
 
                             <div class="mb-3">
@@ -84,13 +86,11 @@
                             <hr />
                             <h5>Change Password (Optional)</h5>
                             <p class="text-muted">Leave blank if you don't want to change your password.</p>
-
                             <div class="mb-3">
                                 <label for="newPassword" class="form-label">New Password</label>
                                 <InputText id="newPassword" @bind-Value="profileModel.NewPassword" type="@(showPassword ? "text" : "password")" class="form-control" />
                                 <ValidationMessage For="@(() => profileModel.NewPassword)" class="text-danger" />
                             </div>
-
                             <div class="mb-3">
                                 <label for="confirmPassword" class="form-label">Confirm New Password</label>
                                 <div class="input-group">
@@ -101,7 +101,6 @@
                                 </div>
                                 <ValidationMessage For="@(() => profileModel.ConfirmPassword)" class="text-danger" />
                             </div>
-
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-save me-1"></i> Save Changes
                             </button>
@@ -109,7 +108,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-md-4">
                 <div class="card border-0 shadow">
                     <div class="card-header bg-white">
@@ -117,12 +115,18 @@
                     </div>
                     <div class="card-body">
                         <p>
-                            This is your personal account profile where you can update your name and 
-                            optionally change your password.
+                            This is your personal account profile where you can update your:
+                        </p>
+                        <ul>
+                            <li>Name - How you appear to other users</li>
+                            <li>Email - Used for login and communications</li>
+                            <li>Password - For account security</li>
+                        </ul>
+                        <p class="font-weight-bold text-danger">
+                            Note: Only your role cannot be changed from this page.
                         </p>
                         <p>
-                            For any other account-related changes such as changing your email or role,
-                            please contact the system administrator.
+                            For role changes, please contact the system administrator.
                         </p>
                         <hr />
                         <h6>Security Tips:</h6>
@@ -260,8 +264,19 @@
                 return;
             }
 
-            // Update basic info
+            // Check if email already exists (but not for this user)
+            if (account.AccountEmail != profileModel.AccountEmail)
+            {
+                if (AccountRepository.IsEmailExists(profileModel.AccountEmail))
+                {
+                    errorMessage = $"Email '{profileModel.AccountEmail}' is already in use by another account";
+                    return;
+                }
+            }
+
+            // Update name and email fields
             account.AccountName = profileModel.AccountName;
+            account.AccountEmail = profileModel.AccountEmail;
             
             // Update password if provided
             if (!string.IsNullOrEmpty(profileModel.NewPassword))
@@ -269,10 +284,13 @@
                 account.AccountPassword = profileModel.NewPassword;
             }
 
+            // Only role should not be updated
+            // account.AccountRole should remain unchanged
+
             // Save changes
             AccountRepository.UpdateAccount(account);
             
-            // Update session data
+            // Update session data to reflect changes
             await AuthService.RefreshUserSession();
             
             // Clear password fields
@@ -295,6 +313,8 @@
         [Display(Name = "Name")]
         public string AccountName { get; set; }
         
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
         [Display(Name = "Email")]
         public string AccountEmail { get; set; }
         

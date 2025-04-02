@@ -182,22 +182,49 @@ namespace NMS_Blazor.Services
 
         public async Task RefreshUserSession()
         {
-            var user = await GetCurrentUser();
-            
-            if (user.IsLoggedIn && user.UserId.HasValue)
+            try
             {
-                var account = _accountRepository.GetAccountById(user.UserId.Value);
-                if (account != null)
+                var userId = await GetUserId();
+                if (!userId.HasValue)
                 {
-                    // Update session data
-                    await _sessionStorage.SetAsync("userId", account.AccountId);
-                    await _sessionStorage.SetAsync("userName", account.AccountName);
-                    await _sessionStorage.SetAsync("userEmail", account.AccountEmail);
-                    await _sessionStorage.SetAsync("userRole", account.AccountRole);
-                    
-                    // Notify subscribers that authentication state has changed
-                    OnAuthenticationStateChanged();
+                    return; // Not logged in
                 }
+
+                // Fetch the current user data from the repository
+                var account = _accountRepository.GetAccountById(userId.Value);
+                if (account == null)
+                {
+                    return; // Account not found
+                }
+
+                // Update session using the same keys that are already defined in this service
+                await _sessionStorage.SetAsync(USER_ID_KEY, account.AccountId);
+                await _sessionStorage.SetAsync(USER_NAME_KEY, account.AccountName);
+                await _sessionStorage.SetAsync(USER_ROLE_KEY, account.AccountRole);
+
+                // Notify UI components that auth state has changed
+                OnAuthenticationStateChanged();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error refreshing user session");
+            }
+        }
+
+        private async Task<short?> GetUserId()
+        {
+            try
+            {
+                var result = await _sessionStorage.GetAsync<short>(USER_ID_KEY);
+                if (result.Success)
+                {
+                    return result.Value;
+                }
+                return null;
+            }
+            catch
+            {
+                return null;
             }
         }
 
