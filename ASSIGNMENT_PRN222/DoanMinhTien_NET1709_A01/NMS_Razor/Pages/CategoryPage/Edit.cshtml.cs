@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using NMS_BusinessObjects;
+using NMS_Razor.Hubs;
 using NMS_Repositories;
 
 namespace NMS_Razor.Pages.CategoryPage
@@ -15,11 +17,13 @@ namespace NMS_Razor.Pages.CategoryPage
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IConfiguration _configuration;
+        private readonly IHubContext<SignalRHub> _hubContext;
 
-        public EditModel(ICategoryRepository categoryRepository, IConfiguration configuration)
+        public EditModel(ICategoryRepository categoryRepository, IConfiguration configuration, IHubContext<SignalRHub> hubContext)
         {
             _categoryRepository = categoryRepository;
             _configuration = configuration;
+            _hubContext = hubContext;   
         }
 
         [BindProperty]
@@ -118,6 +122,7 @@ namespace NMS_Razor.Pages.CategoryPage
                 Category.IsActive = IsActive;
                 
                 _categoryRepository.UpdateCategory(Category);
+                _hubContext.Clients.All.SendAsync("Change");
                 SuccessMessage = "Category updated successfully!";
                 return RedirectToPage("./Index");
             }

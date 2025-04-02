@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using NMS_BusinessObjects;
+using NMS_Razor.Hubs;
 using NMS_Repositories;
 
 namespace NMS_Razor.Pages.CategoryPage
@@ -14,11 +16,13 @@ namespace NMS_Razor.Pages.CategoryPage
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IConfiguration _configuration;
+        private readonly IHubContext<SignalRHub> _hubContext;
 
-        public DeleteModel(ICategoryRepository categoryRepository, IConfiguration configuration)
+        public DeleteModel(ICategoryRepository categoryRepository, IConfiguration configuration, IHubContext<SignalRHub> hubContext)
         {
             _categoryRepository = categoryRepository;
             _configuration = configuration;
+            _hubContext = hubContext;   
         }
 
         [BindProperty]
@@ -95,6 +99,7 @@ namespace NMS_Razor.Pages.CategoryPage
             try
             {
                 _categoryRepository.DeleteCategory(id.Value);
+                _hubContext.Clients.All.SendAsync("Change");
                 SuccessMessage = "Category deleted successfully!";
             }
             catch (Exception ex)
