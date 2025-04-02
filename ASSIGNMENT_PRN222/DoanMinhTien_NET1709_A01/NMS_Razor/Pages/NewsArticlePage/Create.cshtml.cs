@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using NMS_BusinessObjects;
 using NMS_DAOs;
+using NMS_Razor.Hubs;
 using NMS_Repositories;
 
 namespace NMS_Razor.Pages.NewsArticlePage
@@ -18,14 +20,16 @@ namespace NMS_Razor.Pages.NewsArticlePage
         private readonly ICategoryRepository _categoryRepository;
         private readonly ITagRepository _tagRepository;
         private readonly IConfiguration _configuration;
+        private readonly IHubContext<SignalRHub> _hubContext;
 
         public CreateModel(INewsArticleRepository newsArticleRepository, ICategoryRepository categoryRepository, 
-                          ITagRepository tagRepository, IConfiguration configuration)
+                          ITagRepository tagRepository, IConfiguration configuration, IHubContext<SignalRHub> hubContext)
         {
             _newsArticleRepository = newsArticleRepository;
             _categoryRepository = categoryRepository;
             _tagRepository = tagRepository;
             _configuration = configuration;
+            _hubContext = hubContext;   
         }
 
         public IActionResult OnGet()
@@ -139,8 +143,9 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 {
                     _newsArticleRepository.AddTagsToArticle(NewsArticle.NewsArticleId, SelectedTagIds);
                 }
-                
+                _hubContext.Clients.All.SendAsync("Change");
                 SuccessMessage = "Article created successfully!";
+             
                 return RedirectToPage("./Index");
             }
             catch (Exception ex)

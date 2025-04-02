@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using NMS_BusinessObjects;
 using NMS_DAOs;
+using NMS_Razor.Hubs;
 using NMS_Repositories;
 
 namespace NMS_Razor.Pages.NewsArticlePage
@@ -17,12 +19,14 @@ namespace NMS_Razor.Pages.NewsArticlePage
         private readonly INewsArticleRepository _newsArticleRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly ITagRepository _tagRepository;
+        private readonly IHubContext<SignalRHub> _hubContext;
 
-        public EditModel(INewsArticleRepository newsArticleRepository, ICategoryRepository categoryRepository, ITagRepository tagRepository)
+        public EditModel(INewsArticleRepository newsArticleRepository, ICategoryRepository categoryRepository, ITagRepository tagRepository, IHubContext<SignalRHub> hubContext)
         {
             _newsArticleRepository = newsArticleRepository;
             _categoryRepository = categoryRepository;
             _tagRepository = tagRepository;
+            _hubContext = hubContext;   
         }
 
         [BindProperty]
@@ -132,7 +136,7 @@ namespace NMS_Razor.Pages.NewsArticlePage
                 
                 // Update tags
                 _newsArticleRepository.AddTagsToArticle(NewsArticle.NewsArticleId, SelectedTagIds);
-                
+                _hubContext.Clients.All.SendAsync("Change");
                 SuccessMessage = "Article updated successfully!";
                 return RedirectToPage("./Index");
             }
