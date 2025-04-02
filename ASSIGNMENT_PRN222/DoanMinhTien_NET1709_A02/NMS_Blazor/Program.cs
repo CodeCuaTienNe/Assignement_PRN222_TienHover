@@ -43,7 +43,7 @@ builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<AuthService>();
 
 // Add NotificationService
-builder.Services.AddScoped<NotificationService>();
+//builder.Services.AddScoped<NotificationService>();
 
 // Add ProtectedSessionStorage for AuthService to use
 builder.Services.AddScoped<Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage.ProtectedSessionStorage>();

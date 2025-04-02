@@ -65,11 +65,11 @@
         // Get admin role from configuration
         adminRole = Configuration.GetValue<int>("AdminRole", 3);
 
-        // Pre-fill admin email in development environment
-        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-        {
-            loginModel.Email = Configuration["AdminAccount:Email"];
-        }
+        // // Pre-fill admin email in development environment
+        // if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+        // {
+        //     loginModel.Email = Configuration["AdminAccount:Email"];
+        // }
     }
 
     private void ToggleDebugInfo()

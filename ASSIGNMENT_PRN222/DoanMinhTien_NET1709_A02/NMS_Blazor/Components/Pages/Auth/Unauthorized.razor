@@ -3,12 +3,12 @@
 
 <PageTitle>Unauthorized Access</PageTitle>
 
-<div class="container mt-5">
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-0 shadow">
-                <div class="card-header bg-danger text-white">
-                    <h3 class="mb-0">Access Denied</h3>
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow border-0">
+                <div class="card-header bg-danger text-white py-3">
+                    <h3 class="mb-0 text-center">Access Denied</h3>
                 </div>
                 <div class="card-body text-center p-4">
                     <div class="mb-4">
@@ -22,13 +22,18 @@
                     </p>
                     
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary" @onclick="GoHome">
+                        <button class="btn btn-primary py-2" @onclick="GoHome">
                             <i class="bi bi-house-door me-2"></i> Go to Home Page
                         </button>
                         <button class="btn btn-outline-secondary" @onclick="GoBack">
                             <i class="bi bi-arrow-left me-2"></i> Go Back
                         </button>
                     </div>
+                </div>
+                <div class="card-footer bg-light py-3 text-center">
+                    <small class="text-muted">
+                        FU News Management System &copy; @DateTime.Now.Year
+                    </small>
                 </div>
             </div>
         </div>
