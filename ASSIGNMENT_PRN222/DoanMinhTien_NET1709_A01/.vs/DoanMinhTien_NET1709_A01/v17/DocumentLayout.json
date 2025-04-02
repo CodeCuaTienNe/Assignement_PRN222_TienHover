@@ -3,8 +3,12 @@
   "WorkspaceRootPath": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\hubs\\signalrhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\hubs\\signalrhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\edit.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\edit.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|d:\\tien\u0027s librabry\\study\\prn222\\assignement_prn222_tienhover\\assignment_prn222\\doanminhtien_net1709_a01\\nms_razor\\pages\\newsarticlepage\\create.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{57D6CC98-3444-4065-9B08-642B5DF81199}|NMS_Razor\\NMS_Razor.csproj|solutionrelative:nms_razor\\pages\\newsarticlepage\\create.cshtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,14 +39,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "SignalRHub.cs",
-              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Hubs\\SignalRHub.cs",
-              "RelativeDocumentMoniker": "NMS_Razor\\Hubs\\SignalRHub.cs",
-              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Hubs\\SignalRHub.cs",
-              "RelativeToolTip": "NMS_Razor\\Hubs\\SignalRHub.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAAAAAA",
+              "Title": "Edit.cshtml.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml.cs",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml.cs",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Edit.cshtml.cs",
+              "ViewState": "AQIAABwAAAAAAAAAAAAQwIsAAAA8AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T17:53:35.588Z",
+              "WhenOpened": "2025-04-02T02:29:18.733Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Create.cshtml.cs",
+              "DocumentMoniker": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml.cs",
+              "RelativeDocumentMoniker": "NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml.cs",
+              "ToolTip": "D:\\TIEN\u0027S LIBRABRY\\STUDY\\PRN222\\Assignement_PRN222_TienHover\\ASSIGNMENT_PRN222\\DoanMinhTien_NET1709_A01\\NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml.cs",
+              "RelativeToolTip": "NMS_Razor\\Pages\\NewsArticlePage\\Create.cshtml.cs",
+              "ViewState": "AQIAAH8AAAAAAAAAAADwv5AAAAAUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-02T02:26:51.634Z",
               "EditorCaption": ""
             }
           ]

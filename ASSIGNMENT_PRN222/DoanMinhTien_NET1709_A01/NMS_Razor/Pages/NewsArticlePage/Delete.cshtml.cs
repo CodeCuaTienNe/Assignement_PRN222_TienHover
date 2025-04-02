@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using NMS_BusinessObjects;
 using NMS_DAOs;
+using NMS_Razor.Hubs;
 using NMS_Repositories;
 
 namespace NMS_Razor.Pages.NewsArticlePage
@@ -14,10 +16,12 @@ namespace NMS_Razor.Pages.NewsArticlePage
     public class DeleteModel : PageModel
     {
         private readonly INewsArticleRepository _newsArticleRepository;
+        private readonly IHubContext<SignalRHub> _hubContext;
 
-        public DeleteModel(INewsArticleRepository newsArticleRepository)
+        public DeleteModel(INewsArticleRepository newsArticleRepository, IHubContext<SignalRHub> hubContext)
         {
             _newsArticleRepository = newsArticleRepository;
+            _hubContext = hubContext;
         }
 
         [BindProperty]
@@ -96,6 +100,7 @@ namespace NMS_Razor.Pages.NewsArticlePage
             try
             {
                 _newsArticleRepository.DeleteNewsArticle(id);
+                _hubContext.Clients.All.SendAsync("Change");
                 SuccessMessage = "Article deleted successfully!";
                 return RedirectToPage("./Index");
             }
